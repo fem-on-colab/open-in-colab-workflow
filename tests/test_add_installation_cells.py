@@ -5,30 +5,11 @@
 # SPDX-License-Identifier: MIT
 """Tests for the open_in_colab_workflow.add_installation_cells package."""
 
-import os
 import typing
 
-import nbformat
 import pytest
 
 from open_in_colab_workflow import add_installation_cells
-
-
-@pytest.fixture
-def root_directory() -> str:
-    """Return the root directory of the repository."""
-    return os.path.dirname(os.path.dirname(__file__))
-
-
-@pytest.fixture
-def open_notebook(root_directory: str) -> typing.Callable:
-    """Return a fixture to open a local notebook."""
-    def _(filename: str) -> nbformat.NotebookNode:
-        """Open notebook with nbformat."""
-        with open(os.path.join(
-                root_directory, "tests", "data", "add_installation_cells", filename + ".ipynb"), "r") as f:
-            return nbformat.read(f, as_version=4)
-    return _
 
 
 @pytest.mark.parametrize(
@@ -44,7 +25,7 @@ def test_add_installation_cells_single_pip_package(
     fem_on_colab_packages_str: str, pip_packages_str: str, open_notebook: typing.Callable
 ) -> None:
     """Test addition of installation cells with a single pip package, possibly providing unused packages."""
-    nb = open_notebook("import_numpy")
+    nb = open_notebook("add_installation_cells", "import_numpy")
     assert len(nb.cells) == 1
     updated_cells, new_cells_position = add_installation_cells(nb.cells, fem_on_colab_packages_str, pip_packages_str)
     assert len(updated_cells) == 2
@@ -72,7 +53,7 @@ def test_add_installation_cells_single_fem_on_colab_package(
     fem_on_colab_packages_str: str, pip_packages_str: str, open_notebook: typing.Callable
 ) -> None:
     """Test addition of installation cells with a single FEM on Colab package, possibly providing unused packages."""
-    nb = open_notebook("import_mpi4py")
+    nb = open_notebook("add_installation_cells", "import_mpi4py")
     assert len(nb.cells) == 1
     updated_cells, new_cells_position = add_installation_cells(nb.cells, fem_on_colab_packages_str, pip_packages_str)
     assert len(updated_cells) == 2
@@ -100,7 +81,7 @@ def test_add_installation_cells_mix_pip_package_and_fem_on_colab_package(
     fem_on_colab_packages_str: str, pip_packages_str: str, open_notebook: typing.Callable
 ) -> None:
     """Test addition of installation cells with both pip and FEM on Colab packages."""
-    nb = open_notebook("import_mpi4py_numpy")
+    nb = open_notebook("add_installation_cells", "import_mpi4py_numpy")
     assert len(nb.cells) == 1
     updated_cells, new_cells_position = add_installation_cells(nb.cells, fem_on_colab_packages_str, pip_packages_str)
     assert len(updated_cells) == 3
@@ -124,7 +105,7 @@ except ImportError:
 
 def test_add_installation_cells_from_form(open_notebook: typing.Callable) -> None:
     """Test addition of installation cells when the from form of the import is used."""
-    nb = open_notebook("from_numpy_import")
+    nb = open_notebook("add_installation_cells", "from_numpy_import")
     assert len(nb.cells) == 1
     updated_cells, new_cells_position = add_installation_cells(nb.cells, "", "numpy")
     assert len(updated_cells) == 2
@@ -141,7 +122,7 @@ except ImportError:
 
 def test_add_installation_cells_multiple_pip_packages(open_notebook: typing.Callable) -> None:
     """Test that addition of installation cells preserves the order in which the packages are provided."""
-    nb = open_notebook("import_numpy_scipy")
+    nb = open_notebook("add_installation_cells", "import_numpy_scipy")
     assert len(nb.cells) == 1
     updated_cells, new_cells_position = add_installation_cells(nb.cells, "", "scipy\nnumpy")
     assert len(updated_cells) == 3
@@ -165,7 +146,7 @@ except ImportError:
 
 def test_add_installation_cells_markdown(open_notebook: typing.Callable) -> None:
     """Test that the installation cells are placed after markdown cells."""
-    nb = open_notebook("import_numpy_markdown")
+    nb = open_notebook("add_installation_cells", "import_numpy_markdown")
     assert len(nb.cells) == 2
     updated_cells, new_cells_position = add_installation_cells(nb.cells, "", "numpy")
     assert len(updated_cells) == 3
