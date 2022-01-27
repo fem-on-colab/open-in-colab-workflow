@@ -32,11 +32,11 @@ def glob_images(work_dir: str) -> typing.Dict[str, str]:
                         subprocess.check_call(
                             image_convert_.format(image_file=image_file, image_file_png=image_file_png).split(" "),
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                    except subprocess.CalledProcessError:
+                    except subprocess.CalledProcessError:  # pragma: no cover
                         pass
                     else:
                         break
-                else:
+                else:  # pragma: no cover
                     raise RuntimeError(f"Image conversion failed for {image_file}")
             assert image_file not in images_as_base64
             images_as_base64[image_file] = _to_base64(image_file_png)

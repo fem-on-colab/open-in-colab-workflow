@@ -15,7 +15,7 @@ class PublishOnBaseClass(abc.ABC):
     """Base class for three possible publish_on options."""
 
     @abc.abstractmethod
-    def get_url(self, relative_path: str) -> str:
+    def get_url(self, relative_path: str) -> str:  # pragma: no cover
         """Get the URL used by this publisher and associated to a file at the provied relative path."""
         pass
 
@@ -26,7 +26,7 @@ class PublishOnArtifact(PublishOnBaseClass):
     def __init__(self, name: str) -> None:
         self.name = name
 
-    def get_url(self, relative_path: str) -> str:
+    def get_url(self, relative_path: str) -> str:  # pragma: no cover
         """Throw an error."""
         raise RuntimeError("This method should never be called, as no URL is required when publishing to artifacts")
 
@@ -68,5 +68,5 @@ def publish_on(publish_on_str: str) -> PublishOnBaseClass:
         publisher, repository, branch = publish_on_str.split("@")
         assert publisher == "github"
         return PublishOnGitHub(repository, branch)
-    else:
+    else:  # pragma: no cover
         raise RuntimeError("Invalid publish_on attribute")

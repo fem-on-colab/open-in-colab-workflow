@@ -22,5 +22,5 @@ def glob_links(work_dir: str, pattern: str, publish_on: PublishOnBaseClass) -> t
         for local_file in glob_files(work_dir, pattern):
             links_replacement[local_file] = publish_on.get_url(os.path.relpath(local_file, work_dir))
         return links_replacement
-    else:
+    else:  # pragma: no cover
         raise RuntimeError("Invalid publish_on attribute")

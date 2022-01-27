@@ -59,3 +59,16 @@ def test_replace_images_in_markdown_via_html_tag_double_quotes(
     assert len(updated_cells) == 1
     assert updated_cells[0].cell_type == "markdown"
     assert updated_cells[0].source == '<a href="Link to main_notebook.ipynb">Link to the main notebook</a>'
+
+
+def test_replace_links_in_markdown_with_a_code_cell(
+    root_directory: str, open_notebook: typing.Callable, mock_links_replacement: typing.Dict[str, str]
+) -> None:
+    """Test replacement of links in a notebook containing both markdown and code."""
+    nb = open_notebook("replace_links_in_markdown", "link_and_code")
+
+    updated_cells = replace_links_in_markdown(nb.cells, os.path.dirname(nb._filename), mock_links_replacement)
+    assert len(updated_cells) == 2
+    assert updated_cells[0].cell_type == "markdown"
+    assert updated_cells[0].source == "[Link to the main notebook](Link to main_notebook.ipynb)"
+    assert updated_cells[1] == nb.cells[1]

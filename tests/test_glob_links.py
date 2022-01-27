@@ -50,6 +50,7 @@ def test_glob_links_with_drive_publisher(root_directory: str, publish_on_drive: 
             ("main_notebook", "1lccx0xSlkAsX53sK0KboPWSW6kzqWG6Z"),
             ("html_link_double_quotes", "179Yu6XEy3voI1Y8aQ8KWdjF1Np9FTWg4"),
             ("html_link_single_quotes", "1IwowRCntESea4c4jUk7jO9wX9-GnGn1b"),
+            ("link_and_code", "10vNTBpBXggXkGGCY53bpiDL_SXwazzms"),
             ("markdown_link", "17iqh9FU_d3X9mhSnvnCtpHPyarxl96lK")
         )
     }
@@ -66,5 +67,6 @@ def test_glob_links_with_github_publisher(root_directory: str, publish_on_github
     )
     assert links_replacement == {
         absolute_nb_pattern.format(nb_name=nb_name): colab_pattern.format(nb_name=nb_name)
-        for nb_name in ("main_notebook", "html_link_double_quotes", "html_link_single_quotes", "markdown_link")
+        for nb_name in (
+            "main_notebook", "html_link_double_quotes", "html_link_single_quotes", "link_and_code", "markdown_link")
     }

@@ -65,3 +65,17 @@ This is the red image.
     assert updated_cells[1].cell_type == "markdown"
     assert updated_cells[1].source == """This is the blue image.
 ![Blue](Base64 of blue.svg)"""
+
+
+def test_replace_images_in_markdown_with_a_code_cell(
+    root_directory: str, open_notebook: typing.Callable, mock_images_as_base64: typing.Dict[str, str]
+) -> None:
+    """Test replacement of images in a notebook containing both markdown and code."""
+    nb = open_notebook("replace_images_in_markdown", "image_and_code")
+
+    updated_cells = replace_images_in_markdown(nb.cells, os.path.dirname(nb._filename), mock_images_as_base64)
+    assert len(updated_cells) == 2
+    assert updated_cells[0].cell_type == "markdown"
+    assert updated_cells[0].source == """This is the red image.
+![Red](Base64 of red.jpg)"""
+    assert updated_cells[1] == nb.cells[1]
