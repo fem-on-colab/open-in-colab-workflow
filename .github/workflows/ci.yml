@@ -24,11 +24,11 @@ jobs:
           python3 -m pip install .[docs,lint,tests]
       - name: Run flake8 checks
         run: |
-          flake8 .
-          nbqa flake8 .
+          python3 -m flake8 .
+          python3 -m nbqa flake8 .
       - name: Run tests
         run: |
-          pytest tests
+          python3 -m pytest tests
         env:
           RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
           RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
