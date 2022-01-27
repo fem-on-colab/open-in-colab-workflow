@@ -6,11 +6,12 @@
 """Look for images in the work directory, and compute their base64 representation."""
 
 import base64
-import glob
 import io
 import os
 import subprocess
 import typing
+
+from open_in_colab_workflow.glob_files import glob_files
 
 
 def glob_images(work_dir: str) -> typing.Dict[str, str]:
@@ -24,7 +25,7 @@ def glob_images(work_dir: str) -> typing.Dict[str, str]:
         ("svg",
          ["inkscape -e {image_file_png} {image_file}", "inkscape --export-filename={image_file_png} {image_file}"])
     ):
-        for image_file in glob.glob(os.path.join(work_dir, "**", f"*.{image_ext}"), recursive=True):
+        for image_file in glob_files(work_dir, os.path.join("**", f"*.{image_ext}")):
             image_prefix, _ = os.path.splitext(image_file)
             image_file_png = image_prefix + ".png"
             if not os.path.isfile(image_file_png):
