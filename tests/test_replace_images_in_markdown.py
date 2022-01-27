@@ -3,7 +3,7 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_colab_workflow.add_installation_cells package."""
+"""Tests for the open_in_colab_workflow.replace_images_in_markdown package."""
 
 import os
 import typing
@@ -27,8 +27,6 @@ def test_replace_images_in_markdown_via_markdown_tag(
     root_directory: str, open_notebook: typing.Callable, mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
     """Test replacement of images in markdown notebook containing only an image defined via markdown tag."""
-    replace_images_in_markdown
-
     nb = open_notebook("replace_images_in_markdown", "markdown_image")
 
     updated_cells = replace_images_in_markdown(nb.cells, os.path.dirname(nb._filename), mock_images_as_base64)
@@ -42,8 +40,6 @@ def test_replace_images_in_markdown_via_html_tag(
     root_directory: str, open_notebook: typing.Callable, mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
     """Test replacement of images in markdown notebook containing only an image defined via html tag."""
-    replace_images_in_markdown
-
     nb = open_notebook("replace_images_in_markdown", "html_image")
 
     updated_cells = replace_images_in_markdown(nb.cells, os.path.dirname(nb._filename), mock_images_as_base64)
@@ -57,8 +53,6 @@ def test_replace_images_in_markdown_via_html_and_markdown_tags(
     root_directory: str, open_notebook: typing.Callable, mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
     """Test replacement of images in markdown notebook containing image defined via html or markdown tags."""
-    replace_images_in_markdown
-
     nb = open_notebook("replace_images_in_markdown", "html_and_markdown_images")
 
     updated_cells = replace_images_in_markdown(nb.cells, os.path.dirname(nb._filename), mock_images_as_base64)

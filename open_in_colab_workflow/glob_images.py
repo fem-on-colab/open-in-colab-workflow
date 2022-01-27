@@ -16,8 +16,6 @@ from open_in_colab_workflow.glob_files import glob_files
 
 def glob_images(work_dir: str) -> typing.Dict[str, str]:
     """Look for images in the work directory, and compute their base64 representation."""
-    assert work_dir.startswith(os.sep), "Please provide the absolute path of the work directory."
-
     images_as_base64 = dict()
     for (image_ext, image_convert) in (
         ("png", []),

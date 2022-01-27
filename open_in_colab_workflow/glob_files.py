@@ -12,6 +12,7 @@ import typing
 
 def glob_files(work_dir: str, pattern: str) -> typing.Set[str]:
     """Get absolute path of all files in the work directory which match at least one pattern."""
+    assert work_dir.startswith(os.sep), "Please provide the absolute path of the work directory."
     pattern = pattern.split("\n")
     return set().union(*[
         {f for f in glob.glob(os.path.join(work_dir, pattern_), recursive=True)} for pattern_ in pattern
