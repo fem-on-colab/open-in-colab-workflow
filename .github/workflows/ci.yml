@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * THU"
+  workflow_dispatch:
+
+jobs:
+  test_library:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install non-pip dependencies of the workflow call library
+        run: |
+          sudo apt install -y -qq imagemagick inkscape
+      - name: Install the workflow call library
+        run: |
+          python3 -m pip install .[docs,lint,tests]
+      - name: Run flake8 checks
+        run: |
+          flake8 .
+          nbqa flake8 .
+      - name: Run tests
+        run: |
+          pytest tests
+      - name: Warn if scheduled workflow is about to be disabled
+        if: github.repository == 'fem-on-colab/open-in-colab-workflow' && github.ref == 'refs/heads/main' && github.event_name == 'schedule'
+        uses: fem-on-colab/warn-workflow-about-to-be-disabled-action@main
+        with:
+          workflow-filename: ci.yml
+          days-elapsed: 50
