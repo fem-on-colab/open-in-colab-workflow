@@ -6,6 +6,9 @@
 """Open in Colab workflow main module."""
 
 from open_in_colab_workflow.add_installation_cells import add_installation_cells
+from open_in_colab_workflow.get_colab_drive_url import get_colab_drive_url
+from open_in_colab_workflow.get_colab_github_url import get_colab_github_url
+from open_in_colab_workflow.get_drive_url import get_drive_url
 from open_in_colab_workflow.get_fem_on_colab_installation_cell_code import get_fem_on_colab_installation_cell_code
 from open_in_colab_workflow.get_pip_installation_cell_code import get_pip_installation_cell_code
 from open_in_colab_workflow.get_pip_installation_line import get_pip_installation_line
