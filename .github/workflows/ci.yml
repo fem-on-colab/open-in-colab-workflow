@@ -29,6 +29,10 @@ jobs:
       - name: Run tests
         run: |
           pytest tests
+        env:
+          RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
+          RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
+          RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
       - name: Warn if scheduled workflow is about to be disabled
         if: github.repository == 'fem-on-colab/open-in-colab-workflow' && github.ref == 'refs/heads/main' && github.event_name == 'schedule'
         uses: fem-on-colab/warn-workflow-about-to-be-disabled-action@main
