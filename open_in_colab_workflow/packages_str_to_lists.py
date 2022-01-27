@@ -26,13 +26,16 @@ def packages_str_to_lists(packages_str: str) -> typing.Tuple[
                 package_name_version_url = split_at_dollar[0]
                 package_import = split_at_dollar[1]
             split_at_at = package_name_version_url.split("@")
-            assert len(split_at_at) in (1, 2), "Passing a branch or commit is not supported"
+            assert len(split_at_at) in (1, 2, 3)
             if len(split_at_at) == 1:
                 package_name_version = split_at_at[0]
                 package_url = ""
             elif len(split_at_at) == 2:
                 package_name_version = split_at_at[0]
                 package_url = split_at_at[1]
+            elif len(split_at_at) == 3:
+                package_name_version = split_at_at[0]
+                package_url = "@".join(split_at_at[1:])
             package_name = package_name_version
             for operator in ("==", ">=", ">", "<=", "<"):
                 if operator in package_name:

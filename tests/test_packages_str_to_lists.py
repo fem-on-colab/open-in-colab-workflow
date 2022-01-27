@@ -61,6 +61,20 @@ def test_single_package_url_str_to_list() -> None:
     assert packages_import[0] == "numpy"
 
 
+def test_single_package_url_with_tag_str_to_list() -> None:
+    """Test conversion of a single package with url (containing a tag) and without importable name."""
+    packages_name, packages_version, packages_url, packages_import = packages_str_to_lists(
+        "numpy@https://github.com/numpy/numpy.git@v1.22.0")
+    assert len(packages_name) == 1
+    assert packages_name[0] == "numpy"
+    assert len(packages_version) == 1
+    assert packages_version[0] == ""
+    assert len(packages_url) == 1
+    assert packages_url[0] == "https://github.com/numpy/numpy.git@v1.22.0"
+    assert len(packages_import) == 1
+    assert packages_import[0] == "numpy"
+
+
 def test_single_package_import_str_to_list() -> None:
     """Test conversion of a single package with importable name and without url."""
     packages_name, packages_version, packages_url, packages_import = packages_str_to_lists("python-dateutil$dateutil")
