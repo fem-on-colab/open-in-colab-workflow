@@ -28,11 +28,14 @@ jobs:
           python3 -m nbqa flake8 .
       - name: Run tests
         run: |
-          python3 -m pytest tests
+          python3 -m coverage run --source=open_in_colab_workflow -m pytest tests
         env:
           RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
           RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
           RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
+      - name: Check test coverage
+        run: |
+          python3 -m coverage report --fail-under=100 --show-missing --skip-covered
       - name: Warn if scheduled workflow is about to be disabled
         if: github.repository == 'fem-on-colab/open-in-colab-workflow' && github.ref == 'refs/heads/main' && github.event_name == 'schedule'
         uses: fem-on-colab/warn-workflow-about-to-be-disabled-action@main
