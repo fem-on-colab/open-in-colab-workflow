@@ -10,6 +10,8 @@ import typing
 
 import docker
 
+from open_in_colab_workflow.get_rclone_env import get_rclone_env
+
 
 def get_drive_url(relative_path: str, drive_root_directory: str) -> typing.Optional[str]:
     """Get the URL that a file will have on Google Drive."""
@@ -27,13 +29,7 @@ def _get_url_with_rclone(relative_path: str, drive_root_directory: str) -> str:
     This function may raise a docker ContainerError if the file is not present on Google Drive.
     Such error should be handled by the caller.
     """
-    rclone_env = {
-        "RCLONE_CONFIG_COLAB_TYPE": "drive",
-        "RCLONE_CONFIG_COLAB_SCOPE": "drive",
-        "RCLONE_CONFIG_COLAB_CLIENT_ID": os.environ["RCLONE_CONFIG_COLAB_CLIENT_ID"],
-        "RCLONE_CONFIG_COLAB_CLIENT_SECRET": os.environ["RCLONE_CONFIG_COLAB_CLIENT_SECRET"],
-        "RCLONE_CONFIG_COLAB_TOKEN": os.environ["RCLONE_CONFIG_COLAB_TOKEN"]
-    }
+    rclone_env = get_rclone_env()
     client = docker.from_env()
     url = client.containers.run(
         "rclone/rclone", f"-q link colab:{os.path.join(drive_root_directory, relative_path)}",
