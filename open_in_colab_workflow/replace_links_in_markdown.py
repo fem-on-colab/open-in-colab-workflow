@@ -7,9 +7,15 @@
 
 import copy
 import os
+import sys
 import typing
 
 import nbformat
+
+from open_in_colab_workflow.glob_files import glob_files
+from open_in_colab_workflow.glob_links import glob_links
+from open_in_colab_workflow.publish_on import publish_on, PublishOnDrive
+from open_in_colab_workflow.upload_files_to_google_drive import upload_files_to_google_drive
 
 
 def replace_links_in_markdown(
@@ -33,3 +39,33 @@ def replace_links_in_markdown(
         else:
             updated_nb_cells.append(cell)
     return updated_nb_cells
+
+
+if __name__ == "__main__":  # pragma: no cover
+    assert len(sys.argv) == 4
+    work_dir = sys.argv[1]
+    nb_pattern = sys.argv[2]
+    publisher = publish_on(sys.argv[3])
+
+    links_replacement = glob_links(work_dir, nb_pattern, publisher)
+    if isinstance(publisher, PublishOnDrive):
+        # The Google Drive publisher returns colab links equal to None for any file added by the current commit.
+        # Force an upload to obtain a valid link
+        local_files_with_none_link = [
+            os.path.relpath(local_link, work_dir)
+            for (local_link, colab_link) in links_replacement.items() if colab_link is None
+        ]
+        if len(local_files_with_none_link) > 0:
+            local_files_with_none_link = "\n".join(local_files_with_none_link)
+            upload_files_to_google_drive(work_dir, local_files_with_none_link, publisher.drive_root_directory)
+            links_replacement.update(glob_links(work_dir, local_files_with_none_link, publisher))
+        for (local_link, colab_link) in links_replacement.items():
+            assert colab_link is not None
+            print(os.path.relpath(local_link, work_dir) + " -> " + colab_link)
+
+    for nb_filename in glob_files(work_dir, nb_pattern):
+        with open(nb_filename, "r") as f:
+            nb = nbformat.read(f, as_version=4)
+        nb.cells = replace_links_in_markdown(nb.cells, os.path.dirname(nb_filename), links_replacement)
+        with open(nb_filename, "w") as f:
+            nbformat.write(nb, f)
