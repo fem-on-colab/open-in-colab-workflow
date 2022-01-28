@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 """Tests for the open_in_colab_workflow.get_pip_installation_line package."""
 
-from open_in_colab_workflow import get_pip_installation_line
+from open_in_colab_workflow.get_pip_installation_line import get_pip_installation_line
 
 
 def test_pip_installation_line_only_name() -> None:

@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 """Tests for the open_in_colab_workflow.packages_str_to_lists package."""
 
-from open_in_colab_workflow import packages_str_to_lists
+from open_in_colab_workflow.packages_str_to_lists import packages_str_to_lists
 
 
 def test_single_package_str_to_list() -> None:

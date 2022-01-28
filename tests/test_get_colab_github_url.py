@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 """Tests for the open_in_colab_workflow.get_colab_github_url package."""
 
-from open_in_colab_workflow import get_colab_github_url
+from open_in_colab_workflow.get_colab_github_url import get_colab_github_url
 
 
 def test_get_colab_github_url() -> None:

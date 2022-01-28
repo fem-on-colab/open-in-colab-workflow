@@ -10,7 +10,7 @@ import typing
 
 import pytest
 
-from open_in_colab_workflow import replace_links_in_markdown
+from open_in_colab_workflow.replace_links_in_markdown import replace_links_in_markdown
 
 
 @pytest.fixture

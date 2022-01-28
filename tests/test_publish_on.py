@@ -9,7 +9,7 @@ import os
 
 import pytest
 
-from open_in_colab_workflow import PublishOnArtifact, PublishOnDrive, PublishOnGitHub
+from open_in_colab_workflow.publish_on import PublishOnArtifact, PublishOnDrive, PublishOnGitHub
 
 
 def test_publish_on_artifact(publish_on_artifact: PublishOnArtifact) -> None:

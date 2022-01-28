@@ -13,7 +13,9 @@ import docker
 import pytest
 import requests
 
-from open_in_colab_workflow import get_drive_url, get_rclone_env, upload_files_to_google_drive
+from open_in_colab_workflow.get_drive_url import get_drive_url
+from open_in_colab_workflow.get_rclone_env import get_rclone_env
+from open_in_colab_workflow.upload_files_to_google_drive import upload_files_to_google_drive
 
 
 def assert_files_equal(root_directory: str, pattern: str, url: str) -> None:

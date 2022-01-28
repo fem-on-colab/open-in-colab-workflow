@@ -7,7 +7,7 @@
 
 import os
 
-from open_in_colab_workflow import glob_images
+from open_in_colab_workflow.glob_images import glob_images
 
 
 def test_glob_images(root_directory: str) -> None:

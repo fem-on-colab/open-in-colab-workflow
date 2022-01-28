@@ -7,7 +7,7 @@
 
 import os
 
-from open_in_colab_workflow import glob_files
+from open_in_colab_workflow.glob_files import glob_files
 
 
 def test_glob_files_single_pattern(root_directory: str) -> None:

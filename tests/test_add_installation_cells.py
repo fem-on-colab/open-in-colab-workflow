@@ -9,7 +9,7 @@ import typing
 
 import pytest
 
-from open_in_colab_workflow import add_installation_cells
+from open_in_colab_workflow.add_installation_cells import add_installation_cells
 
 
 @pytest.mark.parametrize(

@@ -11,7 +11,7 @@ import typing
 import nbformat
 import pytest
 
-from open_in_colab_workflow import publish_on, PublishOnArtifact, PublishOnDrive, PublishOnGitHub
+from open_in_colab_workflow.publish_on import publish_on, PublishOnArtifact, PublishOnDrive, PublishOnGitHub
 
 
 @pytest.fixture

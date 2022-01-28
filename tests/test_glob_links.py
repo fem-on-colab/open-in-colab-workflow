@@ -9,7 +9,8 @@ import os
 
 import pytest
 
-from open_in_colab_workflow import glob_links, PublishOnArtifact, PublishOnDrive, PublishOnGitHub
+from open_in_colab_workflow.glob_links import glob_links
+from open_in_colab_workflow.publish_on import PublishOnArtifact, PublishOnDrive, PublishOnGitHub
 
 
 def test_glob_links_with_artifact_publisher(root_directory: str, publish_on_artifact: PublishOnArtifact) -> None:
