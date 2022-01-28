@@ -6,12 +6,14 @@
 """Add installation cells on top of the notebook."""
 
 import copy
+import sys
 import typing
 
 import nbformat
 
 from open_in_colab_workflow.get_fem_on_colab_installation_cell_code import get_fem_on_colab_installation_cell_code
 from open_in_colab_workflow.get_pip_installation_cell_code import get_pip_installation_cell_code
+from open_in_colab_workflow.glob_files import glob_files
 from open_in_colab_workflow.packages_str_to_lists import packages_str_to_lists
 
 
@@ -63,3 +65,18 @@ def add_installation_cells(
             new_cells_position.append(first_code_cell_position)
             first_code_cell_position += 1
     return updated_nb_cells, new_cells_position
+
+
+if __name__ == "__main__":  # pragma: no cover
+    assert len(sys.argv) == 5
+    work_dir = sys.argv[1]
+    nb_pattern = sys.argv[2]
+    fem_on_colab_packages = sys.argv[3]
+    pip_packages = sys.argv[4]
+
+    for nb_filename in glob_files(work_dir, nb_pattern):
+        with open(nb_filename, "r") as f:
+            nb = nbformat.read(f, as_version=4)
+        nb.cells, _ = add_installation_cells(nb.cells, fem_on_colab_packages, pip_packages)
+        with open(nb_filename, "w") as f:
+            nbformat.write(nb, f)
