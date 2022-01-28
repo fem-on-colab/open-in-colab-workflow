@@ -135,6 +135,7 @@ jobs:
           RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
           RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
       - name: Determine publisher upload pattern
+        if: success() || (steps.determine_publisher.outputs.publisher == 'artifact' && (failure() || cancelled()))
         id: upload_pattern
         run: |
           if [[ "${{ steps.determine_publisher.outputs.publisher }}" == "artifact" ]]; then
@@ -157,7 +158,7 @@ jobs:
           echo "::set-output name=upload_pattern::${UPLOAD_PATTERN}"
         shell: bash
       - name: Upload files to an artifact
-        if: steps.determine_publisher.outputs.publisher == 'artifact'
+        if: steps.determine_publisher.outputs.publisher == 'artifact' && (success() || failure() || cancelled())
         uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.determine_publisher.outputs.name }}
