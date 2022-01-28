@@ -3,31 +3,13 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_colab_workflow.test_glob_links package."""
+"""Tests for the open_in_colab_workflow.glob_links package."""
 
 import os
 
 import pytest
 
-from open_in_colab_workflow import glob_links, publish_on, PublishOnArtifact, PublishOnDrive, PublishOnGitHub
-
-
-@pytest.fixture
-def publish_on_artifact() -> PublishOnArtifact:
-    """Return an artifact publisher."""
-    return publish_on("artifact@open-in-colab")
-
-
-@pytest.fixture
-def publish_on_drive() -> PublishOnDrive:
-    """Return a Google Drive publisher."""
-    return publish_on("drive@GitHub/open_in_colab_workflow")
-
-
-@pytest.fixture
-def publish_on_github() -> PublishOnGitHub:
-    """Return a GitHub publisher."""
-    return publish_on("github@fem-on-colab/open-in-colab-workflow@open-in-colab")
+from open_in_colab_workflow import glob_links, PublishOnArtifact, PublishOnDrive, PublishOnGitHub
 
 
 def test_glob_links_with_artifact_publisher(root_directory: str, publish_on_artifact: PublishOnArtifact) -> None:
@@ -57,7 +39,7 @@ def test_glob_links_with_drive_publisher(root_directory: str, publish_on_drive: 
 
 
 def test_glob_links_with_github_publisher(root_directory: str, publish_on_github: PublishOnGitHub) -> None:
-    """Test creation of link replacements dictionary with a Google Drive publisher."""
+    """Test creation of link replacements dictionary with a GitHub publisher."""
     nb_pattern = os.path.join("tests", "data", "replace_links_in_markdown", "*.ipynb")
     links_replacement = glob_links(root_directory, nb_pattern, publish_on_github)
     absolute_nb_pattern = os.path.join(root_directory, nb_pattern).replace("*", "{nb_name}")

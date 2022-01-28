@@ -19,6 +19,11 @@ class PublishOnBaseClass(abc.ABC):
         """Get the URL used by this publisher and associated to a file at the provied relative path."""
         pass
 
+    @abc.abstractmethod
+    def __str__(self) -> str:  # pragma: no cover
+        """Print private attributes as attribute_name=attribute_value, one attribute per line."""
+        pass
+
 
 class PublishOnArtifact(PublishOnBaseClass):
     """Store artifact publisher and its name."""
@@ -26,9 +31,14 @@ class PublishOnArtifact(PublishOnBaseClass):
     def __init__(self, name: str) -> None:
         self.name = name
 
-    def get_url(self, relative_path: str) -> str:  # pragma: no cover
+    def get_url(self, relative_path: str) -> str:
         """Throw an error."""
         raise RuntimeError("This method should never be called, as no URL is required when publishing to artifacts")
+
+    def __str__(self) -> str:
+        """Print private attributes as attribute_name=attribute_value, one attribute per line."""
+        return f"""publisher=artifact
+name={self.name}"""
 
 
 class PublishOnDrive(PublishOnBaseClass):
@@ -41,6 +51,11 @@ class PublishOnDrive(PublishOnBaseClass):
         """Get the URL used by Google Colab when the file at the provided relative path is stored on Google Drive."""
         return get_colab_drive_url(relative_path, self.drive_root_directory)
 
+    def __str__(self) -> str:
+        """Print private attributes as attribute_name=attribute_value, one attribute per line."""
+        return f"""publisher=drive
+drive_root_directory={self.drive_root_directory}"""
+
 
 class PublishOnGitHub(PublishOnBaseClass):
     """Store GitHub repository publisher and its branch."""
@@ -52,6 +67,12 @@ class PublishOnGitHub(PublishOnBaseClass):
     def get_url(self, relative_path: str) -> str:
         """Get the URL used by Google Colab when the file at the provided relative path is stored on GitHub."""
         return get_colab_github_url(relative_path, self.repository, self.branch)
+
+    def __str__(self) -> str:
+        """Print private attributes as attribute_name=attribute_value, one attribute per line."""
+        return f"""publisher=github
+repository={self.repository}
+branch={self.branch}"""
 
 
 def publish_on(publish_on_str: str) -> PublishOnBaseClass:
