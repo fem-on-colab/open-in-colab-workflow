@@ -5,9 +5,8 @@
 # SPDX-License-Identifier: MIT
 """Upload all files matching at least one pattern to Google Drive."""
 
+import subprocess
 import sys
-
-import docker
 
 from open_in_colab_workflow.get_rclone_env import get_rclone_env
 from open_in_colab_workflow.publish_on import publish_on, PublishOnDrive
@@ -16,25 +15,9 @@ from open_in_colab_workflow.publish_on import publish_on, PublishOnDrive
 def upload_files_to_google_drive(work_dir: str, pattern: str, drive_root_directory: str) -> None:
     """Upload all files matching at least one pattern to Google Drive."""
     for pattern_ in pattern.strip("\n").split("\n"):
-        _upload_files_with_rclone(work_dir, pattern_, drive_root_directory)
-
-
-def _upload_files_with_rclone(work_dir: str, pattern: str, drive_root_directory: str) -> None:
-    """
-    Run a temporary rclone docker image to upload a file on Google Drive.
-
-    This function may raise a docker ContainerError if an error occurs during the upload.
-    Such error should be handled by the caller.
-    """
-    rclone_env = get_rclone_env()
-    volumes = {
-        work_dir: {"bind": "/data", "mode": "ro"}
-    }
-    client = docker.from_env()
-    client.containers.run(
-        "rclone/rclone", f"-q copy /data colab:{drive_root_directory} --include {pattern}",
-        environment=rclone_env, volumes=volumes, remove=True
-    )
+        subprocess.check_call(
+            f"rclone -q copy {work_dir} colab:{drive_root_directory} --include {pattern_}".split(" "),
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=get_rclone_env())
 
 
 if __name__ == "__main__":  # pragma: no cover

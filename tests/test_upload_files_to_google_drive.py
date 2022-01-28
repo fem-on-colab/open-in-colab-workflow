@@ -7,9 +7,9 @@
 
 import os
 import shutil
+import subprocess
 import tempfile
 
-import docker
 import pytest
 import requests
 
@@ -48,9 +48,6 @@ def test_upload_files_to_google_drive_new(root_directory: str) -> None:
         assert url is not None
         assert_files_equal(root_directory, pattern, url)
         # Clean up file on Drive
-        rclone_env = get_rclone_env()
-        client = docker.from_env()
-        client.containers.run(
-            "rclone/rclone", f'-q deletefile colab:{os.path.join("GitHub/open_in_colab_workflow", pattern)}',
-            environment=rclone_env, remove=True
-        )
+        subprocess.check_call(
+            f'rclone -q deletefile colab:{os.path.join("GitHub/open_in_colab_workflow", pattern)}'.split(" "),
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=get_rclone_env())
