@@ -1,0 +1,187 @@
+name: Open notebooks in Colab
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: "Repository from which this workflow is called"
+        type: string
+      work_directory:
+        description: "Work directory with a copy of the files to be processed"
+        type: string
+      notebook_pattern:
+        description: "Search pattern for notebooks to be processed"
+        type: string
+      extra_files_pattern:
+        description: "Search pattern for extra files to be processed"
+        type: string
+      notebook_preparation:
+        description: "Script to be run before processing notebooks"
+        type: string
+      extra_files_preparation:
+        description: "Script to be run before processing extra files"
+        type: string
+      test_script:
+        description: "Script to be run to test notebooks"
+        type: string
+      fem_on_colab_packages:
+        description: "List of packages that need an installation cell among the one offered by FEM on Colab"
+        type: string
+      pip_packages:
+        description: "List of pip-installable packages that need an installation cell"
+        type: string
+      publish_on:
+        description: "How to publish the processed notebooks"
+        type: string
+    secrets:
+      RCLONE_CONFIG_COLAB_CLIENT_ID:
+        description: "Client ID for the Google Acccount. Only used when publish_on is colab"
+      RCLONE_CONFIG_COLAB_CLIENT_SECRET:
+        description: "Secret for the Google Acccount. Only used when publish_on is colab"
+      RCLONE_CONFIG_COLAB_TOKEN:
+        description: "Token for the Google Acccount. Only used when publish_on is colab"
+      REPO_ACCESS_TOKEN:
+        description: "GitHub access token with public_repo (when publishing to a public repository) or repo scope (when publishing to a private repository). Only used when publish_on is github"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    container: ubuntu:18.04
+    steps:
+      - name: Install git
+        run: |
+          apt update -qq
+          apt install -y -qq software-properties-common
+          add-apt-repository ppa:git-core/ppa
+          apt update -qq
+          apt install -y -qq git
+      - uses: actions/checkout@v2
+      - name: Set environment variable containing the path of the workflow call repository
+        run: |
+          echo "GITHUB_WORKFLOW_CALL_PATH=_workflow_call_repo" >> ${GITHUB_ENV}
+      - name: Clone workflow call repository
+        uses: actions/checkout@v2
+        with:
+          repository: fem-on-colab/open-in-colab-workflow
+          path: ${{ env.GITHUB_WORKFLOW_CALL_PATH }}
+      - name: Setup Colab base image
+        run: |
+          export DEBIAN_FRONTEND="noninteractive"
+          apt install -y -qq wget
+          wget "https://raw.githubusercontent.com/fem-on-colab/fem-on-colab/main/colab/install.sh" -O "/tmp/colab-install.sh" && bash "/tmp/colab-install.sh"
+          INSTALL_PREFIX=/usr/local
+          echo "${INSTALL_PREFIX}/bin" >> ${GITHUB_PATH}
+          echo "LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:${LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
+          echo "PYTHONPATH=${INSTALL_PREFIX}/lib/python3.7/dist-packages:${INSTALL_PREFIX}/lib/python3.7/site-packages:/usr/lib/python3.7/dist-packages:/usr/lib/python3.7/site-packages:${PYTHONPATH}" >> ${GITHUB_ENV}
+      - name: Install non-pip dependencies of the workflow call library
+        run: |
+          apt install -y -qq imagemagick inkscape
+          curl https://rclone.org/install.sh | bash
+      - name: Install the workflow call library
+        run: |
+          pushd ${{ env.GITHUB_WORKFLOW_CALL_PATH }}
+          python3 -m pip install .[docs,lint,tests]
+          popd
+        shell: bash
+      - name: Determine publisher settings
+        id: determine_publisher
+        run: |
+          python3 -m open_in_colab_workflow.publish_on "${{ inputs.publish_on }}" > .publisher
+          while read -r VARIABLE_VALUE; do
+            VARIABLE_VALUE_ARRAY=(${VARIABLE_VALUE//=/ })
+            echo "::set-output name=${VARIABLE_VALUE_ARRAY[0]}::${VARIABLE_VALUE_ARRAY[1]}"
+          done < .publisher
+          rm .publisher
+        shell: bash
+      - name: Clone GitHub repository of the publisher
+        if: steps.determine_publisher.outputs.publisher == 'github' && github.repository == inputs.repository
+        uses: actions/checkout@v2
+        with:
+          repository: "${{ steps.determine_publisher.outputs.repository }}"
+          token: "${{ secrets.REPO_ACCESS_TOKEN || github.token }}"
+          ref: "${{ steps.determine_publisher.outputs.branch }}"
+          fetch-depth: 0
+          path: "${{ inputs.work_directory }}"
+      - name: Run notebook preparation
+        if: inputs.notebook_preparation != ''
+        run: |
+          ${{ inputs.notebook_preparation }}
+        shell: bash
+      - name: Add installation cells
+        run: |
+          python3 -m open_in_colab_workflow.add_installation_cells "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" '${{ inputs.fem_on_colab_packages }}' '${{ inputs.pip_packages }}'
+      - name: Test notebooks in the work directory
+        if: inputs.test_script != ''
+        run: |
+          ${{ inputs.test_script }}
+        env:
+          LD_PRELOAD: "/usr/lib/x86_64-linux-gnu/libstdc++.so.6"
+        shell: bash
+      - name: Run extra files preparation
+        if: inputs.extra_files_preparation != ''
+        run: |
+          ${{ inputs.extra_files_preparation }}
+      - name: Replace images in markdown
+        run: |
+          python3 -m open_in_colab_workflow.replace_images_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}"
+      - name: Replace links in markdown
+        run: |
+          python3 -m open_in_colab_workflow.replace_links_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "${{ inputs.publish_on }}"
+        env:
+          RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
+          RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
+          RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
+      - name: Determine publisher upload pattern
+        id: upload_pattern
+        run: |
+          if [[ "${{ steps.determine_publisher.outputs.publisher }}" == "artifact" ]]; then
+            UPLOAD_PATTERN_PREFIX="${{ inputs.work_directory }}/"
+          else
+            UPLOAD_PATTERN_PREFIX=""
+          fi
+          UPLOAD_PATTERN_ARRAY=()
+          while read -r PATTERN; do
+            UPLOAD_PATTERN_ARRAY+=("${UPLOAD_PATTERN_PREFIX}${PATTERN}")
+          done <<< "${{ inputs.notebook_pattern }}"
+          if [[ -n "${{ inputs.extra_files_pattern }}" ]]; then
+            while read -r PATTERN; do
+              UPLOAD_PATTERN_ARRAY+=("${UPLOAD_PATTERN_PREFIX}${PATTERN}")
+            done <<< "${{ inputs.extra_files_pattern }}"
+          fi
+          SEPARATOR="%0A"
+          UPLOAD_PATTERN="$(printf "${SEPARATOR//%/%%}%s" "${UPLOAD_PATTERN_ARRAY[@]}")"
+          UPLOAD_PATTERN="${UPLOAD_PATTERN:${#SEPARATOR}}"
+          echo "::set-output name=upload_pattern::${UPLOAD_PATTERN}"
+        shell: bash
+      - name: Upload files to an artifact
+        if: steps.determine_publisher.outputs.publisher == 'artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.determine_publisher.outputs.name }}
+          path: ${{ steps.upload_pattern.outputs.upload_pattern }}
+      - name: Upload files to Google Drive
+        if: steps.determine_publisher.outputs.publisher == 'drive' && github.repository == inputs.repository
+        run: |
+          python3 -m open_in_colab_workflow.upload_files_to_google_drive "${{ inputs.work_directory }}" "${{ steps.upload_pattern.outputs.upload_pattern }}" "${{ inputs.publish_on }}"
+        env:
+          RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
+          RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
+          RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
+      - name: Upload files to GitHub repository
+        if: steps.determine_publisher.outputs.publisher == 'github' && github.repository == inputs.repository
+        run: |
+          SHA_SHORT=$(git rev-parse --short HEAD)
+          pushd "${{ inputs.work_directory }}"
+          while read -r PATTERN; do
+            git add "${PATTERN}"
+          done <<< "${{ steps.upload_pattern.outputs.upload_pattern }}"
+          if [[ "$(git diff --name-only --cached | wc -l)" -gt 0 ]]; then
+            git config user.name "GitHub Actions"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            BRANCH="${{ steps.determine_publisher.outputs.branch }}"
+            git pull origin ${BRANCH}
+            git commit -m "deploy: ${GITHUB_REPOSITORY}@${SHA_SHORT}"
+            git push origin ${BRANCH}
+          fi
+          popd
+        shell: bash

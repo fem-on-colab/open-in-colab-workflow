@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "**"
+      - "!open-in-colab"
   pull_request:
     branches:
       - main
@@ -19,6 +20,7 @@ jobs:
       - name: Install non-pip dependencies of the workflow call library
         run: |
           sudo apt install -y -qq imagemagick inkscape
+          curl https://rclone.org/install.sh | sudo bash
       - name: Install the workflow call library
         run: |
           python3 -m pip install .[docs,lint,tests]
@@ -42,3 +44,73 @@ jobs:
         with:
           workflow-filename: ci.yml
           days-elapsed: 50
+
+  test_workflow_artifact:
+    needs: [test_library]
+    uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
+    with:
+      repository: fem-on-colab/open-in-colab-workflow
+      work_directory: open_in_colab
+      notebook_pattern: "**/*.ipynb"
+      extra_files_pattern: "**/*.dat"
+      notebook_preparation: |
+        rsync -avz --include "*/" --include="*.ipynb" --exclude="*" tests open_in_colab/
+      extra_files_preparation: |
+        rsync -avz --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" tests open_in_colab/
+        mkdir -p open_in_colab/tests/data/extras/
+        echo "This is an extra file" > open_in_colab/tests/data/extras/extra.dat
+      fem_on_colab_packages: |
+        mpi4py
+      pip_packages: |
+        python-dateutil$dateutil
+      test_script: |
+        python3 -m pytest --nbval open_in_colab/tests
+      publish_on: artifact@open-in-colab
+
+  test_workflow_drive:
+    needs: [test_library]
+    uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
+    with:
+      repository: fem-on-colab/open-in-colab-workflow
+      work_directory: open_in_colab
+      notebook_pattern: "**/*.ipynb"
+      extra_files_pattern: "**/*.dat"
+      notebook_preparation: |
+        rsync -avz --include "*/" --include="*.ipynb" --exclude="*" tests open_in_colab/
+      extra_files_preparation: |
+        rsync -avz --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" tests open_in_colab/
+        mkdir -p open_in_colab/tests/data/extras/
+        echo "This is an extra file" > open_in_colab/tests/data/extras/extra.dat
+      fem_on_colab_packages: |
+        mpi4py
+      pip_packages: |
+        python-dateutil$dateutil
+      test_script: |
+        python3 -m pytest --nbval open_in_colab/tests
+      publish_on: drive@GitHub/open_in_colab_workflow
+    secrets:
+      RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
+      RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
+      RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
+
+  test_workflow_github:
+    needs: [test_library]
+    uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
+    with:
+      repository: fem-on-colab/open-in-colab-workflow
+      work_directory: open_in_colab
+      notebook_pattern: "**/*.ipynb"
+      extra_files_pattern: "**/*.dat"
+      notebook_preparation: |
+        rsync -avz --include "*/" --include="*.ipynb" --exclude="*" tests open_in_colab/
+      extra_files_preparation: |
+        rsync -avz --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" tests open_in_colab/
+        mkdir -p open_in_colab/tests/data/extras/
+        echo "This is an extra file" > open_in_colab/tests/data/extras/extra.dat
+      fem_on_colab_packages: |
+        mpi4py
+      pip_packages: |
+        python-dateutil$dateutil
+      test_script: |
+        python3 -m pytest --nbval open_in_colab/tests
+      publish_on: github@fem-on-colab/open-in-colab-workflow@open-in-colab
