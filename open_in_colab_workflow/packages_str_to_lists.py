@@ -16,7 +16,7 @@ def packages_str_to_lists(packages_str: str) -> typing.Tuple[
     packages_url = list()
     packages_import = list()
     if packages_str != "":
-        for package_str in packages_str.split("\n"):
+        for package_str in packages_str.strip("\n").split("\n"):
             split_at_dollar = package_str.split("$")
             assert len(split_at_dollar) in (1, 2)
             if len(split_at_dollar) == 1:

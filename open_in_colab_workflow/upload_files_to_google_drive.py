@@ -15,7 +15,7 @@ from open_in_colab_workflow.publish_on import publish_on, PublishOnDrive
 
 def upload_files_to_google_drive(work_dir: str, pattern: str, drive_root_directory: str) -> None:
     """Upload all files matching at least one pattern to Google Drive."""
-    for pattern_ in pattern.split("\n"):
+    for pattern_ in pattern.strip("\n").split("\n"):
         _upload_files_with_rclone(work_dir, pattern_, drive_root_directory)
 
 
