@@ -3,9 +3,6 @@ name: Open notebooks in Colab
 on:
   workflow_call:
     inputs:
-      repository:
-        description: "Repository from which this workflow is called"
-        type: string
       work_directory:
         description: "Work directory with a copy of the files to be processed"
         type: string
@@ -32,6 +29,12 @@ on:
         type: string
       publish_on:
         description: "How to publish the processed notebooks"
+        type: string
+      publish_if_repository:
+        description: "Restrict publishing to a specific calling repository"
+        type: string
+      publish_if_branch:
+        description: "Restrict publishing to a specific branch on the calling repository"
         type: string
     secrets:
       RCLONE_CONFIG_COLAB_CLIENT_ID:
@@ -94,7 +97,7 @@ jobs:
           rm .publisher
         shell: bash
       - name: Clone GitHub repository of the publisher
-        if: steps.determine_publisher.outputs.publisher == 'github' && github.repository == inputs.repository
+        if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         uses: actions/checkout@v2
         with:
           repository: "${{ steps.determine_publisher.outputs.repository }}"
@@ -107,6 +110,10 @@ jobs:
         run: |
           ${{ inputs.notebook_preparation }}
         shell: bash
+      - name: Run extra files preparation
+        if: inputs.extra_files_preparation != ''
+        run: |
+          ${{ inputs.extra_files_preparation }}
       - name: Add installation cells
         run: |
           python3 -m open_in_colab_workflow.add_installation_cells "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" '${{ inputs.fem_on_colab_packages }}' '${{ inputs.pip_packages }}'
@@ -117,10 +124,6 @@ jobs:
         env:
           LD_PRELOAD: "/usr/lib/x86_64-linux-gnu/libstdc++.so.6"
         shell: bash
-      - name: Run extra files preparation
-        if: inputs.extra_files_preparation != ''
-        run: |
-          ${{ inputs.extra_files_preparation }}
       - name: Replace images in markdown
         run: |
           python3 -m open_in_colab_workflow.replace_images_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}"
@@ -160,7 +163,7 @@ jobs:
           name: ${{ steps.determine_publisher.outputs.name }}
           path: ${{ steps.upload_pattern.outputs.upload_pattern }}
       - name: Upload files to Google Drive
-        if: steps.determine_publisher.outputs.publisher == 'drive' && github.repository == inputs.repository
+        if: steps.determine_publisher.outputs.publisher == 'drive' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         run: |
           python3 -m open_in_colab_workflow.upload_files_to_google_drive "${{ inputs.work_directory }}" "${{ steps.upload_pattern.outputs.upload_pattern }}" "${{ inputs.publish_on }}"
         env:
@@ -168,7 +171,7 @@ jobs:
           RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
           RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
       - name: Upload files to GitHub repository
-        if: steps.determine_publisher.outputs.publisher == 'github' && github.repository == inputs.repository
+        if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         run: |
           SHA_SHORT=$(git rev-parse --short HEAD)
           pushd "${{ inputs.work_directory }}"

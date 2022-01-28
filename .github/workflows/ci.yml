@@ -49,7 +49,6 @@ jobs:
     needs: [test_library]
     uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
     with:
-      repository: fem-on-colab/open-in-colab-workflow
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
       extra_files_pattern: "**/*.dat"
@@ -66,12 +65,12 @@ jobs:
       test_script: |
         python3 -m pytest --nbval open_in_colab/tests
       publish_on: artifact@open-in-colab
+      publish_if_repository: fem-on-colab/open-in-colab-workflow
 
   test_workflow_drive:
     needs: [test_library]
     uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
     with:
-      repository: fem-on-colab/open-in-colab-workflow
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
       extra_files_pattern: "**/*.dat"
@@ -88,6 +87,7 @@ jobs:
       test_script: |
         python3 -m pytest --nbval open_in_colab/tests
       publish_on: drive@GitHub/open_in_colab_workflow
+      publish_if_repository: fem-on-colab/open-in-colab-workflow
     secrets:
       RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
       RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
@@ -97,7 +97,6 @@ jobs:
     needs: [test_library]
     uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
     with:
-      repository: fem-on-colab/open-in-colab-workflow
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
       extra_files_pattern: "**/*.dat"
@@ -114,3 +113,4 @@ jobs:
       test_script: |
         python3 -m pytest --nbval open_in_colab/tests
       publish_on: github@fem-on-colab/open-in-colab-workflow@open-in-colab
+      publish_if_repository: fem-on-colab/open-in-colab-workflow
