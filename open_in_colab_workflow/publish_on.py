@@ -6,6 +6,7 @@
 """Determine where the notebooks should be published."""
 
 import abc
+import sys
 
 from open_in_colab_workflow.get_colab_drive_url import get_colab_drive_url
 from open_in_colab_workflow.get_colab_github_url import get_colab_github_url
@@ -91,3 +92,9 @@ def publish_on(publish_on_str: str) -> PublishOnBaseClass:
         return PublishOnGitHub(repository, branch)
     else:  # pragma: no cover
         raise RuntimeError("Invalid publish_on attribute")
+
+
+if __name__ == "__main__":  # pragma: no cover
+    assert len(sys.argv) == 2
+    publisher = publish_on(sys.argv[1])
+    print(publisher)
