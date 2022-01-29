@@ -79,7 +79,8 @@ jobs:
       - name: Install non-pip dependencies of the workflow call library
         run: |
           apt install -y -qq imagemagick inkscape
-          curl https://rclone.org/install.sh | bash
+          wget https://github.com/rclone/rclone/releases/download/v1.57.0/rclone-v1.57.0-linux-amd64.deb -O /tmp/rclone-v1.57.0-linux-amd64.deb
+          dpkg -i /tmp/rclone-v1.57.0-linux-amd64.deb
       - name: Install the workflow call library
         run: |
           pushd ${{ env.GITHUB_WORKFLOW_CALL_PATH }}
