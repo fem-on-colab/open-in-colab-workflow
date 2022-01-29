@@ -6,11 +6,15 @@
 """Tests for the open_in_colab_workflow.replace_links_in_markdown package."""
 
 import os
+import shutil
+import tempfile
 import typing
 
 import pytest
 
-from open_in_colab_workflow.replace_links_in_markdown import replace_links_in_markdown
+from open_in_colab_workflow.publish_on import PublishOnArtifact, PublishOnBaseClass, PublishOnDrive, PublishOnGitHub
+from open_in_colab_workflow.replace_links_in_markdown import (
+    __main__ as replace_links_in_markdown_main, replace_links_in_markdown)
 
 
 @pytest.fixture
@@ -72,3 +76,42 @@ def test_replace_links_in_markdown_with_a_code_cell(
     assert updated_cells[0].cell_type == "markdown"
     assert updated_cells[0].source == "[Link to the main notebook](Link to main_notebook.ipynb)"
     assert updated_cells[1] == nb.cells[1]
+
+
+def test_replace_links_in_markdown_main(
+    root_directory: str, open_notebook: typing.Callable, publisher: PublishOnBaseClass
+) -> None:
+    """Test replacement of links when running the module as a script."""
+    data_directory = os.path.join(root_directory, "tests", "data")
+    nb_pattern = os.path.join("replace_links_in_markdown", "*.ipynb")
+    main_notebook_pattern = nb_pattern.replace("*", "main_notebook")
+    test_notebook_pattern = nb_pattern.replace("*", "markdown_link")
+
+    with tempfile.TemporaryDirectory(dir=data_directory) as tmp_data_directory:
+        os.mkdir(os.path.dirname(os.path.join(tmp_data_directory, nb_pattern)))
+        shutil.copyfile(
+            os.path.join(data_directory, main_notebook_pattern),
+            os.path.join(tmp_data_directory, main_notebook_pattern))
+        shutil.copyfile(
+            os.path.join(data_directory, test_notebook_pattern),
+            os.path.join(tmp_data_directory, test_notebook_pattern))
+        replace_links_in_markdown_main(tmp_data_directory, nb_pattern, publisher)
+
+        updated_nb = open_notebook(
+            os.path.dirname(test_notebook_pattern), os.path.basename(test_notebook_pattern).replace(".ipynb", ""),
+            tmp_data_directory)
+        assert len(updated_nb.cells) == 1
+        assert updated_nb.cells[0].cell_type == "markdown"
+        if isinstance(publisher, PublishOnArtifact):
+            assert updated_nb.cells[0].source == "[Link to the main notebook](main_notebook.ipynb)"
+        elif isinstance(publisher, PublishOnDrive):
+            assert updated_nb.cells[0].source == (
+                "[Link to the main notebook]"
+                "(https://colab.research.google.com/drive/1lccx0xSlkAsX53sK0KboPWSW6kzqWG6Z)")
+        elif isinstance(publisher, PublishOnGitHub):
+            assert updated_nb.cells[0].source == (
+                "[Link to the main notebook]"
+                "(https://colab.research.google.com/github/fem-on-colab/open-in-colab-workflow/blob/open-in-colab/"
+                "replace_links_in_markdown/main_notebook.ipynb)")
+        else:
+            raise RuntimeError("Invalid publisher")

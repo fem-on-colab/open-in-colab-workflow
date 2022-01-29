@@ -5,11 +5,15 @@
 # SPDX-License-Identifier: MIT
 """Tests for the open_in_colab_workflow.add_installation_cells package."""
 
+import os
+import shutil
+import tempfile
 import typing
 
 import pytest
 
-from open_in_colab_workflow.add_installation_cells import add_installation_cells
+from open_in_colab_workflow.add_installation_cells import (
+    __main__ as add_installation_cells_main, add_installation_cells)
 
 
 @pytest.mark.parametrize(
@@ -194,3 +198,109 @@ except ImportError:
     assert updated_cells[2] == nb.cells[1]
     assert len(new_cells_position) == 1
     assert new_cells_position[0] == 1
+
+
+def test_add_installation_cells_main_single_pip_package(root_directory: str, open_notebook: typing.Callable) -> None:
+    """Test addition of installation cells with a single pip package when running the module as a script."""
+    data_directory = os.path.join(root_directory, "tests", "data")
+    nb_pattern = os.path.join("add_installation_cells", "import_numpy.ipynb")
+    fem_on_colab_packages = ""
+    pip_packages = "numpy"
+
+    with tempfile.TemporaryDirectory(dir=data_directory) as tmp_data_directory:
+        os.mkdir(os.path.dirname(os.path.join(tmp_data_directory, nb_pattern)))
+        shutil.copyfile(os.path.join(data_directory, nb_pattern), os.path.join(tmp_data_directory, nb_pattern))
+        add_installation_cells_main(tmp_data_directory, nb_pattern, fem_on_colab_packages, pip_packages)
+
+        nb = open_notebook(
+            os.path.dirname(nb_pattern), os.path.basename(nb_pattern).replace(".ipynb", ""))
+        updated_nb = open_notebook(
+            os.path.dirname(nb_pattern), os.path.basename(nb_pattern).replace(".ipynb", ""), tmp_data_directory)
+        assert len(updated_nb.cells) == 2
+        assert updated_nb.cells[0].cell_type == "code"
+        assert updated_nb.cells[0].source == """try:
+    import numpy
+except ImportError:
+    !pip3 install numpy
+    import numpy"""
+        assert updated_nb.cells[1] == nb.cells[0]
+
+
+def test_add_installation_cells_main_single_fem_on_colab_package(
+    root_directory: str, open_notebook: typing.Callable
+) -> None:
+    """Test addition of installation cells with a single FEM on Colab package when running the module as a script."""
+    data_directory = os.path.join(root_directory, "tests", "data")
+    nb_pattern = os.path.join("add_installation_cells", "import_mpi4py.ipynb")
+    fem_on_colab_packages = "mpi4py"
+    pip_packages = ""
+
+    with tempfile.TemporaryDirectory(dir=data_directory) as tmp_data_directory:
+        os.mkdir(os.path.dirname(os.path.join(tmp_data_directory, nb_pattern)))
+        shutil.copyfile(os.path.join(data_directory, nb_pattern), os.path.join(tmp_data_directory, nb_pattern))
+        add_installation_cells_main(tmp_data_directory, nb_pattern, fem_on_colab_packages, pip_packages)
+
+        nb = open_notebook(
+            os.path.dirname(nb_pattern), os.path.basename(nb_pattern).replace(".ipynb", ""))
+        updated_nb = open_notebook(
+            os.path.dirname(nb_pattern), os.path.basename(nb_pattern).replace(".ipynb", ""), tmp_data_directory)
+        assert len(updated_nb.cells) == 2
+        assert updated_nb.cells[0].cell_type == "code"
+        assert updated_nb.cells[0].source == """try:
+    import mpi4py
+except ImportError:
+    !wget "https://fem-on-colab.github.io/releases/mpi4py-install.sh" -O "/tmp/mpi4py-install.sh" && bash "/tmp/mpi4py-install.sh"
+    import mpi4py"""  # noqa: E501
+        assert updated_nb.cells[1] == nb.cells[0]
+
+
+def test_add_installation_cells_main_import_name(root_directory: str, open_notebook: typing.Callable) -> None:
+    """Test addition of installation cells with non-default import name when running the module as a script."""
+    data_directory = os.path.join(root_directory, "tests", "data")
+    nb_pattern = os.path.join("add_installation_cells", "import_dateutil.ipynb")
+    fem_on_colab_packages = ""
+    pip_packages = "python-dateutil$dateutil"
+
+    with tempfile.TemporaryDirectory(dir=data_directory) as tmp_data_directory:
+        os.mkdir(os.path.dirname(os.path.join(tmp_data_directory, nb_pattern)))
+        shutil.copyfile(os.path.join(data_directory, nb_pattern), os.path.join(tmp_data_directory, nb_pattern))
+        add_installation_cells_main(tmp_data_directory, nb_pattern, fem_on_colab_packages, pip_packages)
+
+        nb = open_notebook(
+            os.path.dirname(nb_pattern), os.path.basename(nb_pattern).replace(".ipynb", ""))
+        updated_nb = open_notebook(
+            os.path.dirname(nb_pattern), os.path.basename(nb_pattern).replace(".ipynb", ""), tmp_data_directory)
+        assert len(updated_nb.cells) == 2
+        assert updated_nb.cells[0].cell_type == "code"
+        assert updated_nb.cells[0].source == """try:
+    import dateutil
+except ImportError:
+    !pip3 install python-dateutil
+    import dateutil"""
+        assert updated_nb.cells[1] == nb.cells[0]
+
+
+def test_add_installation_cells_main_dependent_imports(root_directory: str, open_notebook: typing.Callable) -> None:
+    """Test addition of installation cells with dependent imports when running the module as a script."""
+    data_directory = os.path.join(root_directory, "tests", "data")
+    nb_pattern = os.path.join("add_installation_cells", "import_plotly.ipynb")
+    fem_on_colab_packages = ""
+    pip_packages = "kaleido%plotly"
+
+    with tempfile.TemporaryDirectory(dir=data_directory) as tmp_data_directory:
+        os.mkdir(os.path.dirname(os.path.join(tmp_data_directory, nb_pattern)))
+        shutil.copyfile(os.path.join(data_directory, nb_pattern), os.path.join(tmp_data_directory, nb_pattern))
+        add_installation_cells_main(tmp_data_directory, nb_pattern, fem_on_colab_packages, pip_packages)
+
+        nb = open_notebook(
+            os.path.dirname(nb_pattern), os.path.basename(nb_pattern).replace(".ipynb", ""))
+        updated_nb = open_notebook(
+            os.path.dirname(nb_pattern), os.path.basename(nb_pattern).replace(".ipynb", ""), tmp_data_directory)
+        assert len(updated_nb.cells) == 2
+        assert updated_nb.cells[0].cell_type == "code"
+        assert updated_nb.cells[0].source == """try:
+    import kaleido
+except ImportError:
+    !pip3 install kaleido
+    import kaleido"""
+        assert updated_nb.cells[1] == nb.cells[0]

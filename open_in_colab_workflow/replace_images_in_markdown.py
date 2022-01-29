@@ -32,11 +32,8 @@ def replace_images_in_markdown(
     return updated_nb_cells
 
 
-if __name__ == "__main__":  # pragma: no cover
-    assert len(sys.argv) == 3
-    work_dir = sys.argv[1]
-    nb_pattern = sys.argv[2]
-
+def __main__(work_dir: str, nb_pattern: str) -> None:
+    """Replace images in every notebook in the work directory matching the prescribed pattern."""
     images_as_base64 = glob_images(work_dir)
 
     for nb_filename in glob_files(work_dir, nb_pattern):
@@ -45,3 +42,8 @@ if __name__ == "__main__":  # pragma: no cover
         nb.cells = replace_images_in_markdown(nb.cells, os.path.dirname(nb_filename), images_as_base64)
         with open(nb_filename, "w") as f:
             nbformat.write(nb, f)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    assert len(sys.argv) == 3
+    __main__(*sys.argv[1:])

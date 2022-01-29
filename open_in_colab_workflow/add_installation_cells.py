@@ -81,16 +81,16 @@ def _package_is_imported(package_import: str, cell: nbformat.NotebookNode) -> bo
     return f"import {package_import}" in cell.source or f"from {package_import}" in cell.source
 
 
-if __name__ == "__main__":  # pragma: no cover
-    assert len(sys.argv) == 5
-    work_dir = sys.argv[1]
-    nb_pattern = sys.argv[2]
-    fem_on_colab_packages = sys.argv[3]
-    pip_packages = sys.argv[4]
-
+def __main__(work_dir: str, nb_pattern: str, fem_on_colab_packages: str, pip_packages: str) -> None:
+    """Add installation cells on top of every notebook in the work directory matching the prescribed pattern."""
     for nb_filename in glob_files(work_dir, nb_pattern):
         with open(nb_filename, "r") as f:
             nb = nbformat.read(f, as_version=4)
         nb.cells, _ = add_installation_cells(nb.cells, fem_on_colab_packages, pip_packages)
         with open(nb_filename, "w") as f:
             nbformat.write(nb, f)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    assert len(sys.argv) == 5
+    __main__(*sys.argv[1:])

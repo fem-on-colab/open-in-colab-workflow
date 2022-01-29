@@ -14,7 +14,7 @@ import nbformat
 
 from open_in_colab_workflow.glob_files import glob_files
 from open_in_colab_workflow.glob_links import glob_links
-from open_in_colab_workflow.publish_on import publish_on, PublishOnDrive
+from open_in_colab_workflow.publish_on import publish_on, PublishOnBaseClass, PublishOnDrive
 from open_in_colab_workflow.upload_files_to_google_drive import upload_files_to_google_drive
 
 
@@ -41,11 +41,11 @@ def replace_links_in_markdown(
     return updated_nb_cells
 
 
-if __name__ == "__main__":  # pragma: no cover
-    assert len(sys.argv) == 4
-    work_dir = sys.argv[1]
-    nb_pattern = sys.argv[2]
-    publisher = publish_on(sys.argv[3])
+def __main__(work_dir: str, nb_pattern: str, publisher: typing.Union[str, PublishOnBaseClass]) -> None:
+    """Replace links in every notebook in the work directory matching the prescribed pattern."""
+    if not isinstance(publisher, PublishOnBaseClass):  # pragma: no cover
+        assert isinstance(publisher, str)
+        publisher = publish_on(publisher)
 
     links_replacement = glob_links(work_dir, nb_pattern, publisher)
     if isinstance(publisher, PublishOnDrive):
@@ -55,7 +55,7 @@ if __name__ == "__main__":  # pragma: no cover
             os.path.relpath(local_link, work_dir)
             for (local_link, colab_link) in links_replacement.items() if colab_link is None
         ]
-        if len(local_files_with_none_link) > 0:
+        if len(local_files_with_none_link) > 0:  # pragma: no cover
             local_files_with_none_link = "\n".join(local_files_with_none_link)
             upload_files_to_google_drive(work_dir, local_files_with_none_link, publisher.drive_root_directory)
             links_replacement.update(glob_links(work_dir, local_files_with_none_link, publisher))
@@ -69,3 +69,8 @@ if __name__ == "__main__":  # pragma: no cover
         nb.cells = replace_links_in_markdown(nb.cells, os.path.dirname(nb_filename), links_replacement)
         with open(nb_filename, "w") as f:
             nbformat.write(nb, f)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    assert len(sys.argv) == 4
+    __main__(*sys.argv[1:])

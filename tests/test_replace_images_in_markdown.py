@@ -6,11 +6,14 @@
 """Tests for the open_in_colab_workflow.replace_images_in_markdown package."""
 
 import os
+import shutil
+import tempfile
 import typing
 
 import pytest
 
-from open_in_colab_workflow.replace_images_in_markdown import replace_images_in_markdown
+from open_in_colab_workflow.replace_images_in_markdown import (
+    __main__ as replace_images_in_markdown_main, replace_images_in_markdown)
 
 
 @pytest.fixture
@@ -79,3 +82,24 @@ def test_replace_images_in_markdown_with_a_code_cell(
     assert updated_cells[0].source == """This is the red image.
 ![Red](Base64 of red.jpg)"""
     assert updated_cells[1] == nb.cells[1]
+
+
+def test_replace_images_in_markdown_main(root_directory: str, open_notebook: typing.Callable) -> None:
+    """Test replacement of images when running the module as a script."""
+    data_directory = os.path.join(root_directory, "tests", "data")
+    nb_pattern = os.path.join("replace_images_in_markdown", "html_image.ipynb")
+    img_pattern = os.path.join("replace_images_in_markdown", "images", "black.png")
+
+    with tempfile.TemporaryDirectory(dir=data_directory) as tmp_data_directory:
+        os.mkdir(os.path.dirname(os.path.join(tmp_data_directory, nb_pattern)))
+        os.mkdir(os.path.dirname(os.path.join(tmp_data_directory, img_pattern)))
+        shutil.copyfile(os.path.join(data_directory, nb_pattern), os.path.join(tmp_data_directory, nb_pattern))
+        shutil.copyfile(os.path.join(data_directory, img_pattern), os.path.join(tmp_data_directory, img_pattern))
+        replace_images_in_markdown_main(tmp_data_directory, nb_pattern)
+
+        updated_nb = open_notebook(
+            os.path.dirname(nb_pattern), os.path.basename(nb_pattern).replace(".ipynb", ""), tmp_data_directory)
+        assert len(updated_nb.cells) == 1
+        assert updated_nb.cells[0].cell_type == "markdown"
+        assert """This is the black image.
+<img src="data:image/png;base64,""" in updated_nb.cells[0].source

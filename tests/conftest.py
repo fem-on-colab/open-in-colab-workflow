@@ -8,10 +8,12 @@
 import os
 import typing
 
+import _pytest.fixtures
 import nbformat
 import pytest
 
-from open_in_colab_workflow.publish_on import publish_on, PublishOnArtifact, PublishOnDrive, PublishOnGitHub
+from open_in_colab_workflow.publish_on import (
+    publish_on, PublishOnArtifact, PublishOnBaseClass, PublishOnDrive, PublishOnGitHub)
 
 
 @pytest.fixture
@@ -23,9 +25,11 @@ def root_directory() -> str:
 @pytest.fixture
 def open_notebook(root_directory: str) -> typing.Callable:
     """Return a fixture to open a local notebook."""
-    def _(local_directory: str, filename: str) -> nbformat.NotebookNode:
+    def _(local_directory: str, filename: str, data_directory: str = None) -> nbformat.NotebookNode:
         """Open notebook with nbformat."""
-        filename = os.path.join(root_directory, "tests", "data", local_directory, filename + ".ipynb")
+        if data_directory is None:
+            data_directory = os.path.join(root_directory, "tests", "data")
+        filename = os.path.join(data_directory, local_directory, filename + ".ipynb")
         with open(filename, "r") as f:
             nb = nbformat.read(f, as_version=4)
         nb._filename = filename
@@ -49,3 +53,11 @@ def publish_on_drive() -> PublishOnDrive:
 def publish_on_github() -> PublishOnGitHub:
     """Return a GitHub publisher."""
     return publish_on("github@fem-on-colab/open-in-colab-workflow@open-in-colab")
+
+
+@pytest.fixture(params=["publish_on_artifact", "publish_on_drive", "publish_on_github"])
+def publisher(request: _pytest.fixtures.SubRequest) -> PublishOnBaseClass:
+    """Parameterize over publishers."""
+    if request.param == "publish_on_drive" and "RCLONE_CONFIG_COLAB_TOKEN" not in os.environ:
+        pytest.skip("Missing rclone environment variables")
+    return request.getfixturevalue(request.param)
