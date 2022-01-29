@@ -59,9 +59,9 @@ def __main__(work_dir: str, nb_pattern: str, publisher: typing.Union[str, Publis
             local_files_with_none_link = "\n".join(local_files_with_none_link)
             upload_files_to_google_drive(work_dir, local_files_with_none_link, publisher.drive_root_directory)
             links_replacement.update(glob_links(work_dir, local_files_with_none_link, publisher))
-        for (local_link, colab_link) in links_replacement.items():
-            assert colab_link is not None
-            print(os.path.relpath(local_link, work_dir) + " -> " + colab_link)
+    for (local_link, colab_link) in links_replacement.items():
+        assert colab_link is not None
+        print(os.path.relpath(local_link, work_dir) + " -> " + colab_link)
 
     for nb_filename in glob_files(work_dir, nb_pattern):
         with open(nb_filename, "r") as f:
