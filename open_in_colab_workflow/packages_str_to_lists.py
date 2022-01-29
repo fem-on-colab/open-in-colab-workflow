@@ -9,15 +9,28 @@ import typing
 
 
 def packages_str_to_lists(packages_str: str) -> typing.Tuple[
-        typing.List[str], typing.List[str], typing.List[str], typing.List[str]]:
-    """Convert a newline separated string formatted as package_name_and_version@package_url$package_import."""
+        typing.List[str], typing.List[str], typing.List[str], typing.List[str], typing.List[str]]:
+    """
+    Convert a newline separated string formatted with @, $ and % special characters.
+
+    Full format is package_name_and_version@package_url$package_import%package_dependent_imports
+    """
     packages_name = list()
     packages_version = list()
     packages_url = list()
     packages_import = list()
+    packages_dependent_imports = list()
     if packages_str != "":
         for package_str in packages_str.strip("\n").split("\n"):
-            split_at_dollar = package_str.split("$")
+            split_at_percent = package_str.split("%")
+            assert len(split_at_percent) in (1, 2)
+            if len(split_at_percent) == 1:
+                package_name_version_url_import = split_at_percent[0]
+                package_dependent_imports = ""
+            elif len(split_at_percent) == 2:
+                package_name_version_url_import = split_at_percent[0]
+                package_dependent_imports = split_at_percent[1]
+            split_at_dollar = package_name_version_url_import.split("$")
             assert len(split_at_dollar) in (1, 2)
             if len(split_at_dollar) == 1:
                 package_name_version_url = split_at_dollar[0]
@@ -50,4 +63,5 @@ def packages_str_to_lists(packages_str: str) -> typing.Tuple[
                 packages_import.append(package_name)
             else:
                 packages_import.append(package_import)
-    return packages_name, packages_version, packages_url, packages_import
+            packages_dependent_imports.append(package_dependent_imports)
+    return packages_name, packages_version, packages_url, packages_import, packages_dependent_imports

@@ -62,7 +62,9 @@ jobs:
         mpi4py
       pip_packages: |
         python-dateutil$dateutil
+        kaleido%plotly
       test_script: |
+        python3 -m pip install plotly
         python3 -m pytest --nbval open_in_colab/tests
       publish_on: artifact@open-in-colab
       publish_if_repository: fem-on-colab/open-in-colab-workflow
@@ -84,7 +86,9 @@ jobs:
         mpi4py
       pip_packages: |
         python-dateutil$dateutil
+        kaleido%plotly
       test_script: |
+        python3 -m pip install plotly
         python3 -m pytest --nbval open_in_colab/tests
       publish_on: drive@GitHub/open_in_colab_workflow
       publish_if_repository: fem-on-colab/open-in-colab-workflow
@@ -110,7 +114,9 @@ jobs:
         mpi4py
       pip_packages: |
         python-dateutil$dateutil
+        kaleido%plotly
       test_script: |
+        python3 -m pip install plotly
         python3 -m pytest --nbval open_in_colab/tests
       publish_on: github@fem-on-colab/open-in-colab-workflow@open-in-colab
       publish_if_repository: fem-on-colab/open-in-colab-workflow

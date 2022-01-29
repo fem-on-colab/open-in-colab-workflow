@@ -120,6 +120,40 @@ except ImportError:
     assert new_cells_position[0] == 0
 
 
+def test_add_installation_cells_import_name(open_notebook: typing.Callable) -> None:
+    """Test addition of installation cells with non-default import name."""
+    nb = open_notebook("add_installation_cells", "import_dateutil")
+    assert len(nb.cells) == 1
+    updated_cells, new_cells_position = add_installation_cells(nb.cells, "", "python-dateutil$dateutil")
+    assert len(updated_cells) == 2
+    assert updated_cells[0].cell_type == "code"
+    assert updated_cells[0].source == """try:
+    import dateutil
+except ImportError:
+    !pip3 install python-dateutil
+    import dateutil"""
+    assert updated_cells[1] == nb.cells[0]
+    assert len(new_cells_position) == 1
+    assert new_cells_position[0] == 0
+
+
+def test_add_installation_cells_dependent_imports(open_notebook: typing.Callable) -> None:
+    """Test addition of installation cells with dependent imports."""
+    nb = open_notebook("add_installation_cells", "import_plotly")
+    assert len(nb.cells) == 1
+    updated_cells, new_cells_position = add_installation_cells(nb.cells, "", "kaleido%plotly")
+    assert len(updated_cells) == 2
+    assert updated_cells[0].cell_type == "code"
+    assert updated_cells[0].source == """try:
+    import kaleido
+except ImportError:
+    !pip3 install kaleido
+    import kaleido"""
+    assert updated_cells[1] == nb.cells[0]
+    assert len(new_cells_position) == 1
+    assert new_cells_position[0] == 0
+
+
 def test_add_installation_cells_multiple_pip_packages(open_notebook: typing.Callable) -> None:
     """Test that addition of installation cells preserves the order in which the packages are provided."""
     nb = open_notebook("add_installation_cells", "import_numpy_scipy")

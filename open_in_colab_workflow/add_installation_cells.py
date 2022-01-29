@@ -22,9 +22,11 @@ def add_installation_cells(
 ) -> typing.Tuple[typing.List[nbformat.NotebookNode], typing.List[int]]:
     """Add installation cells on top of the notebook, and return updated notebook content and list of insertions."""
     (fem_on_colab_packages_name, fem_on_colab_packages_version, fem_on_colab_packages_url,
-        fem_on_colab_packages_import) = packages_str_to_lists(fem_on_colab_packages_str)
+        fem_on_colab_packages_import, fem_on_colab_packages_dependent_imports) = (
+            packages_str_to_lists(fem_on_colab_packages_str))
     (pip_packages_name, pip_packages_version, pip_packages_url,
-        pip_packages_import) = packages_str_to_lists(pip_packages_str)
+        pip_packages_import, pip_packages_dependent_imports) = (
+            packages_str_to_lists(pip_packages_str))
 
     packages_name = fem_on_colab_packages_name + pip_packages_name
     packages_install_code = [
@@ -38,13 +40,20 @@ def add_installation_cells(
             pip_packages_name, pip_packages_version, pip_packages_url, pip_packages_import)
     ]
     packages_import = fem_on_colab_packages_import + pip_packages_import
+    packages_dependent_imports = fem_on_colab_packages_dependent_imports + pip_packages_dependent_imports
 
-    actually_imported_packages = {package_import: False for package_import in packages_import}
-    for package_import in packages_import:
+    need_installation_cell = {package_import: False for package_import in packages_import}
+    for package_import, package_dependent_imports in zip(packages_import, packages_dependent_imports):
         for cell in nb_cells:
             if cell.cell_type == "code":
-                if f"import {package_import}" in cell.source or f"from {package_import}" in cell.source:
-                    actually_imported_packages[package_import] = True
+                if _package_is_imported(package_import, cell):
+                    need_installation_cell[package_import] = True
+                    break
+                elif package_dependent_imports != "" and any([
+                    _package_is_imported(package_dependent_import, cell)
+                    for package_dependent_import in package_dependent_imports.split(" ")
+                ]):
+                    need_installation_cell[package_import] = True
                     break
 
     first_code_cell_position = 0
@@ -58,13 +67,18 @@ def add_installation_cells(
     new_cells_position = list()
     for (package_name, package_install_code, package_import) in zip(
             packages_name, packages_install_code, packages_import):
-        if actually_imported_packages[package_import]:
+        if need_installation_cell[package_import]:
             package_install_cell = nbformat.v4.new_code_cell(package_install_code)
             package_install_cell.id = package_name.replace(" ", "_") + "_install"
             updated_nb_cells.insert(first_code_cell_position, package_install_cell)
             new_cells_position.append(first_code_cell_position)
             first_code_cell_position += 1
     return updated_nb_cells, new_cells_position
+
+
+def _package_is_imported(package_import: str, cell: nbformat.NotebookNode) -> bool:
+    """Auxiliary function to determine if the cell contains the import of the package."""
+    return f"import {package_import}" in cell.source or f"from {package_import}" in cell.source
 
 
 if __name__ == "__main__":  # pragma: no cover
