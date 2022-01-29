@@ -76,6 +76,8 @@ jobs:
           echo "${INSTALL_PREFIX}/bin" >> ${GITHUB_PATH}
           echo "LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:${LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
           echo "PYTHONPATH=${INSTALL_PREFIX}/lib/python3.7/dist-packages:${INSTALL_PREFIX}/lib/python3.7/site-packages:/usr/lib/python3.7/dist-packages:/usr/lib/python3.7/site-packages:${PYTHONPATH}" >> ${GITHUB_ENV}
+          mkdir -p /usr/lib/python3.7/site-packages/google/colab
+          wget "https://raw.githubusercontent.com/fem-on-colab/fem-on-colab/main/colab/patches/google/colab/__init__.py" -O "/usr/lib/python3.7/site-packages/google/colab/__init__.py"
       - name: Install non-pip dependencies of the workflow call library
         run: |
           apt install -y -qq imagemagick inkscape

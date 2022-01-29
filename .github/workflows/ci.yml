@@ -64,6 +64,7 @@ jobs:
       pip_packages: |
         python-dateutil$dateutil
         kaleido%plotly
+        itkwidgets
       test_script: |
         python3 -m pip install plotly
         python3 -m pytest --nbval open_in_colab/tests
@@ -88,6 +89,7 @@ jobs:
       pip_packages: |
         python-dateutil$dateutil
         kaleido%plotly
+        itkwidgets
       test_script: |
         python3 -m pip install plotly
         python3 -m pytest --nbval open_in_colab/tests
@@ -116,6 +118,7 @@ jobs:
       pip_packages: |
         python-dateutil$dateutil
         kaleido%plotly
+        itkwidgets
       test_script: |
         python3 -m pip install plotly
         python3 -m pytest --nbval open_in_colab/tests
