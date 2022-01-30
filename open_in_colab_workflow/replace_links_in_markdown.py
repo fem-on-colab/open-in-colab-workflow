@@ -56,6 +56,8 @@ def __main__(work_dir: str, nb_pattern: str, publisher: typing.Union[str, Publis
             for (local_link, colab_link) in links_replacement.items() if colab_link is None
         ]
         if len(local_files_with_none_link) > 0:  # pragma: no cover
+            for local_link in local_files_with_none_link:
+                print(os.path.relpath(local_link, work_dir) + " will be created anew")
             local_files_with_none_link = "\n".join(local_files_with_none_link)
             upload_files_to_google_drive(work_dir, local_files_with_none_link, publisher.drive_root_directory)
             links_replacement.update(glob_links(work_dir, local_files_with_none_link, publisher))
