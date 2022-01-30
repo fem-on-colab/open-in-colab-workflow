@@ -59,14 +59,6 @@ jobs:
           apt update -qq
           apt install -y -qq git
       - uses: actions/checkout@v2
-      - name: Set environment variable containing the path of the workflow call repository
-        run: |
-          echo "GITHUB_WORKFLOW_CALL_PATH=_workflow_call_repo" >> ${GITHUB_ENV}
-      - name: Clone workflow call repository
-        uses: actions/checkout@v2
-        with:
-          repository: fem-on-colab/open-in-colab-workflow
-          path: ${{ env.GITHUB_WORKFLOW_CALL_PATH }}
       - name: Setup Colab base image
         run: |
           export DEBIAN_FRONTEND="noninteractive"
@@ -85,9 +77,7 @@ jobs:
           dpkg -i /tmp/rclone-v1.57.0-linux-amd64.deb
       - name: Install the workflow call library
         run: |
-          pushd ${{ env.GITHUB_WORKFLOW_CALL_PATH }}
-          python3 -m pip install .[docs,lint,tests]
-          popd
+          python3 -m pip install "open_in_colab_workflow[docs,lint,tests]@git+https://github.com/fem-on-colab/open-in-colab-workflow.git"
         shell: bash
       - name: Determine publisher settings
         id: determine_publisher
