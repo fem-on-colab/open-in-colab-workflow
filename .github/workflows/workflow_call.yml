@@ -77,7 +77,12 @@ jobs:
           dpkg -i /tmp/rclone-v1.57.0-linux-amd64.deb
       - name: Install the workflow call library
         run: |
-          python3 -m pip install "open_in_colab_workflow[docs,lint,tests]@git+https://github.com/fem-on-colab/open-in-colab-workflow.git"
+          if [[ "${{ github.repository }}" == "fem-on-colab/open-in-colab-workflow" ]]; then
+            BRANCH=${GITHUB_REF##*/}
+          else
+            BRANCH="main"
+          fi
+          python3 -m pip install "open_in_colab_workflow[docs,lint,tests]@git+https://github.com/fem-on-colab/open-in-colab-workflow.git@${BRANCH}"
         shell: bash
       - name: Determine publisher settings
         id: determine_publisher
