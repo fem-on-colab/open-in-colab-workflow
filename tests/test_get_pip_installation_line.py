@@ -20,10 +20,22 @@ def test_pip_installation_line_name_and_version() -> None:
     assert installation_line == "pip3 install --upgrade numpy>=1.21.0,<1.22.0"
 
 
+def test_pip_installation_line_name_and_extras() -> None:
+    """Test generation of installation line with extras."""
+    installation_line = get_pip_installation_line("jax", "[cpu]", "")
+    assert installation_line == "pip3 install jax[cpu]"
+
+
 def test_pip_installation_line_name_and_url() -> None:
     """Test generation of installation line with url."""
     installation_line = get_pip_installation_line("numpy", "", "https://github.com/numpy/numpy.git")
     assert installation_line == 'pip3 install "numpy@git+https://github.com/numpy/numpy.git"'
+
+
+def test_pip_installation_line_name_and_extras_and_url() -> None:
+    """Test generation of installation line with extras and url."""
+    installation_line = get_pip_installation_line("jax", "[cpu]", "https://github.com/google/jax.git")
+    assert installation_line == 'pip3 install "jax[cpu]@git+https://github.com/google/jax.git"'
 
 
 def test_pip_installation_line_multiple_packages() -> None:
