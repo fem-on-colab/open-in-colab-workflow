@@ -56,6 +56,22 @@ def test_single_package_minimum_maximum_version_str_to_list() -> None:
     assert packages_dependent_imports[0] == ""
 
 
+def test_single_package_extras_str_to_list() -> None:
+    """Test conversion of a single package with extras."""
+    packages_name, packages_version, packages_url, packages_import, packages_dependent_imports = (
+        packages_str_to_lists("jax[cpu]"))
+    assert len(packages_name) == 1
+    assert packages_name[0] == "jax"
+    assert len(packages_version) == 1
+    assert packages_version[0] == "[cpu]"
+    assert len(packages_url) == 1
+    assert packages_url[0] == ""
+    assert len(packages_import) == 1
+    assert packages_import[0] == "jax"
+    assert len(packages_dependent_imports) == 1
+    assert packages_dependent_imports[0] == ""
+
+
 def test_single_package_url_str_to_list() -> None:
     """Test conversion of a single package with url and without importable name."""
     packages_name, packages_version, packages_url, packages_import, packages_dependent_imports = (

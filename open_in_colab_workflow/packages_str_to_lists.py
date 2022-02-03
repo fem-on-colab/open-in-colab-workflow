@@ -50,7 +50,7 @@ def packages_str_to_lists(packages_str: str) -> typing.Tuple[
                 package_name_version = split_at_at[0]
                 package_url = "@".join(split_at_at[1:])
             package_name = package_name_version
-            for operator in ("==", ">=", ">", "<=", "<"):
+            for operator in ("==", ">=", ">", "<=", "<", "["):
                 if operator in package_name:
                     split_at_operator = package_str.split(operator)
                     assert len(split_at_operator) in (1, 2)
