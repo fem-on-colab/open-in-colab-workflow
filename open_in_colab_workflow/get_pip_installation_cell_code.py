@@ -12,7 +12,11 @@ def get_pip_installation_cell_code(
     package_name: str, package_version: str, package_url: str, package_import: str
 ) -> str:
     """Return installation cell code for a pip installable package."""
-    return f"""try:
+    versions_operators = ("==", ">=", ">", "<=", "<")
+    if any(operator in package_version for operator in versions_operators):
+        return f"!{get_pip_installation_line(package_name, package_version, package_url)}"
+    else:
+        return f"""try:
     import {package_import}
 except ImportError:
     !{get_pip_installation_line(package_name, package_version, package_url)}

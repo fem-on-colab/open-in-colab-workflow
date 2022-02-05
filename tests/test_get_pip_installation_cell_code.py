@@ -18,6 +18,22 @@ except ImportError:
     import numpy"""
 
 
+def test_pip_installation_cell_name_and_version() -> None:
+    """Test generation of installation cell with a version and without an url."""
+    installation_cell_code = get_pip_installation_cell_code("numpy", ">=1.21.0", "", "numpy")
+    assert installation_cell_code == '!pip3 install --upgrade "numpy>=1.21.0"'
+
+
+def test_pip_installation_cell_name_and_extras() -> None:
+    """Test generation of installation cell with extras and without an url."""
+    installation_cell_code = get_pip_installation_cell_code("jax", "[cpu]", "", "jax")
+    assert installation_cell_code == """try:
+    import jax
+except ImportError:
+    !pip3 install jax[cpu]
+    import jax"""
+
+
 def test_pip_installation_cell_import_different_from_name() -> None:
     """Test generation of installation cell when package importable name is not the same as the package name."""
     installation_cell_code = get_pip_installation_cell_code("python-dateutil", "", "", "dateutil")
