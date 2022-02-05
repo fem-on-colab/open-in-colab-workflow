@@ -20,7 +20,11 @@ def get_pip_installation_line(package_name: str, package_version: str, package_u
         assert package_version == ""
         install_arg = ""
     if package_url == "":
-        package_url = f"{install_arg}{package_name}{package_version}"
+        if install_arg == "":
+            package_url = f"{package_name}{package_version}"
+        else:
+            assert install_arg == "--upgrade "
+            package_url = f'{install_arg}"{package_name}{package_version}"'
     else:
         assert "https" in package_url
         if package_version != "":

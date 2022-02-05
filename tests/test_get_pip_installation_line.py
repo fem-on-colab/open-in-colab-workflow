@@ -17,7 +17,7 @@ def test_pip_installation_line_only_name() -> None:
 def test_pip_installation_line_name_and_version() -> None:
     """Test generation of installation line with version."""
     installation_line = get_pip_installation_line("numpy", ">=1.21.0,<1.22.0", "")
-    assert installation_line == "pip3 install --upgrade numpy>=1.21.0,<1.22.0"
+    assert installation_line == 'pip3 install --upgrade "numpy>=1.21.0,<1.22.0"'
 
 
 def test_pip_installation_line_name_and_extras() -> None:
