@@ -28,10 +28,12 @@ jobs:
       - name: Install the workflow call library
         run: |
           python3 -m pip install .[docs,lint,tests]
-      - name: Run flake8 checks
+      - name: Run flake8 and mypy checks
         run: |
           python3 -m flake8 .
+          python3 -m mypy .
           python3 -m nbqa flake8 .
+          python3 -m nbqa mypy .
       - name: Run tests
         run: |
           python3 -m coverage run --source=open_in_colab_workflow -m pytest tests
