@@ -16,7 +16,7 @@ from open_in_colab_workflow.glob_files import glob_files
 from open_in_colab_workflow.glob_images import glob_images
 
 
-def replace_images_in_markdown(
+def replace_images_in_markdown(  # type: ignore[no-any-unimported]
     nb_cells: typing.List[nbformat.NotebookNode], nb_dir: str, images_as_base64: typing.Dict[str, str]
 ) -> typing.List[nbformat.NotebookNode]:
     """Replace images with their base64 representation, and return the updated cells."""

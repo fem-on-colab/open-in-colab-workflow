@@ -7,6 +7,7 @@
 
 import abc
 import sys
+import typing
 
 from open_in_colab_workflow.get_colab_drive_url import get_colab_drive_url
 from open_in_colab_workflow.get_colab_github_url import get_colab_github_url
@@ -16,7 +17,7 @@ class PublishOnBaseClass(abc.ABC):
     """Base class for three possible publish_on options."""
 
     @abc.abstractmethod
-    def get_url(self, relative_path: str) -> str:  # pragma: no cover
+    def get_url(self, relative_path: str) -> typing.Optional[str]:  # pragma: no cover
         """Get the URL used by this publisher and associated to a file at the provied relative path."""
         pass
 
@@ -48,7 +49,7 @@ class PublishOnDrive(PublishOnBaseClass):
     def __init__(self, drive_root_directory: str) -> None:
         self.drive_root_directory = drive_root_directory
 
-    def get_url(self, relative_path: str) -> str:
+    def get_url(self, relative_path: str) -> typing.Optional[str]:
         """Get the URL used by Google Colab when the file at the provided relative path is stored on Google Drive."""
         return get_colab_drive_url(relative_path, self.drive_root_directory)
 

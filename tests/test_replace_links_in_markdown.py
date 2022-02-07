@@ -10,6 +10,7 @@ import shutil
 import tempfile
 import typing
 
+import nbformat
 import pytest
 
 from open_in_colab_workflow.publish_on import PublishOnArtifact, PublishOnBaseClass, PublishOnDrive, PublishOnGitHub
@@ -18,7 +19,7 @@ from open_in_colab_workflow.replace_links_in_markdown import (
 
 
 @pytest.fixture
-def mock_links_replacement(root_directory: str) -> typing.Dict[str, str]:
+def mock_links_replacement(root_directory: str) -> typing.Dict[str, typing.Optional[str]]:
     """Return simplified version of the links replacement dictionary."""
     data_subdirectory = os.path.join(root_directory, "tests", "data", "replace_links_in_markdown")
     return {
@@ -29,8 +30,9 @@ def mock_links_replacement(root_directory: str) -> typing.Dict[str, str]:
     }
 
 
-def test_replace_links_in_markdown_via_markdown_tag(
-    root_directory: str, open_notebook: typing.Callable, mock_links_replacement: typing.Dict[str, str]
+def test_replace_links_in_markdown_via_markdown_tag(  # type: ignore[no-any-unimported]
+    root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
+    mock_links_replacement: typing.Dict[str, typing.Optional[str]]
 ) -> None:
     """Test replacement of links in markdown notebook containing only a link defined via markdown tag."""
     nb = open_notebook("replace_links_in_markdown", "markdown_link")
@@ -41,8 +43,9 @@ def test_replace_links_in_markdown_via_markdown_tag(
     assert updated_cells[0].source == "[Link to the main notebook](Link to main_notebook.ipynb)"
 
 
-def test_replace_images_in_markdown_via_html_tag_single_quotes(
-    root_directory: str, open_notebook: typing.Callable, mock_links_replacement: typing.Dict[str, str]
+def test_replace_images_in_markdown_via_html_tag_single_quotes(  # type: ignore[no-any-unimported]
+    root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
+    mock_links_replacement: typing.Dict[str, typing.Optional[str]]
 ) -> None:
     """Test replacement of links in markdown notebook containing only a defined via an html tag with single quotes."""
     nb = open_notebook("replace_links_in_markdown", "html_link_single_quotes")
@@ -53,8 +56,9 @@ def test_replace_images_in_markdown_via_html_tag_single_quotes(
     assert updated_cells[0].source == "<a href='Link to main_notebook.ipynb'>Link to the main notebook</a>"
 
 
-def test_replace_images_in_markdown_via_html_tag_double_quotes(
-    root_directory: str, open_notebook: typing.Callable, mock_links_replacement: typing.Dict[str, str]
+def test_replace_images_in_markdown_via_html_tag_double_quotes(  # type: ignore[no-any-unimported]
+    root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
+    mock_links_replacement: typing.Dict[str, typing.Optional[str]]
 ) -> None:
     """Test replacement of links in markdown notebook containing only a defined via an html tag with double quotes."""
     nb = open_notebook("replace_links_in_markdown", "html_link_double_quotes")
@@ -65,8 +69,9 @@ def test_replace_images_in_markdown_via_html_tag_double_quotes(
     assert updated_cells[0].source == '<a href="Link to main_notebook.ipynb">Link to the main notebook</a>'
 
 
-def test_replace_links_in_markdown_with_a_code_cell(
-    root_directory: str, open_notebook: typing.Callable, mock_links_replacement: typing.Dict[str, str]
+def test_replace_links_in_markdown_with_a_code_cell(  # type: ignore[no-any-unimported]
+    root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
+    mock_links_replacement: typing.Dict[str, typing.Optional[str]]
 ) -> None:
     """Test replacement of links in a notebook containing both markdown and code."""
     nb = open_notebook("replace_links_in_markdown", "link_and_code")
@@ -78,8 +83,9 @@ def test_replace_links_in_markdown_with_a_code_cell(
     assert updated_cells[1] == nb.cells[1]
 
 
-def test_replace_links_in_markdown_main(
-    root_directory: str, open_notebook: typing.Callable, publisher: PublishOnBaseClass
+def test_replace_links_in_markdown_main(  # type: ignore[no-any-unimported]
+    root_directory: str, open_notebook: typing.Callable[[str, str, str], nbformat.NotebookNode],
+    publisher: PublishOnBaseClass
 ) -> None:
     """Test replacement of links when running the module as a script."""
     data_directory = os.path.join(root_directory, "tests", "data")

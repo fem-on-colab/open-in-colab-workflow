@@ -5,10 +5,12 @@
 # SPDX-License-Identifier: MIT
 """Get the URL that a file will have on Google Colab when hosted on Google Drive."""
 
+import typing
+
 from open_in_colab_workflow.get_drive_url import get_drive_url
 
 
-def get_colab_drive_url(relative_path: str, drive_root_directory: str) -> str:
+def get_colab_drive_url(relative_path: str, drive_root_directory: str) -> typing.Optional[str]:
     """Get the URL that a file will have on Google Colab when hosted on Google Drive."""
     drive_url = get_drive_url(relative_path, drive_root_directory)
     if drive_url is not None:

@@ -10,6 +10,7 @@ import shutil
 import tempfile
 import typing
 
+import nbformat
 import pytest
 
 from open_in_colab_workflow.replace_images_in_markdown import (
@@ -26,8 +27,9 @@ def mock_images_as_base64(root_directory: str) -> typing.Dict[str, str]:
     return images_as_base64
 
 
-def test_replace_images_in_markdown_via_markdown_tag(
-    root_directory: str, open_notebook: typing.Callable, mock_images_as_base64: typing.Dict[str, str]
+def test_replace_images_in_markdown_via_markdown_tag(  # type: ignore[no-any-unimported]
+    root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
+    mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
     """Test replacement of images in markdown notebook containing only an image defined via markdown tag."""
     nb = open_notebook("replace_images_in_markdown", "markdown_image")
@@ -39,8 +41,9 @@ def test_replace_images_in_markdown_via_markdown_tag(
 ![Red](Base64 of red.jpg)"""
 
 
-def test_replace_images_in_markdown_via_html_tag(
-    root_directory: str, open_notebook: typing.Callable, mock_images_as_base64: typing.Dict[str, str]
+def test_replace_images_in_markdown_via_html_tag(  # type: ignore[no-any-unimported]
+    root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
+    mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
     """Test replacement of images in markdown notebook containing only an image defined via html tag."""
     nb = open_notebook("replace_images_in_markdown", "html_image")
@@ -52,8 +55,9 @@ def test_replace_images_in_markdown_via_html_tag(
 <img src="Base64 of black.png" alt="Black">"""
 
 
-def test_replace_images_in_markdown_via_html_and_markdown_tags(
-    root_directory: str, open_notebook: typing.Callable, mock_images_as_base64: typing.Dict[str, str]
+def test_replace_images_in_markdown_via_html_and_markdown_tags(  # type: ignore[no-any-unimported]
+    root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
+    mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
     """Test replacement of images in markdown notebook containing image defined via html or markdown tags."""
     nb = open_notebook("replace_images_in_markdown", "html_and_markdown_images")
@@ -70,8 +74,9 @@ This is the red image.
 ![Blue](Base64 of blue.svg)"""
 
 
-def test_replace_images_in_markdown_with_a_code_cell(
-    root_directory: str, open_notebook: typing.Callable, mock_images_as_base64: typing.Dict[str, str]
+def test_replace_images_in_markdown_with_a_code_cell(  # type: ignore[no-any-unimported]
+    root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
+    mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
     """Test replacement of images in a notebook containing both markdown and code."""
     nb = open_notebook("replace_images_in_markdown", "image_and_code")
@@ -84,7 +89,9 @@ def test_replace_images_in_markdown_with_a_code_cell(
     assert updated_cells[1] == nb.cells[1]
 
 
-def test_replace_images_in_markdown_main(root_directory: str, open_notebook: typing.Callable) -> None:
+def test_replace_images_in_markdown_main(  # type: ignore[no-any-unimported]
+    root_directory: str, open_notebook: typing.Callable[[str, str, str], nbformat.NotebookNode]
+) -> None:
     """Test replacement of images when running the module as a script."""
     data_directory = os.path.join(root_directory, "tests", "data")
     nb_pattern = os.path.join("replace_images_in_markdown", "html_image.ipynb")

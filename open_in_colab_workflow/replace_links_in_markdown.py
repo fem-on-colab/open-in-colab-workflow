@@ -18,8 +18,9 @@ from open_in_colab_workflow.publish_on import publish_on, PublishOnBaseClass, Pu
 from open_in_colab_workflow.upload_files_to_google_drive import upload_files_to_google_drive
 
 
-def replace_links_in_markdown(
-    nb_cells: typing.List[nbformat.NotebookNode], nb_dir: str, links_replacement: typing.Dict[str, str]
+def replace_links_in_markdown(  # type: ignore[no-any-unimported]
+    nb_cells: typing.List[nbformat.NotebookNode], nb_dir: str,
+    links_replacement: typing.Dict[str, typing.Optional[str]]
 ) -> typing.List[nbformat.NotebookNode]:
     """Replace links to local file in markdown with links to the corresponding Colab notebooks."""
     add_quotes_or_parentheses = (
@@ -32,9 +33,11 @@ def replace_links_in_markdown(
         if cell.cell_type == "markdown":
             updated_cell = copy.deepcopy(cell)
             for (local_link, colab_link) in links_replacement.items():
+                assert colab_link is not None
                 for preprocess in add_quotes_or_parentheses:
                     updated_cell.source = updated_cell.source.replace(
-                        preprocess(os.path.relpath(local_link, nb_dir)), preprocess(colab_link))
+                        preprocess(os.path.relpath(local_link, nb_dir)),  # type: ignore[no-untyped-call]
+                        preprocess(colab_link))  # type: ignore[no-untyped-call]
             updated_nb_cells.append(updated_cell)
         else:
             updated_nb_cells.append(cell)
@@ -58,9 +61,9 @@ def __main__(work_dir: str, nb_pattern: str, publisher: typing.Union[str, Publis
         if len(local_files_with_none_link) > 0:  # pragma: no cover
             for local_link in local_files_with_none_link:
                 print(os.path.relpath(local_link, work_dir) + " will be created anew")
-            local_files_with_none_link = "\n".join(local_files_with_none_link)
-            upload_files_to_google_drive(work_dir, local_files_with_none_link, publisher.drive_root_directory)
-            links_replacement.update(glob_links(work_dir, local_files_with_none_link, publisher))
+            local_files_with_none_link_str = "\n".join(local_files_with_none_link)
+            upload_files_to_google_drive(work_dir, local_files_with_none_link_str, publisher.drive_root_directory)
+            links_replacement.update(glob_links(work_dir, local_files_with_none_link_str, publisher))
     for (local_link, colab_link) in links_replacement.items():
         assert colab_link is not None
         print(os.path.relpath(local_link, work_dir) + " -> " + colab_link)

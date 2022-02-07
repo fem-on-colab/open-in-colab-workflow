@@ -17,7 +17,7 @@ from open_in_colab_workflow.glob_files import glob_files
 from open_in_colab_workflow.packages_str_to_lists import packages_str_to_lists
 
 
-def add_installation_cells(
+def add_installation_cells(  # type: ignore[no-any-unimported]
     nb_cells: typing.List[nbformat.NotebookNode], fem_on_colab_packages_str: str, pip_packages_str: str
 ) -> typing.Tuple[typing.List[nbformat.NotebookNode], typing.List[int]]:
     """Add installation cells on top of the notebook, and return updated notebook content and list of insertions."""
@@ -76,7 +76,7 @@ def add_installation_cells(
     return updated_nb_cells, new_cells_position
 
 
-def _package_is_imported(package_import: str, cell: nbformat.NotebookNode) -> bool:
+def _package_is_imported(package_import: str, cell: nbformat.NotebookNode) -> bool:  # type: ignore[no-any-unimported]
     """Auxiliary function to determine if the cell contains the import of the package."""
     return f"import {package_import}" in cell.source or f"from {package_import}" in cell.source
 

@@ -23,7 +23,7 @@ def root_directory() -> str:
 
 
 @pytest.fixture
-def open_notebook(root_directory: str) -> typing.Callable:
+def open_notebook(root_directory: str) -> typing.Callable[[str, str, typing.Optional[str]], nbformat.NotebookNode]:
     """Return a fixture to open a local notebook."""
     def _(local_directory: str, filename: str, data_directory: str = None) -> nbformat.NotebookNode:
         """Open notebook with nbformat."""

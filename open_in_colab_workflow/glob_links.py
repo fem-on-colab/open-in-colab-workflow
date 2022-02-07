@@ -12,7 +12,7 @@ from open_in_colab_workflow.glob_files import glob_files
 from open_in_colab_workflow.publish_on import PublishOnArtifact, PublishOnBaseClass, PublishOnDrive, PublishOnGitHub
 
 
-def glob_links(work_dir: str, pattern: str, publish_on: PublishOnBaseClass) -> typing.Dict[str, str]:
+def glob_links(work_dir: str, pattern: str, publish_on: PublishOnBaseClass) -> typing.Dict[str, typing.Optional[str]]:
     """Get links associated to every notebook matching a pattern in the work directory."""
     if isinstance(publish_on, PublishOnArtifact):
         # No link replacement is necessary
