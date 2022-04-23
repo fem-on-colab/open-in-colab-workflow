@@ -58,7 +58,12 @@ jobs:
           add-apt-repository ppa:git-core/ppa
           apt update -qq
           apt install -y -qq git
-      - uses: actions/checkout@v2
+      - name: Mark workspace as safe
+        run: |
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+      - uses: actions/checkout@v3
+        with:
+          set-safe-directory: false
       - name: Setup Colab base image
         run: |
           export DEBIAN_FRONTEND="noninteractive"
@@ -94,15 +99,20 @@ jobs:
           done < .publisher
           rm .publisher
         shell: bash
+      - name: Mark work directory as safe
+        if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
+        run: |
+          git config --global --add safe.directory "${{ inputs.work_directory }}"
       - name: Clone GitHub repository of the publisher
         if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: "${{ steps.determine_publisher.outputs.repository }}"
           token: "${{ secrets.REPO_ACCESS_TOKEN || github.token }}"
           ref: "${{ steps.determine_publisher.outputs.branch }}"
           fetch-depth: 0
           path: "${{ inputs.work_directory }}"
+          set-safe-directory: false
       - name: Run notebook preparation
         if: inputs.notebook_preparation != ''
         run: |
