@@ -21,6 +21,7 @@ from open_in_colab_workflow.upload_files_to_google_drive import upload_files_to_
 def assert_files_equal(root_directory: str, pattern: str, url: str) -> None:
     """Assert that the local file and the downloaded one have the same content."""
     remote_data = requests.get(url.replace("/open?", "/uc?"))
+    remote_data.raise_for_status()
     with open(os.path.join(root_directory, pattern), "r") as f:
         assert f.read() == remote_data.content.decode("utf-8")
 
