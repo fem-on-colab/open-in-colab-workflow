@@ -30,7 +30,7 @@ def mock_links_replacement(root_directory: str) -> typing.Dict[str, typing.Optio
     }
 
 
-def test_replace_links_in_markdown_via_markdown_tag(  # type: ignore[no-any-unimported]
+def test_replace_links_in_markdown_via_markdown_tag(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
     mock_links_replacement: typing.Dict[str, typing.Optional[str]]
 ) -> None:
@@ -43,7 +43,7 @@ def test_replace_links_in_markdown_via_markdown_tag(  # type: ignore[no-any-unim
     assert updated_cells[0].source == "[Link to the main notebook](Link to main_notebook.ipynb)"
 
 
-def test_replace_images_in_markdown_via_html_tag_single_quotes(  # type: ignore[no-any-unimported]
+def test_replace_images_in_markdown_via_html_tag_single_quotes(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
     mock_links_replacement: typing.Dict[str, typing.Optional[str]]
 ) -> None:
@@ -56,7 +56,7 @@ def test_replace_images_in_markdown_via_html_tag_single_quotes(  # type: ignore[
     assert updated_cells[0].source == "<a href='Link to main_notebook.ipynb'>Link to the main notebook</a>"
 
 
-def test_replace_images_in_markdown_via_html_tag_double_quotes(  # type: ignore[no-any-unimported]
+def test_replace_images_in_markdown_via_html_tag_double_quotes(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
     mock_links_replacement: typing.Dict[str, typing.Optional[str]]
 ) -> None:
@@ -69,7 +69,7 @@ def test_replace_images_in_markdown_via_html_tag_double_quotes(  # type: ignore[
     assert updated_cells[0].source == '<a href="Link to main_notebook.ipynb">Link to the main notebook</a>'
 
 
-def test_replace_links_in_markdown_with_a_code_cell(  # type: ignore[no-any-unimported]
+def test_replace_links_in_markdown_with_a_code_cell(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
     mock_links_replacement: typing.Dict[str, typing.Optional[str]]
 ) -> None:
@@ -83,7 +83,7 @@ def test_replace_links_in_markdown_with_a_code_cell(  # type: ignore[no-any-unim
     assert updated_cells[1] == nb.cells[1]
 
 
-def test_replace_links_in_markdown_main(  # type: ignore[no-any-unimported]
+def test_replace_links_in_markdown_main(
     root_directory: str, open_notebook: typing.Callable[[str, str, str], nbformat.NotebookNode],
     publisher: PublishOnBaseClass
 ) -> None:

@@ -18,7 +18,7 @@ from open_in_colab_workflow.publish_on import publish_on, PublishOnBaseClass, Pu
 from open_in_colab_workflow.upload_files_to_google_drive import upload_files_to_google_drive
 
 
-def replace_links_in_markdown(  # type: ignore[no-any-unimported]
+def replace_links_in_markdown(
     nb_cells: typing.List[nbformat.NotebookNode], nb_dir: str,
     links_replacement: typing.Dict[str, typing.Optional[str]]
 ) -> typing.List[nbformat.NotebookNode]:
@@ -70,10 +70,10 @@ def __main__(work_dir: str, nb_pattern: str, publisher: typing.Union[str, Publis
 
     for nb_filename in glob_files(work_dir, nb_pattern):
         with open(nb_filename, "r") as f:
-            nb = nbformat.read(f, as_version=4)
+            nb = nbformat.read(f, as_version=4)  # type: ignore[no-untyped-call]
         nb.cells = replace_links_in_markdown(nb.cells, os.path.dirname(nb_filename), links_replacement)
         with open(nb_filename, "w") as f:
-            nbformat.write(nb, f)
+            nbformat.write(nb, f)  # type: ignore[no-untyped-call]
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -26,7 +26,7 @@ from open_in_colab_workflow.add_installation_cells import (
         ("mpi4py", "numpy\nscipy")
     ]
 )
-def test_add_installation_cells_single_pip_package(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_single_pip_package(
     fem_on_colab_packages_str: str, pip_packages_str: str,
     open_notebook: typing.Callable[[str, str], nbformat.NotebookNode]
 ) -> None:
@@ -55,7 +55,7 @@ except ImportError:
         ("mpi4py\nh5py", "numpy")
     ]
 )
-def test_add_installation_cells_single_fem_on_colab_package(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_single_fem_on_colab_package(
     fem_on_colab_packages_str: str, pip_packages_str: str,
     open_notebook: typing.Callable[[str, str], nbformat.NotebookNode]
 ) -> None:
@@ -84,7 +84,7 @@ except ImportError:
         ("mpi4py\nh5py", "numpy\nscipy")
     ]
 )
-def test_add_installation_cells_mix_pip_package_and_fem_on_colab_package(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_mix_pip_package_and_fem_on_colab_package(
     fem_on_colab_packages_str: str, pip_packages_str: str,
     open_notebook: typing.Callable[[str, str], nbformat.NotebookNode]
 ) -> None:
@@ -111,7 +111,7 @@ except ImportError:
     assert new_cells_position[1] == 1
 
 
-def test_add_installation_cells_from_form(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_from_form(
     open_notebook: typing.Callable[[str, str], nbformat.NotebookNode]
 ) -> None:
     """Test addition of installation cells when the from form of the import is used."""
@@ -130,7 +130,7 @@ except ImportError:
     assert new_cells_position[0] == 0
 
 
-def test_add_installation_cells_import_name(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_import_name(
     open_notebook: typing.Callable[[str, str], nbformat.NotebookNode]
 ) -> None:
     """Test addition of installation cells with non-default import name."""
@@ -149,7 +149,7 @@ except ImportError:
     assert new_cells_position[0] == 0
 
 
-def test_add_installation_cells_dependent_imports(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_dependent_imports(
     open_notebook: typing.Callable[[str, str], nbformat.NotebookNode]
 ) -> None:
     """Test addition of installation cells with dependent imports."""
@@ -168,7 +168,7 @@ except ImportError:
     assert new_cells_position[0] == 0
 
 
-def test_add_installation_cells_multiple_pip_packages(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_multiple_pip_packages(
     open_notebook: typing.Callable[[str, str], nbformat.NotebookNode]
 ) -> None:
     """Test that addition of installation cells preserves the order in which the packages are provided."""
@@ -194,7 +194,7 @@ except ImportError:
     assert new_cells_position[1] == 1
 
 
-def test_add_installation_cells_markdown(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_markdown(
     open_notebook: typing.Callable[[str, str], nbformat.NotebookNode]
 ) -> None:
     """Test that the installation cells are placed after markdown cells."""
@@ -214,7 +214,7 @@ except ImportError:
     assert new_cells_position[0] == 1
 
 
-def test_add_installation_cells_main_single_pip_package(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_main_single_pip_package(
     root_directory: str, open_notebook: typing.Callable[[str, str, str], nbformat.NotebookNode]
 ) -> None:
     """Test addition of installation cells with a single pip package when running the module as a script."""
@@ -242,7 +242,7 @@ except ImportError:
         assert updated_nb.cells[1] == nb.cells[0]
 
 
-def test_add_installation_cells_main_single_fem_on_colab_package(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_main_single_fem_on_colab_package(
     root_directory: str, open_notebook: typing.Callable[[str, str, str], nbformat.NotebookNode]
 ) -> None:
     """Test addition of installation cells with a single FEM on Colab package when running the module as a script."""
@@ -270,7 +270,7 @@ except ImportError:
         assert updated_nb.cells[1] == nb.cells[0]
 
 
-def test_add_installation_cells_main_import_name(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_main_import_name(
     root_directory: str, open_notebook: typing.Callable[[str, str, str], nbformat.NotebookNode]
 ) -> None:
     """Test addition of installation cells with non-default import name when running the module as a script."""
@@ -298,7 +298,7 @@ except ImportError:
         assert updated_nb.cells[1] == nb.cells[0]
 
 
-def test_add_installation_cells_main_dependent_imports(  # type: ignore[no-any-unimported]
+def test_add_installation_cells_main_dependent_imports(
     root_directory: str, open_notebook: typing.Callable[[str, str, str], nbformat.NotebookNode]
 ) -> None:
     """Test addition of installation cells with dependent imports when running the module as a script."""

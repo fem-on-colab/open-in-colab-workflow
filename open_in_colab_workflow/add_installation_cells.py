@@ -17,7 +17,7 @@ from open_in_colab_workflow.glob_files import glob_files
 from open_in_colab_workflow.packages_str_to_lists import packages_str_to_lists
 
 
-def add_installation_cells(  # type: ignore[no-any-unimported]
+def add_installation_cells(
     nb_cells: typing.List[nbformat.NotebookNode], fem_on_colab_packages_str: str, pip_packages_str: str
 ) -> typing.Tuple[typing.List[nbformat.NotebookNode], typing.List[int]]:
     """Add installation cells on top of the notebook, and return updated notebook content and list of insertions."""
@@ -68,7 +68,7 @@ def add_installation_cells(  # type: ignore[no-any-unimported]
     for (package_name, package_install_code, package_import) in zip(
             packages_name, packages_install_code, packages_import):
         if need_installation_cell[package_import]:
-            package_install_cell = nbformat.v4.new_code_cell(package_install_code)
+            package_install_cell = nbformat.v4.new_code_cell(package_install_code)  # type: ignore[no-untyped-call]
             package_install_cell.id = package_name.replace(" ", "_") + "_install"
             updated_nb_cells.insert(first_code_cell_position, package_install_cell)
             new_cells_position.append(first_code_cell_position)
@@ -76,7 +76,7 @@ def add_installation_cells(  # type: ignore[no-any-unimported]
     return updated_nb_cells, new_cells_position
 
 
-def _package_is_imported(package_import: str, cell: nbformat.NotebookNode) -> bool:  # type: ignore[no-any-unimported]
+def _package_is_imported(package_import: str, cell: nbformat.NotebookNode) -> bool:
     """Auxiliary function to determine if the cell contains the import of the package."""
     return f"import {package_import}" in cell.source or f"from {package_import}" in cell.source
 
@@ -85,10 +85,10 @@ def __main__(work_dir: str, nb_pattern: str, fem_on_colab_packages: str, pip_pac
     """Add installation cells on top of every notebook in the work directory matching the prescribed pattern."""
     for nb_filename in glob_files(work_dir, nb_pattern):
         with open(nb_filename, "r") as f:
-            nb = nbformat.read(f, as_version=4)
+            nb = nbformat.read(f, as_version=4)  # type: ignore[no-untyped-call]
         nb.cells, _ = add_installation_cells(nb.cells, fem_on_colab_packages, pip_packages)
         with open(nb_filename, "w") as f:
-            nbformat.write(nb, f)
+            nbformat.write(nb, f)  # type: ignore[no-untyped-call]
 
 
 if __name__ == "__main__":  # pragma: no cover

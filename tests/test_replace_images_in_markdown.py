@@ -27,7 +27,7 @@ def mock_images_as_base64(root_directory: str) -> typing.Dict[str, str]:
     return images_as_base64
 
 
-def test_replace_images_in_markdown_via_markdown_tag(  # type: ignore[no-any-unimported]
+def test_replace_images_in_markdown_via_markdown_tag(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
     mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
@@ -41,7 +41,7 @@ def test_replace_images_in_markdown_via_markdown_tag(  # type: ignore[no-any-uni
 ![Red](Base64 of red.jpg)"""
 
 
-def test_replace_images_in_markdown_via_html_tag(  # type: ignore[no-any-unimported]
+def test_replace_images_in_markdown_via_html_tag(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
     mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
@@ -55,7 +55,7 @@ def test_replace_images_in_markdown_via_html_tag(  # type: ignore[no-any-unimpor
 <img src="Base64 of black.png" alt="Black">"""
 
 
-def test_replace_images_in_markdown_via_html_and_markdown_tags(  # type: ignore[no-any-unimported]
+def test_replace_images_in_markdown_via_html_and_markdown_tags(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
     mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
@@ -74,7 +74,7 @@ This is the red image.
 ![Blue](Base64 of blue.svg)"""
 
 
-def test_replace_images_in_markdown_with_a_code_cell(  # type: ignore[no-any-unimported]
+def test_replace_images_in_markdown_with_a_code_cell(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
     mock_images_as_base64: typing.Dict[str, str]
 ) -> None:
@@ -89,7 +89,7 @@ def test_replace_images_in_markdown_with_a_code_cell(  # type: ignore[no-any-uni
     assert updated_cells[1] == nb.cells[1]
 
 
-def test_replace_images_in_markdown_main(  # type: ignore[no-any-unimported]
+def test_replace_images_in_markdown_main(
     root_directory: str, open_notebook: typing.Callable[[str, str, str], nbformat.NotebookNode]
 ) -> None:
     """Test replacement of images when running the module as a script."""
