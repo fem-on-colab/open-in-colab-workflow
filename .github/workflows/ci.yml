@@ -23,8 +23,8 @@ jobs:
           export DEBIAN_FRONTEND="noninteractive"
           apt -qq update
           apt install -y -qq imagemagick inkscape python3-pip wget
-          wget https://github.com/rclone/rclone/releases/download/v1.58.1/rclone-v1.58.1-linux-amd64.deb -O /tmp/rclone-v1.58.1-linux-amd64.deb
-          dpkg -i /tmp/rclone-v1.58.1-linux-amd64.deb
+          wget https://github.com/rclone/rclone/releases/download/v1.59.1/rclone-v1.59.1-linux-amd64.deb -O /tmp/rclone-v1.59.1-linux-amd64.deb
+          dpkg -i /tmp/rclone-v1.59.1-linux-amd64.deb
       - name: Install the workflow call library
         run: |
           python3 -m pip install .[docs,lint,tests]
