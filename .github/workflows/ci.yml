@@ -15,7 +15,7 @@ on:
 jobs:
   test_library:
     runs-on: ubuntu-latest
-    container: ubuntu:devel
+    container: ubuntu:rolling
     steps:
       - uses: actions/checkout@v3
       - name: Install non-pip dependencies of the workflow call library
