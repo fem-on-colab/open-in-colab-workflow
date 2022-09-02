@@ -44,27 +44,11 @@ except ImportError:
     import dateutil"""
 
 
-def test_pip_installation_cell_enable_custom_widget_manager_single_package() -> None:
-    """Test generation of installation cell when the package requires the custom widget manager to be enabled."""
-    installation_cell_code = get_pip_installation_cell_code("itkwidgets", "", "", "itkwidgets")
-    assert installation_cell_code == """try:
-    import itkwidgets
-except ImportError:
-    !pip3 install itkwidgets
-    import itkwidgets
-finally:
-    import google.colab
-    google.colab.output.enable_custom_widget_manager()"""
-
-
-def test_pip_installation_cell_enable_custom_widget_manager_multiple_packages() -> None:
+def test_pip_installation_cell_multiple_packages() -> None:
     """Test generation of installation cell when a package requires the custom widget manager to be enabled."""
     installation_cell_code = get_pip_installation_cell_code("itkwidgets pyvista", "", "", "pyvista")
     assert installation_cell_code == """try:
     import pyvista
 except ImportError:
     !pip3 install itkwidgets pyvista
-    import pyvista
-finally:
-    import google.colab
-    google.colab.output.enable_custom_widget_manager()"""
+    import pyvista"""

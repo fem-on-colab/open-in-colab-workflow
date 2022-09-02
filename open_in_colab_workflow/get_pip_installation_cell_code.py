@@ -20,15 +20,4 @@ def get_pip_installation_cell_code(
     import {package_import}
 except ImportError:
     !{get_pip_installation_line(package_name, package_version, package_url)}
-    import {package_import}""" + _enable_custom_widget_manager(package_name)
-
-
-def _enable_custom_widget_manager(package_name: str) -> str:
-    """Return additional finally block for packages that require a custom widget manager."""
-    if any([requires_custom_widget_manager in package_name for requires_custom_widget_manager in (
-            "itkwidgets", )]):
-        return "\n" + """finally:
-    import google.colab
-    google.colab.output.enable_custom_widget_manager()"""
-    else:
-        return ""
+    import {package_import}"""
