@@ -1,0 +1,32 @@
+# Copyright (C) 2021-2022 by the FEM on Colab authors
+#
+# This file is part of FEM on Colab-related actions.
+#
+# SPDX-License-Identifier: MIT
+"""Tests for the open_in_colab_workflow.get_fem_on_colab_installation_line package."""
+
+from open_in_colab_workflow.get_fem_on_colab_installation_line import get_fem_on_colab_installation_line
+
+
+def test_fem_on_colab_installation_line_only_name() -> None:
+    """Test generation of installation line without any additonal version and url."""
+    installation_line = get_fem_on_colab_installation_line("gmsh", "", "")
+    assert installation_line == 'wget "https://fem-on-colab.github.io/releases/gmsh-install.sh" -O "/tmp/gmsh-install.sh" && bash "/tmp/gmsh-install.sh"'  # noqa: E501
+
+
+def test_fem_on_colab_installation_line_name_and_version() -> None:
+    """Test generation of installation line with version."""
+    installation_line = get_fem_on_colab_installation_line("firedrake", "==real", "")
+    assert installation_line == 'wget "https://fem-on-colab.github.io/releases/firedrake-install-real.sh" -O "/tmp/firedrake-install.sh" && bash "/tmp/firedrake-install.sh"'  # noqa: E501
+
+
+def test_fem_on_colab_installation_line_name_and_url() -> None:
+    """Test generation of installation line with url."""
+    installation_line = get_fem_on_colab_installation_line("gmsh", "", "357e49c")
+    assert installation_line == 'wget "https://github.com/fem-on-colab/fem-on-colab.github.io/raw/357e49c/releases/gmsh-install.sh" -O "/tmp/gmsh-install.sh" && bash "/tmp/gmsh-install.sh"'  # noqa: E501
+
+
+def test_fem_on_colab_installation_line_name_version_and_url() -> None:
+    """Test generation of installation line with version and url."""
+    installation_line = get_fem_on_colab_installation_line("firedrake", "==real", "357e49c")
+    assert installation_line == 'wget "https://github.com/fem-on-colab/fem-on-colab.github.io/raw/357e49c/releases/firedrake-install-real.sh" -O "/tmp/firedrake-install.sh" && bash "/tmp/firedrake-install.sh"'  # noqa: E501
