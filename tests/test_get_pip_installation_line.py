@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: MIT
 """Tests for the open_in_colab_workflow.get_pip_installation_line package."""
 
+from open_in_colab_workflow.get_git_head_hash import get_git_head_hash
 from open_in_colab_workflow.get_pip_installation_line import get_pip_installation_line
 
 
@@ -30,6 +31,19 @@ def test_pip_installation_line_name_and_url() -> None:
     """Test generation of installation line with url."""
     installation_line = get_pip_installation_line("numpy", "", "https://github.com/numpy/numpy.git")
     assert installation_line == 'pip3 install "numpy@git+https://github.com/numpy/numpy.git"'
+
+
+def test_pip_installation_line_name_and_url_at_fixed_commit() -> None:
+    """Test generation of installation line with url at a fixed commit."""
+    installation_line = get_pip_installation_line("numpy", "", "https://github.com/numpy/numpy.git@2a6daf3")
+    assert installation_line == 'pip3 install "numpy@git+https://github.com/numpy/numpy.git@2a6daf3"'
+
+
+def test_pip_installation_line_name_and_url_at_current_commit() -> None:
+    """Test generation of installation line with url at the current commit."""
+    installation_line = get_pip_installation_line("numpy", "", "https://github.com/numpy/numpy.git@current")
+    numpy_head_commit = get_git_head_hash("https://github.com/numpy/numpy.git")
+    assert installation_line == f'pip3 install "numpy@git+https://github.com/numpy/numpy.git@{numpy_head_commit}"'
 
 
 def test_pip_installation_line_name_and_extras_and_url() -> None:
