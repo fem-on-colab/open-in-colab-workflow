@@ -34,6 +34,6 @@ def get_pip_installation_line(package_name: str, package_version: str, package_u
             assert any(operator in package_version for operator in extras_operators)
         if package_url.endswith("@current"):
             package_url_without_commit = package_url.replace("@current", "")
-            package_url = package_url_without_commit + "@" + get_git_head_hash(package_url_without_commit)
+            package_url = package_url_without_commit + "@" + get_git_head_hash(package_url_without_commit, "HEAD")
         package_url = f'{install_arg}"{package_name}{package_version}@git+{package_url}"'
     return f"pip3 install {package_url}"

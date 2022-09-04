@@ -10,12 +10,12 @@ import subprocess
 from open_in_colab_workflow.get_git_head_hash import get_git_head_hash
 
 
-def test_get_git_head_hash_new() -> None:
-    """Test Google Drive URL for a file which was never uploaded."""
+def test_get_git_head_hash() -> None:
+    """Test Git HEAD has on this repository."""
     this_repo_url = subprocess.run(
         "git remote get-url origin".split(" "),
         capture_output=True, check=True).stdout.decode("utf-8").strip("\n")
-    head_commit = get_git_head_hash(this_repo_url)
+    head_commit = get_git_head_hash(this_repo_url, "main")
     subprocess.run(
         "git fetch origin main".split(" "),
         capture_output=True, check=True)

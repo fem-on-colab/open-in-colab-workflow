@@ -42,7 +42,7 @@ def test_pip_installation_line_name_and_url_at_fixed_commit() -> None:
 def test_pip_installation_line_name_and_url_at_current_commit() -> None:
     """Test generation of installation line with url at the current commit."""
     installation_line = get_pip_installation_line("numpy", "", "https://github.com/numpy/numpy.git@current")
-    numpy_head_commit = get_git_head_hash("https://github.com/numpy/numpy.git")
+    numpy_head_commit = get_git_head_hash("https://github.com/numpy/numpy.git", "main")
     assert installation_line == f'pip3 install "numpy@git+https://github.com/numpy/numpy.git@{numpy_head_commit}"'
 
 

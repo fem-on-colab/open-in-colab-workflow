@@ -30,7 +30,7 @@ def test_fem_on_colab_installation_line_name_and_url_at_fixed_commit() -> None:
 def test_fem_on_colab_installation_line_name_and_url_at_current_commit() -> None:
     """Test generation of installation line with url at current commit."""
     installation_line = get_fem_on_colab_installation_line("gmsh", "", "current")
-    website_head_commit = get_git_head_hash("https://github.com/fem-on-colab/fem-on-colab.github.io.git")
+    website_head_commit = get_git_head_hash("https://github.com/fem-on-colab/fem-on-colab.github.io.git", "gh-pages")
     assert installation_line == f'wget "https://github.com/fem-on-colab/fem-on-colab.github.io/raw/{website_head_commit}/releases/gmsh-install.sh" -O "/tmp/gmsh-install.sh" && bash "/tmp/gmsh-install.sh"'  # noqa: E501
 
 
