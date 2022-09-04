@@ -17,11 +17,19 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:rolling
     steps:
+      - name: Install git
+        run: |
+          apt -qq update
+          apt install -y -qq git
+      - name: Mark workspace as safe
+        run: |
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
       - uses: actions/checkout@v3
+        with:
+          set-safe-directory: false
       - name: Install non-pip dependencies of the workflow call library
         run: |
           export DEBIAN_FRONTEND="noninteractive"
-          apt -qq update
           apt install -y -qq imagemagick inkscape python3-pip wget
           wget https://github.com/rclone/rclone/releases/download/v1.59.1/rclone-v1.59.1-linux-amd64.deb -O /tmp/rclone-v1.59.1-linux-amd64.deb
           dpkg -i /tmp/rclone-v1.59.1-linux-amd64.deb
