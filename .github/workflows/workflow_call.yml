@@ -95,7 +95,7 @@ jobs:
           python3 -m open_in_colab_workflow.publish_on "${{ inputs.publish_on }}" > .publisher
           while read -r VARIABLE_VALUE; do
             VARIABLE_VALUE_ARRAY=(${VARIABLE_VALUE//=/ })
-            echo "::set-output name=${VARIABLE_VALUE_ARRAY[0]}::${VARIABLE_VALUE_ARRAY[1]}"
+            echo "${VARIABLE_VALUE_ARRAY[0]}=${VARIABLE_VALUE_ARRAY[1]}" >> ${GITHUB_OUTPUT}
           done < .publisher
           rm .publisher
         shell: bash
@@ -163,7 +163,8 @@ jobs:
           SEPARATOR="%0A"
           UPLOAD_PATTERN="$(printf "${SEPARATOR//%/%%}%s" "${UPLOAD_PATTERN_ARRAY[@]}")"
           UPLOAD_PATTERN="${UPLOAD_PATTERN:${#SEPARATOR}}"
-          echo "::set-output name=upload_pattern::${UPLOAD_PATTERN}"
+          echo "upload_pattern_separator=${SEPARATOR}" >> ${GITHUB_OUTPUT}
+          echo "upload_pattern=${UPLOAD_PATTERN}" >> ${GITHUB_OUTPUT}
         shell: bash
       - name: Upload files to an artifact
         if: steps.determine_publisher.outputs.publisher == 'artifact' && (success() || failure() || cancelled())
@@ -184,9 +185,10 @@ jobs:
         run: |
           SHA_SHORT=$(git rev-parse --short HEAD)
           pushd "${{ inputs.work_directory }}"
-          while read -r PATTERN; do
+          PATTERNS=($(echo "${{ steps.upload_pattern.outputs.upload_pattern }}" | sed "s/${{ steps.upload_pattern.outputs.upload_pattern_separator }}/ /g"))
+          for PATTERN in "${PATTERNS[@]}"; do
             git add "${PATTERN}"
-          done <<< "${{ steps.upload_pattern.outputs.upload_pattern }}"
+          done
           if [[ "$(git diff --name-only --cached | wc -l)" -gt 0 ]]; then
             git config user.name "GitHub Actions"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
