@@ -49,32 +49,16 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-    container: ubuntu:18.04
+    container: femoncolab/base_images:latest
     steps:
-      - name: Install git
-        run: |
-          apt update -qq
-          apt install -y -qq software-properties-common
-          add-apt-repository ppa:git-core/ppa
-          apt update -qq
-          apt install -y -qq git
       - name: Mark workspace as safe
         run: |
           git config --global --add safe.directory "${GITHUB_WORKSPACE}"
       - uses: actions/checkout@v3
         with:
           set-safe-directory: false
-      - name: Setup Colab base image
-        run: |
-          export DEBIAN_FRONTEND="noninteractive"
-          apt install -y -qq wget
-          wget "https://raw.githubusercontent.com/fem-on-colab/fem-on-colab/main/colab/install.sh" -O "/tmp/colab-install.sh" && bash "/tmp/colab-install.sh"
-          INSTALL_PREFIX=/usr/local
-          echo "${INSTALL_PREFIX}/bin" >> ${GITHUB_PATH}
-          echo "LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:${LD_LIBRARY_PATH}" >> ${GITHUB_ENV}
-          echo "PYTHONPATH=${INSTALL_PREFIX}/lib/python3.7/dist-packages:${INSTALL_PREFIX}/lib/python3.7/site-packages:/usr/lib/python3.7/dist-packages:/usr/lib/python3.7/site-packages:${PYTHONPATH}" >> ${GITHUB_ENV}
-          mkdir -p /usr/lib/python3.7/site-packages/google/colab
-          wget "https://raw.githubusercontent.com/fem-on-colab/fem-on-colab/main/colab/patches/google/colab/__init__.py" -O "/usr/lib/python3.7/site-packages/google/colab/__init__.py"
+      - name: Fetch updated package list
+        run: apt update -qq
       - name: Install non-pip dependencies of the workflow call library
         run: |
           apt install -y -qq imagemagick inkscape
@@ -130,6 +114,9 @@ jobs:
         run: |
           ${{ inputs.test_script }}
         env:
+          CPPFLAGS: ""
+          LDFLAGS: ""
+          LD_LIBRARY_PATH: ""
           LD_PRELOAD: "/usr/lib/x86_64-linux-gnu/libstdc++.so.6"
         shell: bash
       - name: Replace images in markdown
