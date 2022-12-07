@@ -136,7 +136,7 @@ jobs:
           python3 -m open_in_cloud_workflow.replace_images_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}"
       - name: Replace links in markdown
         run: |
-          python3 -m open_in_cloud_workflow.replace_links_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "${{ inputs.publish_on }}"
+          python3 -m open_in_cloud_workflow.replace_links_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "colab" "${{ inputs.publish_on }}"
         env:
           RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
           RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"

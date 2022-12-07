@@ -101,7 +101,7 @@ def test_replace_links_in_markdown_main(
         shutil.copyfile(
             os.path.join(data_directory, test_notebook_pattern),
             os.path.join(tmp_data_directory, test_notebook_pattern))
-        replace_links_in_markdown_main(tmp_data_directory, nb_pattern, publisher)
+        replace_links_in_markdown_main(tmp_data_directory, nb_pattern, "colab", publisher)
 
         updated_nb = open_notebook(
             os.path.dirname(test_notebook_pattern), os.path.basename(test_notebook_pattern).replace(".ipynb", ""),

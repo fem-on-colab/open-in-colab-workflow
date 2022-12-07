@@ -16,7 +16,7 @@ from open_in_cloud_workflow.publish_on import PublishOnArtifact, PublishOnDrive,
 def test_glob_links_with_artifact_publisher(root_directory: str, publish_on_artifact: PublishOnArtifact) -> None:
     """Test creation of link replacements dictionary with an artifact publisher."""
     nb_pattern = os.path.join("tests", "data", "replace_links_in_markdown", "*.ipynb")
-    links_replacement = glob_links(root_directory, nb_pattern, publish_on_artifact)
+    links_replacement = glob_links(root_directory, nb_pattern, "colab", publish_on_artifact)
     assert links_replacement == {}
 
 
@@ -24,7 +24,7 @@ def test_glob_links_with_artifact_publisher(root_directory: str, publish_on_arti
 def test_glob_links_with_drive_publisher(root_directory: str, publish_on_drive: PublishOnDrive) -> None:
     """Test creation of link replacements dictionary with a Google Drive publisher."""
     nb_pattern = os.path.join("tests", "data", "replace_links_in_markdown", "*.ipynb")
-    links_replacement = glob_links(root_directory, nb_pattern, publish_on_drive)
+    links_replacement = glob_links(root_directory, nb_pattern, "colab", publish_on_drive)
     absolute_nb_pattern = os.path.join(root_directory, nb_pattern).replace("*", "{nb_name}")
     colab_pattern = "https://colab.research.google.com/drive/{drive_id}"
     assert links_replacement == {
@@ -42,7 +42,7 @@ def test_glob_links_with_drive_publisher(root_directory: str, publish_on_drive: 
 def test_glob_links_with_github_publisher(root_directory: str, publish_on_github: PublishOnGitHub) -> None:
     """Test creation of link replacements dictionary with a GitHub publisher."""
     nb_pattern = os.path.join("tests", "data", "replace_links_in_markdown", "*.ipynb")
-    links_replacement = glob_links(root_directory, nb_pattern, publish_on_github)
+    links_replacement = glob_links(root_directory, nb_pattern, "colab", publish_on_github)
     absolute_nb_pattern = os.path.join(root_directory, nb_pattern).replace("*", "{nb_name}")
     colab_pattern = os.path.join(
         "https://colab.research.google.com/github", publish_on_github.repository, "blob",

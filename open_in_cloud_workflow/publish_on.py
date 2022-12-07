@@ -11,13 +11,15 @@ import typing
 
 from open_in_cloud_workflow.get_colab_drive_url import get_colab_drive_url
 from open_in_cloud_workflow.get_colab_github_url import get_colab_github_url
+from open_in_cloud_workflow.get_kaggle_drive_url import get_kaggle_drive_url
+from open_in_cloud_workflow.get_kaggle_github_url import get_kaggle_github_url
 
 
 class PublishOnBaseClass(abc.ABC):
     """Base class for three possible publish_on options."""
 
     @abc.abstractmethod
-    def get_url(self, relative_path: str) -> typing.Optional[str]:  # pragma: no cover
+    def get_url(self, cloud_provider: str, relative_path: str) -> typing.Optional[str]:  # pragma: no cover
         """Get the URL used by this publisher and associated to a file at the provied relative path."""
         pass
 
@@ -33,7 +35,7 @@ class PublishOnArtifact(PublishOnBaseClass):
     def __init__(self, name: str) -> None:
         self.name = name
 
-    def get_url(self, relative_path: str) -> str:
+    def get_url(self, cloud_provider: str, relative_path: str) -> str:
         """Throw an error."""
         raise RuntimeError("This method should never be called, as no URL is required when publishing to artifacts")
 
@@ -49,9 +51,15 @@ class PublishOnDrive(PublishOnBaseClass):
     def __init__(self, drive_root_directory: str) -> None:
         self.drive_root_directory = drive_root_directory
 
-    def get_url(self, relative_path: str) -> typing.Optional[str]:
-        """Get the URL used by Google Colab when the file at the provided relative path is stored on Google Drive."""
-        return get_colab_drive_url(relative_path, self.drive_root_directory)
+    def get_url(self, cloud_provider: str, relative_path: str) -> typing.Optional[str]:
+        """Get the URL used on the cloud when the file at the provided relative path is stored on Google Drive."""
+        assert cloud_provider in ("colab", "kaggle")
+        if cloud_provider == "colab":
+            return get_colab_drive_url(relative_path, self.drive_root_directory)
+        elif cloud_provider == "kaggle":
+            return get_kaggle_drive_url(relative_path, self.drive_root_directory)
+        else:  # pragma: no cover
+            raise RuntimeError("Invalid cloud provider")
 
     def __str__(self) -> str:
         """Print private attributes as attribute_name=attribute_value, one attribute per line."""
@@ -66,9 +74,15 @@ class PublishOnGitHub(PublishOnBaseClass):
         self.repository = repository
         self.branch = branch
 
-    def get_url(self, relative_path: str) -> str:
-        """Get the URL used by Google Colab when the file at the provided relative path is stored on GitHub."""
-        return get_colab_github_url(relative_path, self.repository, self.branch)
+    def get_url(self, cloud_provider: str, relative_path: str) -> str:
+        """Get the URL used on the cloud when the file at the provided relative path is stored on GitHub."""
+        assert cloud_provider in ("colab", "kaggle")
+        if cloud_provider == "colab":
+            return get_colab_github_url(relative_path, self.repository, self.branch)
+        elif cloud_provider == "kaggle":
+            return get_kaggle_github_url(relative_path, self.repository, self.branch)
+        else:  # pragma: no cover
+            raise RuntimeError("Invalid cloud provider")
 
     def __str__(self) -> str:
         """Print private attributes as attribute_name=attribute_value, one attribute per line."""
