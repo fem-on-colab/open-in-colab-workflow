@@ -84,6 +84,7 @@ jobs:
           pushd _workflow_call_library
           python3 -m pip install .[docs,lint,tests]
           popd
+          rm -rf _workflow_call_library
         shell: bash
       - name: Determine publisher settings
         id: determine_publisher
