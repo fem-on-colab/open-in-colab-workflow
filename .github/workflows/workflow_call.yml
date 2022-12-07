@@ -37,11 +37,11 @@ on:
         description: "Restrict publishing to a specific branch on the calling repository"
         type: string
     secrets:
-      RCLONE_CONFIG_COLAB_CLIENT_ID:
+      RCLONE_CONFIG_DRIVE_CLIENT_ID:
         description: "Client ID for the Google Acccount. Only used when publish_on is colab"
-      RCLONE_CONFIG_COLAB_CLIENT_SECRET:
+      RCLONE_CONFIG_DRIVE_CLIENT_SECRET:
         description: "Secret for the Google Acccount. Only used when publish_on is colab"
-      RCLONE_CONFIG_COLAB_TOKEN:
+      RCLONE_CONFIG_DRIVE_TOKEN:
         description: "Token for the Google Acccount. Only used when publish_on is colab"
       REPO_ACCESS_TOKEN:
         description: "GitHub access token with public_repo (when publishing to a public repository) or repo scope (when publishing to a private repository). Only used when publish_on is github"
@@ -126,9 +126,9 @@ jobs:
         run: |
           python3 -m open_in_colab_workflow.replace_links_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "${{ inputs.publish_on }}"
         env:
-          RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
-          RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
-          RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
+          RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
+          RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
+          RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
       - name: Determine publisher upload pattern
         if: success() || (steps.determine_publisher.outputs.publisher == 'artifact' && (failure() || cancelled()))
         id: upload_pattern
@@ -164,9 +164,9 @@ jobs:
         run: |
           python3 -m open_in_colab_workflow.upload_files_to_google_drive "${{ inputs.work_directory }}" "${{ steps.upload_pattern.outputs.upload_pattern }}" "${{ inputs.publish_on }}"
         env:
-          RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
-          RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
-          RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
+          RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
+          RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
+          RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
       - name: Upload files to GitHub repository
         if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         run: |

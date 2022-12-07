@@ -16,7 +16,7 @@ def upload_files_to_google_drive(work_dir: str, pattern: str, drive_root_directo
     """Upload all files matching at least one pattern to Google Drive."""
     for pattern_ in pattern.strip("\n").split("\n"):
         subprocess.check_call(
-            f"rclone -q copy {work_dir} colab:{drive_root_directory} --include {pattern_}".split(" "),
+            f"rclone -q copy {work_dir} drive:{drive_root_directory} --include {pattern_}".split(" "),
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=get_rclone_env())
 
 

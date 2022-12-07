@@ -58,6 +58,6 @@ def publish_on_github() -> PublishOnGitHub:
 @pytest.fixture(params=["publish_on_artifact", "publish_on_drive", "publish_on_github"])
 def publisher(request: _pytest.fixtures.SubRequest) -> PublishOnBaseClass:
     """Parameterize over publishers."""
-    if request.param == "publish_on_drive" and "RCLONE_CONFIG_COLAB_TOKEN" not in os.environ:
+    if request.param == "publish_on_drive" and "RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ:
         pytest.skip("Missing rclone environment variables")
     return request.getfixturevalue(request.param)

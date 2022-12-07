@@ -16,7 +16,7 @@ def get_drive_url(relative_path: str, drive_root_directory: str) -> typing.Optio
     """Get the URL that a file will have on Google Drive."""
     try:
         return subprocess.run(
-            f"rclone -q link colab:{os.path.join(drive_root_directory, relative_path)}".split(" "),
+            f"rclone -q link drive:{os.path.join(drive_root_directory, relative_path)}".split(" "),
             capture_output=True, check=True, env=get_rclone_env()).stdout.decode("utf-8").strip("\n")
     except subprocess.CalledProcessError:  # pragma: no cover
         return None

@@ -12,9 +12,9 @@ import typing
 def get_rclone_env() -> typing.Dict[str, str]:
     """Get rclone environment variables."""
     return {
-        "RCLONE_CONFIG_COLAB_TYPE": "drive",
-        "RCLONE_CONFIG_COLAB_SCOPE": "drive",
-        "RCLONE_CONFIG_COLAB_CLIENT_ID": os.environ["RCLONE_CONFIG_COLAB_CLIENT_ID"],
-        "RCLONE_CONFIG_COLAB_CLIENT_SECRET": os.environ["RCLONE_CONFIG_COLAB_CLIENT_SECRET"],
-        "RCLONE_CONFIG_COLAB_TOKEN": os.environ["RCLONE_CONFIG_COLAB_TOKEN"]
+        "RCLONE_CONFIG_DRIVE_TYPE": "drive",
+        "RCLONE_CONFIG_DRIVE_SCOPE": "drive",
+        "RCLONE_CONFIG_DRIVE_CLIENT_ID": os.environ["RCLONE_CONFIG_DRIVE_CLIENT_ID"],
+        "RCLONE_CONFIG_DRIVE_CLIENT_SECRET": os.environ["RCLONE_CONFIG_DRIVE_CLIENT_SECRET"],
+        "RCLONE_CONFIG_DRIVE_TOKEN": os.environ["RCLONE_CONFIG_DRIVE_TOKEN"]
     }

@@ -21,7 +21,7 @@ def test_publish_on_artifact(publish_on_artifact: PublishOnArtifact) -> None:
 name=open-in-colab"""
 
 
-@pytest.mark.skipif("RCLONE_CONFIG_COLAB_TOKEN" not in os.environ, reason="Missing rclone environment variables")
+@pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")
 def test_publish_on_drive(publish_on_drive: PublishOnDrive) -> None:
     """Test content of Google Drive publisher."""
     assert publish_on_drive.drive_root_directory == "GitHub/open_in_colab_workflow"

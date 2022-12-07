@@ -26,7 +26,7 @@ def assert_files_equal(root_directory: str, pattern: str, url: str) -> None:
         assert f.read() == remote_data.content.decode("utf-8")
 
 
-@pytest.mark.skipif("RCLONE_CONFIG_COLAB_TOKEN" not in os.environ, reason="Missing rclone environment variables")
+@pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")
 def test_upload_files_to_google_drive_existing(root_directory: str) -> None:
     """Test that updating an existing file on Google Drive preserves its url."""
     pattern = os.path.join("tests", "data", "upload_file_to_google_drive", "existing_file.txt")
@@ -36,7 +36,7 @@ def test_upload_files_to_google_drive_existing(root_directory: str) -> None:
     assert_files_equal(root_directory, pattern, url)
 
 
-@pytest.mark.skipif("RCLONE_CONFIG_COLAB_TOKEN" not in os.environ, reason="Missing rclone environment variables")
+@pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")
 def test_upload_files_to_google_drive_new(root_directory: str) -> None:
     """Test uploading a new file on Google Drive."""
     original_pattern = os.path.join("tests", "data", "upload_file_to_google_drive", "new_file.txt")
@@ -50,5 +50,5 @@ def test_upload_files_to_google_drive_new(root_directory: str) -> None:
         assert_files_equal(root_directory, pattern, url)
         # Clean up file on Drive
         subprocess.check_call(
-            f'rclone -q deletefile colab:{os.path.join("GitHub/open_in_colab_workflow", pattern)}'.split(" "),
+            f'rclone -q deletefile drive:{os.path.join("GitHub/open_in_colab_workflow", pattern)}'.split(" "),
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=get_rclone_env())

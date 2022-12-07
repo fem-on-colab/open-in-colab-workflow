@@ -20,7 +20,7 @@ def test_glob_links_with_artifact_publisher(root_directory: str, publish_on_arti
     assert links_replacement == {}
 
 
-@pytest.mark.skipif("RCLONE_CONFIG_COLAB_TOKEN" not in os.environ, reason="Missing rclone environment variables")
+@pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")
 def test_glob_links_with_drive_publisher(root_directory: str, publish_on_drive: PublishOnDrive) -> None:
     """Test creation of link replacements dictionary with a Google Drive publisher."""
     nb_pattern = os.path.join("tests", "data", "replace_links_in_markdown", "*.ipynb")

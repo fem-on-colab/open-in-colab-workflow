@@ -46,9 +46,9 @@ jobs:
         run: |
           python3 -m coverage run --source=open_in_colab_workflow -m pytest tests
         env:
-          RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
-          RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
-          RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
+          RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
+          RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
+          RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
       - name: Check test coverage
         run: |
           python3 -m coverage report --fail-under=100 --show-missing --skip-covered
@@ -109,9 +109,9 @@ jobs:
       publish_on: drive@GitHub/open_in_colab_workflow
       publish_if_repository: fem-on-colab/open-in-colab-workflow
     secrets:
-      RCLONE_CONFIG_COLAB_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_ID }}"
-      RCLONE_CONFIG_COLAB_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_COLAB_CLIENT_SECRET }}"
-      RCLONE_CONFIG_COLAB_TOKEN: "${{ secrets.RCLONE_CONFIG_COLAB_TOKEN }}"
+      RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
+      RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
+      RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
 
   test_workflow_github:
     needs: [test_library]
