@@ -3,14 +3,14 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_cloud_workflow.get_fem_on_colab_installation_cell_code package."""
+"""Tests for the open_in_cloud_workflow.get_fem_on_cloud_installation_cell_code package."""
 
-from open_in_cloud_workflow.get_fem_on_colab_installation_cell_code import get_fem_on_colab_installation_cell_code
+from open_in_cloud_workflow.get_fem_on_cloud_installation_cell_code import get_fem_on_cloud_installation_cell_code
 
 
-def test_fem_on_colab_installation_cell_only_name() -> None:
+def test_fem_on_cloud_installation_cell_only_name() -> None:
     """Test generation of installation cell without any additonal version and url."""
-    installation_cell_code = get_fem_on_colab_installation_cell_code("gmsh", "", "", "gmsh")
+    installation_cell_code = get_fem_on_cloud_installation_cell_code("colab", "gmsh", "", "", "gmsh")
     assert installation_cell_code == """try:
     import gmsh
 except ImportError:
@@ -18,9 +18,9 @@ except ImportError:
     import gmsh"""  # noqa: E501
 
 
-def test_fem_on_colab_installation_cell_name_and_version() -> None:
+def test_fem_on_cloud_installation_cell_name_and_version() -> None:
     """Test generation of installation cell with version."""
-    installation_cell_code = get_fem_on_colab_installation_cell_code("firedrake", "==real", "", "firedrake")
+    installation_cell_code = get_fem_on_cloud_installation_cell_code("colab", "firedrake", "==real", "", "firedrake")
     assert installation_cell_code == """try:
     import firedrake
 except ImportError:
@@ -28,9 +28,9 @@ except ImportError:
     import firedrake"""  # noqa: E501
 
 
-def test_fem_on_colab_installation_cell_name_and_url() -> None:
+def test_fem_on_cloud_installation_cell_name_and_url() -> None:
     """Test generation of installation cell with url."""
-    installation_cell_code = get_fem_on_colab_installation_cell_code("gmsh", "", "357e49c", "gmsh")
+    installation_cell_code = get_fem_on_cloud_installation_cell_code("colab", "gmsh", "", "357e49c", "gmsh")
     assert installation_cell_code == """try:
     import gmsh
 except ImportError:
@@ -38,9 +38,10 @@ except ImportError:
     import gmsh"""  # noqa: E501
 
 
-def test_fem_on_colab_installation_cell_name_version_and_url() -> None:
+def test_fem_on_cloud_installation_cell_name_version_and_url() -> None:
     """Test generation of installation cell with version and url."""
-    installation_cell_code = get_fem_on_colab_installation_cell_code("firedrake", "==real", "357e49c", "firedrake")
+    installation_cell_code = get_fem_on_cloud_installation_cell_code(
+        "colab", "firedrake", "==real", "357e49c", "firedrake")
     assert installation_cell_code == """try:
     import firedrake
 except ImportError:
@@ -48,9 +49,9 @@ except ImportError:
     import firedrake"""  # noqa: E501
 
 
-def test_fem_on_colab_installation_cell_import_different_from_name() -> None:
+def test_fem_on_cloud_installation_cell_import_different_from_name() -> None:
     """Test generation of installation cell when package importable name is not the same as the package name."""
-    installation_cell_code = get_fem_on_colab_installation_cell_code("fenics", "", "", "dolfin")
+    installation_cell_code = get_fem_on_cloud_installation_cell_code("colab", "fenics", "", "", "dolfin")
     assert installation_cell_code == """try:
     import dolfin
 except ImportError:

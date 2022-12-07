@@ -120,7 +120,7 @@ jobs:
           ${{ inputs.extra_files_preparation }}
       - name: Add installation cells
         run: |
-          python3 -m open_in_cloud_workflow.add_installation_cells "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" '${{ inputs.fem_on_colab_packages }}' '${{ inputs.pip_packages }}'
+          python3 -m open_in_cloud_workflow.add_installation_cells "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "colab" '${{ inputs.fem_on_colab_packages }}' '${{ inputs.pip_packages }}'
       - name: Test notebooks in the work directory
         if: inputs.test_script != ''
         run: |

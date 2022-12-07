@@ -9,7 +9,8 @@ API reference
    open_in_cloud_workflow.get_colab_drive_url
    open_in_cloud_workflow.get_colab_github_url
    open_in_cloud_workflow.get_drive_url
-   open_in_cloud_workflow.get_fem_on_colab_installation_cell_code
+   open_in_cloud_workflow.get_fem_on_cloud_installation_cell_code
+   open_in_cloud_workflow.get_fem_on_cloud_installation_line
    open_in_cloud_workflow.get_kaggle_drive_url
    open_in_cloud_workflow.get_kaggle_github_url
    open_in_cloud_workflow.get_pip_installation_cell_code
