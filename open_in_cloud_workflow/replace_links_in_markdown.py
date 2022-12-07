@@ -12,10 +12,10 @@ import typing
 
 import nbformat
 
-from open_in_colab_workflow.glob_files import glob_files
-from open_in_colab_workflow.glob_links import glob_links
-from open_in_colab_workflow.publish_on import publish_on, PublishOnBaseClass, PublishOnDrive
-from open_in_colab_workflow.upload_files_to_google_drive import upload_files_to_google_drive
+from open_in_cloud_workflow.glob_files import glob_files
+from open_in_cloud_workflow.glob_links import glob_links
+from open_in_cloud_workflow.publish_on import publish_on, PublishOnBaseClass, PublishOnDrive
+from open_in_cloud_workflow.upload_files_to_google_drive import upload_files_to_google_drive
 
 
 def replace_links_in_markdown(

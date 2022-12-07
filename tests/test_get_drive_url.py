@@ -3,14 +3,14 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_colab_workflow.get_drive_url package."""
+"""Tests for the open_in_cloud_workflow.get_drive_url package."""
 
 import os
 import tempfile
 
 import pytest
 
-from open_in_colab_workflow.get_drive_url import get_drive_url
+from open_in_cloud_workflow.get_drive_url import get_drive_url
 
 
 @pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")

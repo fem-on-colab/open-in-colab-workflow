@@ -9,8 +9,8 @@ import abc
 import sys
 import typing
 
-from open_in_colab_workflow.get_colab_drive_url import get_colab_drive_url
-from open_in_colab_workflow.get_colab_github_url import get_colab_github_url
+from open_in_cloud_workflow.get_colab_drive_url import get_colab_drive_url
+from open_in_cloud_workflow.get_colab_github_url import get_colab_github_url
 
 
 class PublishOnBaseClass(abc.ABC):

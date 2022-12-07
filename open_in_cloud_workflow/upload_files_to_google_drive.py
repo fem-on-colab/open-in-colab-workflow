@@ -8,8 +8,8 @@
 import subprocess
 import sys
 
-from open_in_colab_workflow.get_rclone_env import get_rclone_env
-from open_in_colab_workflow.publish_on import publish_on, PublishOnDrive
+from open_in_cloud_workflow.get_rclone_env import get_rclone_env
+from open_in_cloud_workflow.publish_on import publish_on, PublishOnDrive
 
 
 def upload_files_to_google_drive(work_dir: str, pattern: str, drive_root_directory: str) -> None:

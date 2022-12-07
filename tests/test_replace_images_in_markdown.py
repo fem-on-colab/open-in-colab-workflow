@@ -3,7 +3,7 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_colab_workflow.replace_images_in_markdown package."""
+"""Tests for the open_in_cloud_workflow.replace_images_in_markdown package."""
 
 import os
 import shutil
@@ -13,7 +13,7 @@ import typing
 import nbformat
 import pytest
 
-from open_in_colab_workflow.replace_images_in_markdown import (
+from open_in_cloud_workflow.replace_images_in_markdown import (
     __main__ as replace_images_in_markdown_main, replace_images_in_markdown)
 
 

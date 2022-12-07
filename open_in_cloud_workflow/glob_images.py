@@ -11,7 +11,7 @@ import os
 import subprocess
 import typing
 
-from open_in_colab_workflow.glob_files import glob_files
+from open_in_cloud_workflow.glob_files import glob_files
 
 
 def glob_images(work_dir: str) -> typing.Dict[str, str]:

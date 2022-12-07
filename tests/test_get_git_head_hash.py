@@ -3,11 +3,11 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_colab_workflow.get_git_head_hash package."""
+"""Tests for the open_in_cloud_workflow.get_git_head_hash package."""
 
 import subprocess
 
-from open_in_colab_workflow.get_git_head_hash import get_git_head_hash
+from open_in_cloud_workflow.get_git_head_hash import get_git_head_hash
 
 
 def test_get_git_head_hash() -> None:

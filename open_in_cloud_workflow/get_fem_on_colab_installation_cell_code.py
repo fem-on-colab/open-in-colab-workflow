@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 """Prepare installation cell code for a FEM on Colab package."""
 
-from open_in_colab_workflow.get_fem_on_colab_installation_line import get_fem_on_colab_installation_line
+from open_in_cloud_workflow.get_fem_on_colab_installation_line import get_fem_on_colab_installation_line
 
 
 def get_fem_on_colab_installation_cell_code(

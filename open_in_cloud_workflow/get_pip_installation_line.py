@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 """Prepare installation line for a pip-installable package."""
 
-from open_in_colab_workflow.get_git_head_hash import get_git_head_hash
+from open_in_cloud_workflow.get_git_head_hash import get_git_head_hash
 
 
 def get_pip_installation_line(package_name: str, package_version: str, package_url: str) -> str:

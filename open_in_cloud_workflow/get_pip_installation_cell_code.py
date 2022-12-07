@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 """Prepare installation cell code for a pip-installable package."""
 
-from open_in_colab_workflow.get_pip_installation_line import get_pip_installation_line
+from open_in_cloud_workflow.get_pip_installation_line import get_pip_installation_line
 
 
 def get_pip_installation_cell_code(

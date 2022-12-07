@@ -3,9 +3,9 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_colab_workflow.get_fem_on_colab_installation_cell_code package."""
+"""Tests for the open_in_cloud_workflow.get_fem_on_colab_installation_cell_code package."""
 
-from open_in_colab_workflow.get_fem_on_colab_installation_cell_code import get_fem_on_colab_installation_cell_code
+from open_in_cloud_workflow.get_fem_on_colab_installation_cell_code import get_fem_on_colab_installation_cell_code
 
 
 def test_fem_on_colab_installation_cell_only_name() -> None:

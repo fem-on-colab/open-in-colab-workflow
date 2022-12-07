@@ -12,7 +12,7 @@ import _pytest.fixtures
 import nbformat
 import pytest
 
-from open_in_colab_workflow.publish_on import (
+from open_in_cloud_workflow.publish_on import (
     publish_on, PublishOnArtifact, PublishOnBaseClass, PublishOnDrive, PublishOnGitHub)
 
 

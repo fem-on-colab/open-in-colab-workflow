@@ -3,9 +3,9 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_colab_workflow.get_kaggle_github_url package."""
+"""Tests for the open_in_cloud_workflow.get_kaggle_github_url package."""
 
-from open_in_colab_workflow.get_kaggle_github_url import get_kaggle_github_url
+from open_in_cloud_workflow.get_kaggle_github_url import get_kaggle_github_url
 
 
 def test_get_kaggle_github_url() -> None:

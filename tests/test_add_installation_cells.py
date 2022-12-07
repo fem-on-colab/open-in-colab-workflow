@@ -3,7 +3,7 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_colab_workflow.add_installation_cells package."""
+"""Tests for the open_in_cloud_workflow.add_installation_cells package."""
 
 import os
 import shutil
@@ -13,7 +13,7 @@ import typing
 import nbformat
 import pytest
 
-from open_in_colab_workflow.add_installation_cells import (
+from open_in_cloud_workflow.add_installation_cells import (
     __main__ as add_installation_cells_main, add_installation_cells)
 
 

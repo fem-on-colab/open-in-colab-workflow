@@ -3,11 +3,11 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_colab_workflow.glob_files package."""
+"""Tests for the open_in_cloud_workflow.glob_files package."""
 
 import os
 
-from open_in_colab_workflow.glob_files import glob_files
+from open_in_cloud_workflow.glob_files import glob_files
 
 
 def test_glob_files_single_pattern(root_directory: str) -> None:

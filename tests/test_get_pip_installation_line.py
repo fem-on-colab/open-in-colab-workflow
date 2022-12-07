@@ -3,10 +3,10 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Tests for the open_in_colab_workflow.get_pip_installation_line package."""
+"""Tests for the open_in_cloud_workflow.get_pip_installation_line package."""
 
-from open_in_colab_workflow.get_git_head_hash import get_git_head_hash
-from open_in_colab_workflow.get_pip_installation_line import get_pip_installation_line
+from open_in_cloud_workflow.get_git_head_hash import get_git_head_hash
+from open_in_cloud_workflow.get_pip_installation_line import get_pip_installation_line
 
 
 def test_pip_installation_line_only_name() -> None:

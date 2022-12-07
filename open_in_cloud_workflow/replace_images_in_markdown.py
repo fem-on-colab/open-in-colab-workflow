@@ -12,8 +12,8 @@ import typing
 
 import nbformat
 
-from open_in_colab_workflow.glob_files import glob_files
-from open_in_colab_workflow.glob_images import glob_images
+from open_in_cloud_workflow.glob_files import glob_files
+from open_in_cloud_workflow.glob_images import glob_images
 
 
 def replace_images_in_markdown(

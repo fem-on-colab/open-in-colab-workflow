@@ -8,8 +8,8 @@
 import os
 import typing
 
-from open_in_colab_workflow.glob_files import glob_files
-from open_in_colab_workflow.publish_on import PublishOnArtifact, PublishOnBaseClass, PublishOnDrive, PublishOnGitHub
+from open_in_cloud_workflow.glob_files import glob_files
+from open_in_cloud_workflow.publish_on import PublishOnArtifact, PublishOnBaseClass, PublishOnDrive, PublishOnGitHub
 
 
 def glob_links(work_dir: str, pattern: str, publish_on: PublishOnBaseClass) -> typing.Dict[str, typing.Optional[str]]:

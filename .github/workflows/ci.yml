@@ -44,7 +44,7 @@ jobs:
           python3 -m nbqa mypy .
       - name: Run tests
         run: |
-          python3 -m coverage run --source=open_in_colab_workflow -m pytest tests
+          python3 -m coverage run --source=open_in_cloud_workflow -m pytest tests
         env:
           RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
           RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"

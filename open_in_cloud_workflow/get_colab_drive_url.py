@@ -7,7 +7,7 @@
 
 import typing
 
-from open_in_colab_workflow.get_drive_url import get_drive_url
+from open_in_cloud_workflow.get_drive_url import get_drive_url
 
 
 def get_colab_drive_url(relative_path: str, drive_root_directory: str) -> typing.Optional[str]:
