@@ -3,10 +3,10 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Open in Colab workflow documentation configuration."""
+"""Open in Cloud workflow documentation configuration."""
 
 # Project information
-project = "Open in Colab workflow"
+project = "Open in Cloud workflow"
 copyright = "2021-2022, the FEM on Colab authors"
 author = "Francesco Ballarin (and contributors)"
 

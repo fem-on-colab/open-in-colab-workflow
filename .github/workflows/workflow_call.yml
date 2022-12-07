@@ -38,11 +38,11 @@ on:
         type: string
     secrets:
       RCLONE_CONFIG_DRIVE_CLIENT_ID:
-        description: "Client ID for the Google Acccount. Only used when publish_on is colab"
+        description: "Client ID for the Google Acccount. Only used when publish_on is drive"
       RCLONE_CONFIG_DRIVE_CLIENT_SECRET:
-        description: "Secret for the Google Acccount. Only used when publish_on is colab"
+        description: "Secret for the Google Acccount. Only used when publish_on is drive"
       RCLONE_CONFIG_DRIVE_TOKEN:
-        description: "Token for the Google Acccount. Only used when publish_on is colab"
+        description: "Token for the Google Acccount. Only used when publish_on is drive"
       REPO_ACCESS_TOKEN:
         description: "GitHub access token with public_repo (when publishing to a public repository) or repo scope (when publishing to a private repository). Only used when publish_on is github"
 

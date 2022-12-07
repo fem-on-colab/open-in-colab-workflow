@@ -1,4 +1,4 @@
-Open in Colab workflow documentation
+Open in Cloud workflow documentation
 ====================================
 
 .. toctree::

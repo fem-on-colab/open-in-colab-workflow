@@ -3,4 +3,4 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Open in Colab workflow main module."""
+"""Open in Cloud workflow main module."""
