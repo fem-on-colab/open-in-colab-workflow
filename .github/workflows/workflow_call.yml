@@ -64,14 +64,26 @@ jobs:
           apt install -y -qq imagemagick inkscape
           wget https://github.com/rclone/rclone/releases/download/v1.59.1/rclone-v1.59.1-linux-amd64.deb -O /tmp/rclone-v1.59.1-linux-amd64.deb
           dpkg -i /tmp/rclone-v1.59.1-linux-amd64.deb
-      - name: Install the workflow call library
+      - name: Determine which branch to use while cloning the workflow call library
+        id: workflow_call_library_branch
         run: |
           if [[ "${{ github.repository }}" == "fem-on-colab/open-in-colab-workflow" ]]; then
             BRANCH=${GITHUB_REF##*/}
           else
             BRANCH="main"
           fi
-          python3 -m pip install "open_in_cloud_workflow[docs,lint,tests]@git+https://github.com/fem-on-colab/open-in-colab-workflow.git@${BRANCH}"
+          echo "branch=${BRANCH}" >> ${GITHUB_OUTPUT}
+      - name: Clone workflow call library
+        uses: actions/checkout@v3
+        with:
+          repository: fem-on-colab/open-in-colab-workflow.git
+          ref: ${{ steps.workflow_call_library_branch.outputs.branch }}
+          path: _workflow_call_library
+      - name: Install the workflow call library
+        run: |
+          pushd _workflow_call_library
+          python3 -m pip install .[docs,lint,tests]
+          popd
         shell: bash
       - name: Determine publisher settings
         id: determine_publisher
