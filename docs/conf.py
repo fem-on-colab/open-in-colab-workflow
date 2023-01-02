@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 by the FEM on Colab authors
+# Copyright (C) 2021-2023 by the FEM on Colab authors
 #
 # This file is part of FEM on Colab-related actions.
 #
@@ -7,7 +7,7 @@
 
 # Project information
 project = "Open in Cloud workflow"
-copyright = "2021-2022, the FEM on Colab authors"
+copyright = "2021-2023, the FEM on Colab authors"
 author = "Francesco Ballarin (and contributors)"
 
 # General configuration
