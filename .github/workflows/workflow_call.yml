@@ -122,6 +122,12 @@ jobs:
       - name: Add installation cells
         run: |
           python3 -m open_in_cloud_workflow.add_installation_cells "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "colab" '${{ inputs.fem_on_colab_packages }}' '${{ inputs.pip_packages }}'
+      - name: Manually install gcc before testing, since gcc installation cell is expected to fail the first time
+        run: |
+          wget "https://${PROJECT_NAME}.github.io/releases/gcc-install.sh" -O "/tmp/gcc-install.sh"
+          LIBSTDCXX_IGNORE_REPLACED="yes" bash "/tmp/gcc-install.sh"
+          rm "/tmp/gcc-install.sh"
+        shell: bash
       - name: Test notebooks in the work directory
         if: inputs.test_script != ''
         run: |
@@ -130,7 +136,7 @@ jobs:
           CPPFLAGS: ""
           LDFLAGS: ""
           LD_LIBRARY_PATH: ""
-          LD_PRELOAD: "/usr/lib/x86_64-linux-gnu/libstdc++.so.6"
+          LD_PRELOAD: ""
         shell: bash
       - name: Replace images in markdown
         run: |
