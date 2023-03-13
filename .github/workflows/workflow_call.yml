@@ -133,6 +133,7 @@ jobs:
       - name: Test notebooks in the work directory
         if: inputs.test_script != ''
         run: |
+          export PYTHONPATH="/usr/lib/${PYTHON_VERSION}/test-task/extra-site-packages:${PYTHONPATH}"
           ${{ inputs.test_script }}
         env:
           CPPFLAGS: ""
