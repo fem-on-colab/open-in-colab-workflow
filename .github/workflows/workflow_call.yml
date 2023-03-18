@@ -177,7 +177,7 @@ jobs:
         shell: bash
       - name: Upload files to an artifact
         if: steps.determine_publisher.outputs.publisher == 'artifact' && (success() || failure() || cancelled())
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.determine_publisher.outputs.name }}
           path: ${{ steps.upload_pattern.outputs.upload_pattern }}
