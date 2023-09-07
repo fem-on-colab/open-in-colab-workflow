@@ -53,12 +53,6 @@ jobs:
       - name: Check test coverage
         run: |
           python3 -m coverage report --fail-under=100 --show-missing --skip-covered
-      - name: Warn if scheduled workflow is about to be disabled
-        if: github.repository == 'fem-on-colab/open-in-colab-workflow' && github.ref == 'refs/heads/main' && github.event_name == 'schedule'
-        uses: fem-on-colab/warn-workflow-about-to-be-disabled-action@main
-        with:
-          workflow-filename: ci.yml
-          days-elapsed: 50
 
   test_workflow_artifact:
     needs: [test_library]
@@ -138,3 +132,13 @@ jobs:
         python3 -m pytest --nbval open_in_colab/tests
       publish_on: github@fem-on-colab/open-in-colab-workflow@open-in-colab
       publish_if_repository: fem-on-colab/open-in-colab-workflow
+
+  warn:
+    runs-on: ubuntu-latest
+    if: github.repository == 'fem-on-colab/open-in-colab-workflow' && github.ref == 'refs/heads/main' && github.event_name == 'schedule'
+    steps:
+      - name: Warn if scheduled workflow is about to be disabled
+        uses: fem-on-colab/warn-workflow-about-to-be-disabled-action@main
+        with:
+          workflow-filename: ci.yml
+          days-elapsed: 50
