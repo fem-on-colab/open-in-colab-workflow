@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Install git
         run: |
-          apt -qq update
+          apt update -y -q
           apt install -y -qq git
       - name: Mark workspace as safe
         run: |

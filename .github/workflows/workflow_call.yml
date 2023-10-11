@@ -58,7 +58,7 @@ jobs:
         with:
           set-safe-directory: false
       - name: Fetch updated package list
-        run: apt update -qq
+        run: apt update -y -q
       - name: Install non-pip dependencies of the workflow call library
         run: |
           apt install -y -qq imagemagick inkscape
