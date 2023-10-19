@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: MIT
 """Tests for the open_in_cloud_workflow.upload_files_to_google_drive package."""
 
+import datetime
 import os
 import shutil
 import subprocess
@@ -30,10 +31,15 @@ def assert_files_equal(root_directory: str, pattern: str, url: str) -> None:
 def test_upload_files_to_google_drive_existing(root_directory: str) -> None:
     """Test that updating an existing file on Google Drive preserves its url."""
     pattern = os.path.join("tests", "data", "upload_file_to_google_drive", "existing_file.txt")
-    upload_files_to_google_drive(root_directory, pattern, "GitHub/open_in_colab_workflow")
-    url = get_drive_url(pattern, "GitHub/open_in_colab_workflow")
-    assert url == "https://drive.google.com/open?id=1MUq5LVW4ScYDE1f1sHRi3XDupYe5jOra"
-    assert_files_equal(root_directory, pattern, url)
+    with tempfile.TemporaryDirectory(dir=root_directory) as tmp_root_directory:
+        os.makedirs(os.path.dirname(os.path.join(tmp_root_directory, pattern)))
+        shutil.copyfile(os.path.join(root_directory, pattern), os.path.join(tmp_root_directory, pattern))
+        with open(os.path.join(tmp_root_directory, pattern), "a") as f:
+            f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        upload_files_to_google_drive(tmp_root_directory, pattern, "GitHub/open_in_colab_workflow")
+        url = get_drive_url(pattern, "GitHub/open_in_colab_workflow")
+        assert url == "https://drive.google.com/open?id=1MUq5LVW4ScYDE1f1sHRi3XDupYe5jOra"
+        assert_files_equal(tmp_root_directory, pattern, url)
 
 
 @pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")
