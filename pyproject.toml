@@ -1,3 +1,108 @@
 [build-system]
-requires = ["setuptools>=58", "wheel"]
+requires = ["setuptools>=62", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "open_in_cloud_workflow"
+version = "0.0.dev1"
+authors = [
+    {name = "Francesco Ballarin (and contributors)", email = "francesco.ballarin@unicatt.it"},
+]
+maintainers = [
+    {name = "Francesco Ballarin", email = "francesco.ballarin@unicatt.it"},
+]
+description = "Open in Cloud workflow"
+license = {file = "LICENSE"}
+requires-python = ">=3.7"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+dependencies = [
+    "nbformat"
+]
+
+[project.urls]
+homepage = "https://fem-on-colab.github.io"
+repository = "https://github.com/fem-on-colab/open-in-colab-workflow"
+issues = "https://github.com/fem-on-colab/open-in-colab-workflow/issues"
+funding = "https://github.com/sponsors/francesco-ballarin"
+
+[project.optional-dependencies]
+docs = [
+    "sphinx"
+]
+lint = [
+    "flake8",
+    "flake8-annotations",
+    "flake8-docstrings",
+    "flake8-import-restrictions",
+    "flake8-isort",
+    "Flake8-pyproject",
+    "flake8-quotes",
+    "mypy"
+]
+tests = [
+    "coverage[toml]",
+    "nbqa",
+    "nbval",
+    "pytest",
+    "requests"
+]
+
+[tool.coverage.paths]
+source = ["femlium", "*/dist-packages/femlium", "*/site-packages/femlium"]
+
+[tool.flake8]
+max-line-length = 120
+show-source = true
+docstring-convention = "numpy"
+inline-quotes = "double"
+imr241_exclude = ["open_in_cloud_workflow", "open_in_cloud_workflow.*"]
+imr245_include = "*"
+imr245_exclude = ["open_in_cloud_workflow", "open_in_cloud_workflow.*"]
+ignore = ["ANN101", "W503"]
+exclude = [".eggs", "build", "dist"]
+per-file-ignores = [
+    "open_in_cloud_workflow/__init__.py: F401",
+    "tests/data/**/*.py: D100, I004"
+]
+
+[tool.isort]
+line_length = 120
+multi_line_output = 4
+order_by_type = false
+combine_as_imports = true
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_any_unimported = true
+disallow_untyped_defs = true
+exclude = "(^\\.eggs|^build|^dist|conftest\\.py$)"
+no_implicit_optional = true
+pretty = true
+show_error_codes = true
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "nbformat"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "requests"
+ignore_missing_imports = true
