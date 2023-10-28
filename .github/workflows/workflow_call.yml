@@ -122,24 +122,12 @@ jobs:
       - name: Add installation cells
         run: |
           python3 -m open_in_cloud_workflow.add_installation_cells "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "colab" '${{ inputs.fem_on_colab_packages }}' '${{ inputs.pip_packages }}'
-      - name: Manually install gcc before testing if libstdc++.so replacement is required
-        run: |
-          if [[ "${REQUIRE_LIBSTDCXX_REPLACEMENT}" == "yes" ]]; then
-            wget "https://${PROJECT_NAME}.github.io/releases/gcc-install.sh" -O "/tmp/gcc-install.sh"
-            LIBSTDCXX_IGNORE_REPLACED="yes" bash "/tmp/gcc-install.sh"
-            rm "/tmp/gcc-install.sh"
-          fi
-        shell: bash
       - name: Test notebooks in the work directory
         if: inputs.test_script != ''
         run: |
           export PYTHONPATH="/usr/lib/${PYTHON_VERSION}/test-task/extra-site-packages:${PYTHONPATH}"
+          export LD_LIBRARY_PATH=""
           ${{ inputs.test_script }}
-        env:
-          CPPFLAGS: ""
-          LDFLAGS: ""
-          LD_LIBRARY_PATH: ""
-          LD_PRELOAD: ""
         shell: bash
       - name: Replace images in markdown
         run: |
