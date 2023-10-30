@@ -23,23 +23,27 @@ def add_installation_cells(
 ) -> typing.Tuple[typing.List[nbformat.NotebookNode], typing.List[int]]:
     """Add installation cells on top of the notebook, and return updated notebook content and list of insertions."""
     (fem_on_cloud_packages_name, fem_on_cloud_packages_version, fem_on_cloud_packages_url,
-        fem_on_cloud_packages_import, fem_on_cloud_packages_dependent_imports) = (
+        fem_on_cloud_packages_import, fem_on_cloud_packages_dependent_imports,
+        fem_on_cloud_packages_install_command_line_options) = (
             packages_str_to_lists(fem_on_cloud_packages_str))
     (pip_packages_name, pip_packages_version, pip_packages_url,
-        pip_packages_import, pip_packages_dependent_imports) = (
+        pip_packages_import, pip_packages_dependent_imports, pip_packages_install_command_line_options) = (
             packages_str_to_lists(pip_packages_str))
 
     packages_name = fem_on_cloud_packages_name + pip_packages_name
     packages_install_code = [
         get_fem_on_cloud_installation_cell_code(
-            cloud_provider, package_name, package_version, package_url, package_import)
-        for (package_name, package_version, package_url, package_import) in zip(
+            cloud_provider, package_name, package_version, package_url, package_import,
+            package_install_command_line_options)
+        for (package_name, package_version, package_url, package_import, package_install_command_line_options) in zip(
             fem_on_cloud_packages_name, fem_on_cloud_packages_version, fem_on_cloud_packages_url,
-            fem_on_cloud_packages_import)
+            fem_on_cloud_packages_import, fem_on_cloud_packages_install_command_line_options)
     ] + [
-        get_pip_installation_cell_code(package_name, package_version, package_url, package_import)
-        for (package_name, package_version, package_url, package_import) in zip(
-            pip_packages_name, pip_packages_version, pip_packages_url, pip_packages_import)
+        get_pip_installation_cell_code(
+            package_name, package_version, package_url, package_import, package_install_command_line_options)
+        for (package_name, package_version, package_url, package_import, package_install_command_line_options) in zip(
+            pip_packages_name, pip_packages_version, pip_packages_url, pip_packages_import,
+            pip_packages_install_command_line_options)
     ]
     packages_import = fem_on_cloud_packages_import + pip_packages_import
     packages_dependent_imports = fem_on_cloud_packages_dependent_imports + pip_packages_dependent_imports

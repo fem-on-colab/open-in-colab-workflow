@@ -8,7 +8,9 @@
 from open_in_cloud_workflow.get_git_head_hash import get_git_head_hash
 
 
-def get_pip_installation_line(package_name: str, package_version: str, package_url: str) -> str:
+def get_pip_installation_line(
+    package_name: str, package_version: str, package_url: str, package_install_command_line_options: str
+) -> str:
     """Return installation line for a pip installable package."""
     extras_operators = ("[", "]")
     versions_operators = ("==", ">=", ">", "<=", "<")
@@ -21,11 +23,16 @@ def get_pip_installation_line(package_name: str, package_version: str, package_u
     else:
         assert package_version == ""
         install_arg = ""
+    if package_install_command_line_options != "":
+        install_arg += package_install_command_line_options + " "
     if package_url == "":
-        if install_arg == "":
+        if install_arg == "" and package_version == "":
+            package_url = f"{package_name}"
+        elif install_arg != "" and package_version == "":
+            package_url = f"{install_arg}{package_name}"
+        elif install_arg == "" and package_version != "":
             package_url = f"{package_name}{package_version}"
         else:
-            assert install_arg == "--upgrade "
             package_url = f'{install_arg}"{package_name}{package_version}"'
     else:
         assert "https" in package_url

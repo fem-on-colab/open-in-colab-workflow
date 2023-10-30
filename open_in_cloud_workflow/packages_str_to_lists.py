@@ -9,20 +9,30 @@ import typing
 
 
 def packages_str_to_lists(packages_str: str) -> typing.Tuple[
-        typing.List[str], typing.List[str], typing.List[str], typing.List[str], typing.List[str]]:
+        typing.List[str], typing.List[str], typing.List[str], typing.List[str], typing.List[str], typing.List[str]]:
     """
-    Convert a newline separated string formatted with @, $ and % special characters.
+    Convert a newline separated string formatted with @, $, % and £ special characters.
 
-    Full format is package_name_and_version@package_url$package_import%package_dependent_imports
+    Full format is:
+        package_name_and_version@package_url$package_import%package_dependent_imports£install_command_line_options.
     """
     packages_name = list()
     packages_version = list()
     packages_url = list()
     packages_import = list()
     packages_dependent_imports = list()
+    packages_install_command_line_options = list()
     if packages_str != "":
         for package_str in packages_str.strip("\n").split("\n"):
-            split_at_percent = package_str.split("%")
+            split_at_pound = package_str.split("£")
+            assert len(split_at_pound) in (1, 2)
+            if len(split_at_pound) == 1:
+                package_name_version_url_import_depimports = split_at_pound[0]
+                package_install_command_line_options = ""
+            elif len(split_at_pound) == 2:
+                package_name_version_url_import_depimports = split_at_pound[0]
+                package_install_command_line_options = split_at_pound[1]
+            split_at_percent = package_name_version_url_import_depimports.split("%")
             assert len(split_at_percent) in (1, 2)
             if len(split_at_percent) == 1:
                 package_name_version_url_import = split_at_percent[0]
@@ -34,7 +44,7 @@ def packages_str_to_lists(packages_str: str) -> typing.Tuple[
             assert len(split_at_dollar) in (1, 2)
             if len(split_at_dollar) == 1:
                 package_name_version_url = split_at_dollar[0]
-                package_import = ""
+                package_import = None
             elif len(split_at_dollar) == 2:
                 package_name_version_url = split_at_dollar[0]
                 package_import = split_at_dollar[1]
@@ -59,9 +69,13 @@ def packages_str_to_lists(packages_str: str) -> typing.Tuple[
             packages_name.append(package_name)
             packages_version.append(package_version)
             packages_url.append(package_url)
-            if package_import == "":
+            if package_import is None:
                 packages_import.append(package_name)
             else:
                 packages_import.append(package_import)
             packages_dependent_imports.append(package_dependent_imports)
-    return packages_name, packages_version, packages_url, packages_import, packages_dependent_imports
+            packages_install_command_line_options.append(package_install_command_line_options)
+    return (
+        packages_name, packages_version, packages_url, packages_import, packages_dependent_imports,
+        packages_install_command_line_options
+    )
