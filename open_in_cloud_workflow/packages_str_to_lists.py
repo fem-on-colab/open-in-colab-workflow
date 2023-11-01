@@ -9,12 +9,15 @@ import typing
 
 
 def packages_str_to_lists(packages_str: str) -> typing.Tuple[
-        typing.List[str], typing.List[str], typing.List[str], typing.List[str], typing.List[str], typing.List[str]]:
+        typing.List[str], typing.List[str], typing.List[str], typing.List[str], typing.List[str],
+        typing.List[str], typing.List[str]]:
     """
-    Convert a newline separated string formatted with @, $, % and £ special characters.
+    Convert a newline separated string formatted with @, $, %, £ and € special characters.
 
-    Full format is:
-        package_name_and_version@package_url$package_import%package_dependent_imports£install_command_line_options.
+    Full format is (without line breaks):
+        package_name_and_version
+        @package_url$package_import%package_dependent_imports
+        £install_command_line_options€extra_commands_before_install.
     """
     packages_name = list()
     packages_version = list()
@@ -22,9 +25,18 @@ def packages_str_to_lists(packages_str: str) -> typing.Tuple[
     packages_import = list()
     packages_dependent_imports = list()
     packages_install_command_line_options = list()
+    packages_extra_commands_before_install = list()
     if packages_str != "":
         for package_str in packages_str.strip("\n").split("\n"):
-            split_at_pound = package_str.split("£")
+            split_at_euro = package_str.split("€")
+            assert len(split_at_euro) in (1, 2)
+            if len(split_at_euro) == 1:
+                package_name_version_url_import_depimports_commandlineoptions = split_at_euro[0]
+                package_extra_commands_before_install = ""
+            elif len(split_at_euro) == 2:
+                package_name_version_url_import_depimports_commandlineoptions = split_at_euro[0]
+                package_extra_commands_before_install = split_at_euro[1]
+            split_at_pound = package_name_version_url_import_depimports_commandlineoptions.split("£")
             assert len(split_at_pound) in (1, 2)
             if len(split_at_pound) == 1:
                 package_name_version_url_import_depimports = split_at_pound[0]
@@ -75,7 +87,8 @@ def packages_str_to_lists(packages_str: str) -> typing.Tuple[
                 packages_import.append(package_import)
             packages_dependent_imports.append(package_dependent_imports)
             packages_install_command_line_options.append(package_install_command_line_options)
+            packages_extra_commands_before_install.append(package_extra_commands_before_install)
     return (
         packages_name, packages_version, packages_url, packages_import, packages_dependent_imports,
-        packages_install_command_line_options
+        packages_install_command_line_options, packages_extra_commands_before_install
     )

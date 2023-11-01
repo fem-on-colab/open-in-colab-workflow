@@ -10,7 +10,7 @@ from open_in_cloud_workflow.get_pip_installation_cell_code import get_pip_instal
 
 def test_pip_installation_cell_only_name() -> None:
     """Test generation of installation cell without any additonal version and url."""
-    installation_cell_code = get_pip_installation_cell_code("numpy", "", "", "numpy", "")
+    installation_cell_code = get_pip_installation_cell_code("numpy", "", "", "numpy", "", "")
     assert installation_cell_code == """try:
     import numpy
 except ImportError:
@@ -20,13 +20,13 @@ except ImportError:
 
 def test_pip_installation_cell_name_and_version() -> None:
     """Test generation of installation cell with a version and without an url."""
-    installation_cell_code = get_pip_installation_cell_code("numpy", ">=1.21.0", "", "numpy", "")
+    installation_cell_code = get_pip_installation_cell_code("numpy", ">=1.21.0", "", "numpy", "", "")
     assert installation_cell_code == '!pip3 install --upgrade "numpy>=1.21.0"'
 
 
 def test_pip_installation_cell_name_and_extras() -> None:
     """Test generation of installation cell with extras and without an url."""
-    installation_cell_code = get_pip_installation_cell_code("jax", "[cpu]", "", "jax", "")
+    installation_cell_code = get_pip_installation_cell_code("jax", "[cpu]", "", "jax", "", "")
     assert installation_cell_code == """try:
     import jax
 except ImportError:
@@ -36,7 +36,7 @@ except ImportError:
 
 def test_pip_installation_cell_import_different_from_name() -> None:
     """Test generation of installation cell when package importable name is not the same as the package name."""
-    installation_cell_code = get_pip_installation_cell_code("python-dateutil", "", "", "dateutil", "")
+    installation_cell_code = get_pip_installation_cell_code("python-dateutil", "", "", "dateutil", "", "")
     assert installation_cell_code == """try:
     import dateutil
 except ImportError:
@@ -46,7 +46,7 @@ except ImportError:
 
 def test_pip_installation_cell_multiple_packages() -> None:
     """Test generation of installation cell when a package requires the custom widget manager to be enabled."""
-    installation_cell_code = get_pip_installation_cell_code("itkwidgets pyvista", "", "", "pyvista", "")
+    installation_cell_code = get_pip_installation_cell_code("itkwidgets pyvista", "", "", "pyvista", "", "")
     assert installation_cell_code == """try:
     import pyvista
 except ImportError:
@@ -56,7 +56,7 @@ except ImportError:
 
 def test_pip_installation_cell_name_and_command_line_options() -> None:
     """Test generation of installation cell with command line options."""
-    installation_cell_code = get_pip_installation_cell_code("numpy", "", "", "numpy", '--no-binary="numpy"')
+    installation_cell_code = get_pip_installation_cell_code("numpy", "", "", "numpy", '--no-binary="numpy"', "")
     assert installation_cell_code == """try:
     import numpy
 except ImportError:
@@ -66,11 +66,27 @@ except ImportError:
 
 def test_pip_installation_cell_name_and_version_and_command_line_options() -> None:
     """Test generation of installation cell with a version and command line options."""
-    installation_cell_code = get_pip_installation_cell_code("numpy", ">=1.21.0", "", "numpy", '--no-binary="numpy"')
+    installation_cell_code = get_pip_installation_cell_code("numpy", ">=1.21.0", "", "numpy", '--no-binary="numpy"', "")
     assert installation_cell_code == '!pip3 install --upgrade --no-binary="numpy" "numpy>=1.21.0"'
 
 
 def test_pip_installation_cell_name_and_and_empty_package_import_and_command_line_options() -> None:
     """Test generation of installation cell with command line options."""
-    installation_cell_code = get_pip_installation_cell_code("numpy", "", "", "", '--no-binary="numpy"')
+    installation_cell_code = get_pip_installation_cell_code("numpy", "", "", "", '--no-binary="numpy"', "")
     assert installation_cell_code == '!pip3 install --no-binary="numpy" numpy'
+
+
+def test_pip_installation_cell_name_and_extra_commands_before_install() -> None:
+    """Test generation of installation cell with extra commands before install."""
+    installation_cell_code = get_pip_installation_cell_code("numpy", "", "", "numpy", "", "cd /tmp")
+    assert installation_cell_code == """try:
+    import numpy
+except ImportError:
+    !cd /tmp && pip3 install numpy
+    import numpy"""
+
+
+def test_pip_installation_cell_name_and_version_and_extra_commands_before_install() -> None:
+    """Test generation of installation cell with a version and extra commands before install."""
+    installation_cell_code = get_pip_installation_cell_code("numpy", ">=1.21.0", "", "numpy", "", "cd /tmp")
+    assert installation_cell_code == '!cd /tmp && pip3 install --upgrade "numpy>=1.21.0"'
