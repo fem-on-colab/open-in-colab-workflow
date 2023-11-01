@@ -6,6 +6,7 @@
 """Prepare installation line for a pip-installable package."""
 
 from open_in_cloud_workflow.get_git_head_hash import get_git_head_hash
+from open_in_cloud_workflow.hardcode_environment_variable import hardcode_environment_variable
 
 
 def get_pip_installation_line(
@@ -24,6 +25,9 @@ def get_pip_installation_line(
         assert package_version == ""
         install_arg = ""
     if package_install_command_line_options != "":
+        if "INSTALL_PREFIX" in package_install_command_line_options:
+            package_install_command_line_options = hardcode_environment_variable(
+                "INSTALL_PREFIX", package_install_command_line_options)
         install_arg += package_install_command_line_options + " "
     if package_url == "":
         if install_arg == "" and package_version == "":

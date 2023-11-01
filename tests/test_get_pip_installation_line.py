@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: MIT
 """Tests for the open_in_cloud_workflow.get_pip_installation_line package."""
 
+import os
+
 from open_in_cloud_workflow.get_git_head_hash import get_git_head_hash
 from open_in_cloud_workflow.get_pip_installation_line import get_pip_installation_line
 
@@ -68,3 +70,11 @@ def test_pip_installation_line_name_and_version_and_command_line_options() -> No
     """Test generation of installation line with a version and command line options."""
     installation_line = get_pip_installation_line("numpy", ">=1.21.0", "", '--no-binary="numpy"')
     assert installation_line == 'pip3 install --upgrade --no-binary="numpy" "numpy>=1.21.0"'
+
+
+def test_pip_installation_line_name_and_command_line_options_with_environment_variable() -> None:
+    """Test generation of installation line with command line options."""
+    os.environ["INSTALL_PREFIX"] = "/my/install/prefix"
+    installation_line = get_pip_installation_line(
+        "basix", "", "", "--config-settings=cmake.define.CMAKE_PREFIX_PATH=${INSTALL_PREFIX}")
+    assert installation_line == "pip3 install --config-settings=cmake.define.CMAKE_PREFIX_PATH=/my/install/prefix basix"
