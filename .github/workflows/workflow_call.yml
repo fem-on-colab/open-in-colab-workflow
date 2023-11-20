@@ -54,7 +54,7 @@ jobs:
       - name: Mark workspace as safe
         run: |
           git config --global --add safe.directory "${GITHUB_WORKSPACE}"
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           set-safe-directory: false
       - name: Fetch updated package list
@@ -74,7 +74,7 @@ jobs:
           fi
           echo "branch=${BRANCH}" >> ${GITHUB_OUTPUT}
       - name: Clone workflow call library
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: fem-on-colab/open-in-colab-workflow.git
           ref: ${{ steps.workflow_call_library_branch.outputs.branch }}
@@ -102,7 +102,7 @@ jobs:
           git config --global --add safe.directory "${{ inputs.work_directory }}"
       - name: Clone GitHub repository of the publisher
         if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: "${{ steps.determine_publisher.outputs.repository }}"
           token: "${{ secrets.REPO_ACCESS_TOKEN || github.token }}"
