@@ -44,7 +44,7 @@ on:
       RCLONE_CONFIG_DRIVE_TOKEN:
         description: "Token for the Google Acccount. Only used when publish_on is drive"
       REPO_ACCESS_TOKEN:
-        description: "GitHub access token with public_repo (when publishing to a public repository) or repo scope (when publishing to a private repository). Only used when publish_on is github"
+        description: "Token that enables writing to the destination repository. Only used when publish_on is github"
 
 jobs:
   run:
