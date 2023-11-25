@@ -44,7 +44,7 @@ def replace_links_in_markdown(
     return updated_nb_cells
 
 
-def __main__(
+def __main__(  # noqa: N807
     work_dir: str, nb_pattern: str, cloud_provider: str, publisher: typing.Union[str, PublishOnBaseClass]
 ) -> None:
     """Replace links in every notebook in the work directory matching the prescribed pattern."""

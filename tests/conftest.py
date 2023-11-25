@@ -25,34 +25,34 @@ def root_directory() -> str:
 @pytest.fixture
 def open_notebook(root_directory: str) -> typing.Callable[[str, str, typing.Optional[str]], nbformat.NotebookNode]:
     """Return a fixture to open a local notebook."""
-    def _(local_directory: str, filename: str, data_directory: str = None) -> nbformat.NotebookNode:
+    def _(  local_directory: str, filename: str, data_directory: typing.Optional[str] = None) -> nbformat.NotebookNode:
         """Open notebook with nbformat."""
         if data_directory is None:
             data_directory = os.path.join(root_directory, "tests", "data")
         filename = os.path.join(data_directory, local_directory, filename + ".ipynb")
         with open(filename, "r") as f:
-            nb = nbformat.read(f, as_version=4)
+            nb = nbformat.read(f, as_version=4)  # type: ignore[no-untyped-call]
         nb._filename = filename
-        return nb
+        return nb  # type: ignore[no-any-return]
     return _
 
 
 @pytest.fixture
 def publish_on_artifact() -> PublishOnArtifact:
     """Return an artifact publisher."""
-    return publish_on("artifact@open-in-colab")
+    return publish_on("artifact@open-in-colab")  # type: ignore[return-value]
 
 
 @pytest.fixture
 def publish_on_drive() -> PublishOnDrive:
     """Return a Google Drive publisher."""
-    return publish_on("drive@GitHub/open_in_colab_workflow")
+    return publish_on("drive@GitHub/open_in_colab_workflow")  # type: ignore[return-value]
 
 
 @pytest.fixture
 def publish_on_github() -> PublishOnGitHub:
     """Return a GitHub publisher."""
-    return publish_on("github@fem-on-colab/open-in-colab-workflow@open-in-colab")
+    return publish_on("github@fem-on-colab/open-in-colab-workflow@open-in-colab")  # type: ignore[return-value]
 
 
 @pytest.fixture(params=["publish_on_artifact", "publish_on_drive", "publish_on_github"])
@@ -60,4 +60,4 @@ def publisher(request: _pytest.fixtures.SubRequest) -> PublishOnBaseClass:
     """Parameterize over publishers."""
     if request.param == "publish_on_drive" and "RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ:
         pytest.skip("Missing rclone environment variables")
-    return request.getfixturevalue(request.param)
+    return request.getfixturevalue(request.param)  # type: ignore[no-any-return]

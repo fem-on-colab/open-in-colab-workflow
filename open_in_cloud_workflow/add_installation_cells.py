@@ -98,7 +98,7 @@ def _package_is_imported(package_import: str, cell: nbformat.NotebookNode) -> bo
     return f"import {package_import}" in cell.source or f"from {package_import}" in cell.source
 
 
-def __main__(
+def __main__(  # noqa: N807
     work_dir: str, nb_pattern: str, cloud_provider: str, fem_on_cloud_packages: str, pip_packages: str
 ) -> None:
     """Add installation cells on top of every notebook in the work directory matching the prescribed pattern."""

@@ -32,7 +32,7 @@ def replace_images_in_markdown(
     return updated_nb_cells
 
 
-def __main__(work_dir: str, nb_pattern: str) -> None:
+def __main__(work_dir: str, nb_pattern: str) -> None:  # noqa: N807
     """Replace images in every notebook in the work directory matching the prescribed pattern."""
     images_as_base64 = glob_images(work_dir)
 
