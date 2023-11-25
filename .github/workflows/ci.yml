@@ -37,11 +37,17 @@ jobs:
       - name: Install the workflow call library
         run: |
           python3 -m pip install .[docs,lint,tests]
-      - name: Run flake8 and mypy checks
+      - name: Run flake8
         run: |
           python3 -m flake8 .
-          python3 -m mypy .
           python3 -m nbqa flake8 .
+      - name: Run isort
+        run: |
+          python3 -m isort --check --diff .
+          python3 -m nbqa isort --check --diff .
+      - name: Run mypy
+        run: |
+          python3 -m mypy .
           python3 -m nbqa mypy .
       - name: Run documentation generation
         run: |
