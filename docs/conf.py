@@ -8,7 +8,7 @@
 # Project information
 project = "Open in Cloud workflow"
 copyright = "2021-2023, the FEM on Colab authors"
-author = "Francesco Ballarin (and contributors)"
+author = "Francesco Ballarin"
 
 # General configuration
 extensions = [
