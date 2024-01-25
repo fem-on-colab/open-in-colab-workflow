@@ -7,10 +7,9 @@
 
 import glob
 import os
-import typing
 
 
-def glob_files(work_dir: str, pattern: str) -> typing.Set[str]:
+def glob_files(work_dir: str, pattern: str) -> set[str]:
     """Get absolute path of all files in the work directory which match at least one pattern."""
     assert work_dir.startswith(os.sep), "Please provide the absolute path of the work directory."
     patterns = pattern.strip("\n").split("\n")

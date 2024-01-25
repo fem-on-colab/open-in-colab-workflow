@@ -8,7 +8,6 @@
 import copy
 import os
 import sys
-import typing
 
 import nbformat
 
@@ -19,9 +18,9 @@ from open_in_cloud_workflow.upload_files_to_google_drive import upload_files_to_
 
 
 def replace_links_in_markdown(
-    nb_cells: typing.List[nbformat.NotebookNode], nb_dir: str,
-    links_replacement: typing.Dict[str, typing.Optional[str]]
-) -> typing.List[nbformat.NotebookNode]:
+    nb_cells: list[nbformat.NotebookNode], nb_dir: str,
+    links_replacement: dict[str, str | None]
+) -> list[nbformat.NotebookNode]:
     """Replace links to local file in markdown with links to the corresponding cloud notebooks."""
     add_quotes_or_parentheses = (
         lambda text: '"' + text + '"',
@@ -45,7 +44,7 @@ def replace_links_in_markdown(
 
 
 def __main__(  # noqa: N807
-    work_dir: str, nb_pattern: str, cloud_provider: str, publisher: typing.Union[str, PublishOnBaseClass]
+    work_dir: str, nb_pattern: str, cloud_provider: str, publisher: str | PublishOnBaseClass
 ) -> None:
     """Replace links in every notebook in the work directory matching the prescribed pattern."""
     if not isinstance(publisher, PublishOnBaseClass):  # pragma: no cover
@@ -71,7 +70,7 @@ def __main__(  # noqa: N807
         print(os.path.relpath(local_link, work_dir) + " -> " + cloud_link)
 
     for nb_filename in glob_files(work_dir, nb_pattern):
-        with open(nb_filename, "r") as f:
+        with open(nb_filename) as f:
             nb = nbformat.read(f, as_version=4)  # type: ignore[no-untyped-call]
         nb.cells = replace_links_in_markdown(nb.cells, os.path.dirname(nb_filename), links_replacement)
         with open(nb_filename, "w") as f:

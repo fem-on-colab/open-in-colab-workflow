@@ -6,18 +6,16 @@
 """Look for images in the work directory, and compute their base64 representation."""
 
 import base64
-import io
 import os
 import subprocess
-import typing
 
 from open_in_cloud_workflow.glob_files import glob_files
 
 
-def glob_images(work_dir: str) -> typing.Dict[str, str]:
+def glob_images(work_dir: str) -> dict[str, str]:
     """Look for images in the work directory, and compute their base64 representation."""
     images_as_base64 = dict()
-    image_convert: typing.List[str]
+    image_convert: list[str]
     for (image_ext, image_convert) in (  # type: ignore[assignment]
         ("png", []),
         ("jpg", ["convert {image_file} {image_file_png}"]),
@@ -47,6 +45,6 @@ def glob_images(work_dir: str) -> typing.Dict[str, str]:
 def _to_base64(image_file: str) -> str:
     """Convert the PNG image to its base64 representation."""
     assert image_file.endswith(".png")
-    with io.open(image_file, "rb") as f:
+    with open(image_file, "rb") as f:
         image_content = base64.b64encode(f.read()).decode("utf-8")
     return "data:image/png;base64," + image_content

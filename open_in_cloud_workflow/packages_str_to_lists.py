@@ -5,12 +5,11 @@
 # SPDX-License-Identifier: MIT
 """Convert a string representing a list of packages."""
 
-import typing
 
 
-def packages_str_to_lists(packages_str: str) -> typing.Tuple[
-        typing.List[str], typing.List[str], typing.List[str], typing.List[str], typing.List[str],
-        typing.List[str], typing.List[str]]:
+def packages_str_to_lists(packages_str: str) -> tuple[
+        list[str], list[str], list[str], list[str], list[str],
+        list[str], list[str]]:
     """
     Convert a newline separated string formatted with @, $, %, £ and € special characters.
 

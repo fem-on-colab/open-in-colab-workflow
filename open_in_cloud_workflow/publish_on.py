@@ -7,7 +7,6 @@
 
 import abc
 import sys
-import typing
 
 from open_in_cloud_workflow.get_colab_drive_url import get_colab_drive_url
 from open_in_cloud_workflow.get_colab_github_url import get_colab_github_url
@@ -19,7 +18,7 @@ class PublishOnBaseClass(abc.ABC):
     """Base class for three possible publish_on options."""
 
     @abc.abstractmethod
-    def get_url(self, cloud_provider: str, relative_path: str) -> typing.Optional[str]:  # pragma: no cover
+    def get_url(self, cloud_provider: str, relative_path: str) -> str | None:  # pragma: no cover
         """Get the URL used by this publisher and associated to a file at the provied relative path."""
         pass
 
@@ -51,7 +50,7 @@ class PublishOnDrive(PublishOnBaseClass):
     def __init__(self, drive_root_directory: str) -> None:
         self.drive_root_directory = drive_root_directory
 
-    def get_url(self, cloud_provider: str, relative_path: str) -> typing.Optional[str]:
+    def get_url(self, cloud_provider: str, relative_path: str) -> str | None:
         """Get the URL used on the cloud when the file at the provided relative path is stored on Google Drive."""
         assert cloud_provider in ("colab", "kaggle")
         if cloud_provider == "colab":

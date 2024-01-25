@@ -23,14 +23,14 @@ def root_directory() -> str:
 
 
 @pytest.fixture
-def open_notebook(root_directory: str) -> typing.Callable[[str, str, typing.Optional[str]], nbformat.NotebookNode]:
+def open_notebook(root_directory: str) -> typing.Callable[[str, str, str | None], nbformat.NotebookNode]:
     """Return a fixture to open a local notebook."""
-    def _(  local_directory: str, filename: str, data_directory: typing.Optional[str] = None) -> nbformat.NotebookNode:
+    def _(  local_directory: str, filename: str, data_directory: str | None = None) -> nbformat.NotebookNode:
         """Open notebook with nbformat."""
         if data_directory is None:
             data_directory = os.path.join(root_directory, "tests", "data")
         filename = os.path.join(data_directory, local_directory, filename + ".ipynb")
-        with open(filename, "r") as f:
+        with open(filename) as f:
             nb = nbformat.read(f, as_version=4)  # type: ignore[no-untyped-call]
         nb._filename = filename
         return nb  # type: ignore[no-any-return]

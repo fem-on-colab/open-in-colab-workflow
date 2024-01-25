@@ -18,7 +18,7 @@ from open_in_cloud_workflow.replace_images_in_markdown import (
 
 
 @pytest.fixture
-def mock_images_as_base64(root_directory: str) -> typing.Dict[str, str]:
+def mock_images_as_base64(root_directory: str) -> dict[str, str]:
     """Return simplified version of the base64 encoding."""
     images_as_base64 = dict()
     for image_name in ("black.png", "blue.svg", "red.jpg"):
@@ -29,7 +29,7 @@ def mock_images_as_base64(root_directory: str) -> typing.Dict[str, str]:
 
 def test_replace_images_in_markdown_via_markdown_tag(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
-    mock_images_as_base64: typing.Dict[str, str]
+    mock_images_as_base64: dict[str, str]
 ) -> None:
     """Test replacement of images in markdown notebook containing only an image defined via markdown tag."""
     nb = open_notebook("replace_images_in_markdown", "markdown_image")
@@ -43,7 +43,7 @@ def test_replace_images_in_markdown_via_markdown_tag(
 
 def test_replace_images_in_markdown_via_html_tag(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
-    mock_images_as_base64: typing.Dict[str, str]
+    mock_images_as_base64: dict[str, str]
 ) -> None:
     """Test replacement of images in markdown notebook containing only an image defined via html tag."""
     nb = open_notebook("replace_images_in_markdown", "html_image")
@@ -57,7 +57,7 @@ def test_replace_images_in_markdown_via_html_tag(
 
 def test_replace_images_in_markdown_via_html_and_markdown_tags(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
-    mock_images_as_base64: typing.Dict[str, str]
+    mock_images_as_base64: dict[str, str]
 ) -> None:
     """Test replacement of images in markdown notebook containing image defined via html or markdown tags."""
     nb = open_notebook("replace_images_in_markdown", "html_and_markdown_images")
@@ -76,7 +76,7 @@ This is the red image.
 
 def test_replace_images_in_markdown_with_a_code_cell(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
-    mock_images_as_base64: typing.Dict[str, str]
+    mock_images_as_base64: dict[str, str]
 ) -> None:
     """Test replacement of images in a notebook containing both markdown and code."""
     nb = open_notebook("replace_images_in_markdown", "image_and_code")

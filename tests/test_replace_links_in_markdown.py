@@ -19,7 +19,7 @@ from open_in_cloud_workflow.replace_links_in_markdown import (
 
 
 @pytest.fixture
-def mock_links_replacement(root_directory: str) -> typing.Dict[str, typing.Optional[str]]:
+def mock_links_replacement(root_directory: str) -> dict[str, str | None]:
     """Return simplified version of the links replacement dictionary."""
     data_subdirectory = os.path.join(root_directory, "tests", "data", "replace_links_in_markdown")
     return {
@@ -32,7 +32,7 @@ def mock_links_replacement(root_directory: str) -> typing.Dict[str, typing.Optio
 
 def test_replace_links_in_markdown_via_markdown_tag(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
-    mock_links_replacement: typing.Dict[str, typing.Optional[str]]
+    mock_links_replacement: dict[str, str | None]
 ) -> None:
     """Test replacement of links in markdown notebook containing only a link defined via markdown tag."""
     nb = open_notebook("replace_links_in_markdown", "markdown_link")
@@ -45,7 +45,7 @@ def test_replace_links_in_markdown_via_markdown_tag(
 
 def test_replace_images_in_markdown_via_html_tag_single_quotes(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
-    mock_links_replacement: typing.Dict[str, typing.Optional[str]]
+    mock_links_replacement: dict[str, str | None]
 ) -> None:
     """Test replacement of links in markdown notebook containing only a defined via an html tag with single quotes."""
     nb = open_notebook("replace_links_in_markdown", "html_link_single_quotes")
@@ -58,7 +58,7 @@ def test_replace_images_in_markdown_via_html_tag_single_quotes(
 
 def test_replace_images_in_markdown_via_html_tag_double_quotes(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
-    mock_links_replacement: typing.Dict[str, typing.Optional[str]]
+    mock_links_replacement: dict[str, str | None]
 ) -> None:
     """Test replacement of links in markdown notebook containing only a defined via an html tag with double quotes."""
     nb = open_notebook("replace_links_in_markdown", "html_link_double_quotes")
@@ -71,7 +71,7 @@ def test_replace_images_in_markdown_via_html_tag_double_quotes(
 
 def test_replace_links_in_markdown_with_a_code_cell(
     root_directory: str, open_notebook: typing.Callable[[str, str], nbformat.NotebookNode],
-    mock_links_replacement: typing.Dict[str, typing.Optional[str]]
+    mock_links_replacement: dict[str, str | None]
 ) -> None:
     """Test replacement of links in a notebook containing both markdown and code."""
     nb = open_notebook("replace_links_in_markdown", "link_and_code")

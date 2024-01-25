@@ -6,10 +6,9 @@
 """Get rclone environment variables."""
 
 import os
-import typing
 
 
-def get_rclone_env() -> typing.Dict[str, str]:
+def get_rclone_env() -> dict[str, str]:
     """Get rclone environment variables."""
     return {
         "RCLONE_CONFIG_DRIVE_TYPE": "drive",

@@ -7,12 +7,11 @@
 
 import os
 import subprocess
-import typing
 
 from open_in_cloud_workflow.get_rclone_env import get_rclone_env
 
 
-def get_drive_url(relative_path: str, drive_root_directory: str) -> typing.Optional[str]:
+def get_drive_url(relative_path: str, drive_root_directory: str) -> str | None:
     """Get the URL that a file will have on Google Drive."""
     try:
         return subprocess.run(

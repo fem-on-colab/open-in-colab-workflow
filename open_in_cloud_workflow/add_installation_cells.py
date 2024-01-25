@@ -7,7 +7,6 @@
 
 import copy
 import sys
-import typing
 
 import nbformat
 
@@ -18,9 +17,9 @@ from open_in_cloud_workflow.packages_str_to_lists import packages_str_to_lists
 
 
 def add_installation_cells(
-    nb_cells: typing.List[nbformat.NotebookNode], cloud_provider: str, fem_on_cloud_packages_str: str,
+    nb_cells: list[nbformat.NotebookNode], cloud_provider: str, fem_on_cloud_packages_str: str,
     pip_packages_str: str
-) -> typing.Tuple[typing.List[nbformat.NotebookNode], typing.List[int]]:
+) -> tuple[list[nbformat.NotebookNode], list[int]]:
     """Add installation cells on top of the notebook, and return updated notebook content and list of insertions."""
     (fem_on_cloud_packages_name, fem_on_cloud_packages_version, fem_on_cloud_packages_url,
         fem_on_cloud_packages_import, fem_on_cloud_packages_dependent_imports,
@@ -103,7 +102,7 @@ def __main__(  # noqa: N807
 ) -> None:
     """Add installation cells on top of every notebook in the work directory matching the prescribed pattern."""
     for nb_filename in glob_files(work_dir, nb_pattern):
-        with open(nb_filename, "r") as f:
+        with open(nb_filename) as f:
             nb = nbformat.read(f, as_version=4)  # type: ignore[no-untyped-call]
         nb.cells, _ = add_installation_cells(nb.cells, cloud_provider, fem_on_cloud_packages, pip_packages)
         with open(nb_filename, "w") as f:

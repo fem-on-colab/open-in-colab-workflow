@@ -8,7 +8,6 @@
 import copy
 import os
 import sys
-import typing
 
 import nbformat
 
@@ -17,8 +16,8 @@ from open_in_cloud_workflow.glob_images import glob_images
 
 
 def replace_images_in_markdown(
-    nb_cells: typing.List[nbformat.NotebookNode], nb_dir: str, images_as_base64: typing.Dict[str, str]
-) -> typing.List[nbformat.NotebookNode]:
+    nb_cells: list[nbformat.NotebookNode], nb_dir: str, images_as_base64: dict[str, str]
+) -> list[nbformat.NotebookNode]:
     """Replace images with their base64 representation, and return the updated cells."""
     updated_nb_cells = list()
     for cell in nb_cells:
@@ -37,7 +36,7 @@ def __main__(work_dir: str, nb_pattern: str) -> None:  # noqa: N807
     images_as_base64 = glob_images(work_dir)
 
     for nb_filename in glob_files(work_dir, nb_pattern):
-        with open(nb_filename, "r") as f:
+        with open(nb_filename) as f:
             nb = nbformat.read(f, as_version=4)  # type: ignore[no-untyped-call]
         nb.cells = replace_images_in_markdown(nb.cells, os.path.dirname(nb_filename), images_as_base64)
         with open(nb_filename, "w") as f:
