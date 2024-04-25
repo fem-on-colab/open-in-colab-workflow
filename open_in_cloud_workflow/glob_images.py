@@ -16,7 +16,7 @@ def glob_images(work_dir: str) -> dict[str, str]:
     """Look for images in the work directory, and compute their base64 representation."""
     images_as_base64 = dict()
     image_convert: list[str]
-    for (image_ext, image_convert) in (  # type: ignore[assignment]
+    for (image_ext, image_convert) in (
         ("png", []),
         ("jpg", ["convert {image_file} {image_file_png}"]),
         ("svg",
