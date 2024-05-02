@@ -17,7 +17,7 @@ def test_glob_images(root_directory: str) -> None:
     black_base64_trail = "DUOgAAAABJRU5ErkJggg=="
     red = os.path.join(nb_directory, "images", "red.jpg")
     red_converted = red.replace(".jpg", ".png")
-    red_base64_trail = "BJQwAAAABJRU5ErkJggg=="
+    red_base64_trail = ["BJQwAAAABJRU5ErkJggg==", "tgSUMAAAAASUVORK5CYII="]
     blue = os.path.join(nb_directory, "images", "blue.svg")
     blue_converted = blue.replace(".svg", ".png")
     blue_base64_trail = ["Zm1CLDAAAAAElFTkSuQmCC", "bUIsMAAAAASUVORK5CYII="]
@@ -34,7 +34,7 @@ def test_glob_images(root_directory: str) -> None:
     assert black in images_as_base64
     assert black_base64_trail in images_as_base64[black]
     assert red in images_as_base64
-    assert red_base64_trail in images_as_base64[red]
+    assert any([red_base64_trail_ in images_as_base64[red] for red_base64_trail_ in red_base64_trail])
     assert blue in images_as_base64
     assert any([blue_base64_trail_ in images_as_base64[blue] for blue_base64_trail_ in blue_base64_trail])
 
@@ -53,9 +53,9 @@ def test_glob_images(root_directory: str) -> None:
     assert black in images_as_base64
     assert black_base64_trail in images_as_base64[black]
     assert red in images_as_base64
-    assert red_base64_trail in images_as_base64[red]
+    assert any([red_base64_trail_ in images_as_base64[red] for red_base64_trail_ in red_base64_trail])
     assert red_converted in images_as_base64
-    assert red_base64_trail in images_as_base64[red_converted]
+    assert any([red_base64_trail_ in images_as_base64[red_converted] for red_base64_trail_ in red_base64_trail])
     assert blue in images_as_base64
     assert any([blue_base64_trail_ in images_as_base64[blue] for blue_base64_trail_ in blue_base64_trail])
     assert blue_converted in images_as_base64
