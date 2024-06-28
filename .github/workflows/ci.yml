@@ -42,7 +42,7 @@ jobs:
           git clean -xdf
       - name: Run ruff
         run: |
-          python3 -m ruff .
+          python3 -m ruff check .
           python3 -m nbqa ruff .
       - name: Run isort
         run: |
