@@ -141,7 +141,6 @@ jobs:
           RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
       - name: Determine publisher upload pattern
         if: success() || (steps.determine_publisher.outputs.publisher == 'artifact' && (failure() || cancelled()))
-        id: upload_pattern
         run: |
           if [[ "${{ steps.determine_publisher.outputs.publisher }}" == "artifact" ]]; then
             UPLOAD_PATTERN_PREFIX="${{ inputs.work_directory }}/"
@@ -157,23 +156,25 @@ jobs:
               UPLOAD_PATTERN_ARRAY+=("${UPLOAD_PATTERN_PREFIX}${PATTERN}")
             done <<< "${{ inputs.extra_files_pattern }}"
           fi
-          SEPARATOR="%0A"
+          SEPARATOR="\n"
           UPLOAD_PATTERN="$(printf "${SEPARATOR//%/%%}%s" "${UPLOAD_PATTERN_ARRAY[@]}")"
           UPLOAD_PATTERN="${UPLOAD_PATTERN:${#SEPARATOR}}"
-          echo "upload_pattern_separator=${SEPARATOR}" >> ${GITHUB_OUTPUT}
-          echo "upload_pattern=${UPLOAD_PATTERN}" >> ${GITHUB_OUTPUT}
+          {
+            echo 'UPLOAD_PATTERN<<EOF'
+            echo "${UPLOAD_PATTERN}"
+            echo EOF
+          } >> ${GITHUB_ENV}
         shell: bash
       - name: Upload files to an artifact
         if: steps.determine_publisher.outputs.publisher == 'artifact' && (success() || failure() || cancelled())
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.determine_publisher.outputs.name }}
-          path: ${{ steps.upload_pattern.outputs.upload_pattern }}
+          path: ${{ env.UPLOAD_PATTERN }}
       - name: Upload files to Google Drive
         if: steps.determine_publisher.outputs.publisher == 'drive' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         run: |
-          PATTERNS=$(echo "${{ steps.upload_pattern.outputs.upload_pattern }}" | sed "s/${{ steps.upload_pattern.outputs.upload_pattern_separator }}/\n/g")
-          python3 -m open_in_cloud_workflow.upload_files_to_google_drive "${{ inputs.work_directory }}" "${PATTERNS}" "${{ inputs.publish_on }}"
+          python3 -m open_in_cloud_workflow.upload_files_to_google_drive "${{ inputs.work_directory }}" "${{ env.UPLOAD_PATTERN }}" "${{ inputs.publish_on }}"
         env:
           RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
           RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
@@ -183,9 +184,9 @@ jobs:
         run: |
           SHA_SHORT=$(git rev-parse --short HEAD)
           pushd "${{ inputs.work_directory }}"
-          PATTERNS=($(echo "${{ steps.upload_pattern.outputs.upload_pattern }}" | sed "s/${{ steps.upload_pattern.outputs.upload_pattern_separator }}/ /g"))
-          for PATTERN in "${PATTERNS[@]}"; do
-            git add "${PATTERN}"
+          UPLOAD_PATTERN_AS_ARRAY=($(echo "${{ env.UPLOAD_PATTERN }}" | sed "s/\n/ /g"))
+          for UPLOAD_PATTERN_ENTRY in "${UPLOAD_PATTERN_AS_ARRAY[@]}"; do
+            git add "${UPLOAD_PATTERN_ENTRY}"
           done
           if [[ "$(git diff --name-only --cached | wc -l)" -gt 0 ]]; then
             git config user.name "GitHub Actions"
