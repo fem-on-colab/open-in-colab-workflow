@@ -157,8 +157,7 @@ jobs:
             done <<< "${{ inputs.extra_files_pattern }}"
           fi
           SEPARATOR="\n"
-          UPLOAD_PATTERN="$(printf "${SEPARATOR//%/%%}%s" "${UPLOAD_PATTERN_ARRAY[@]}")"
-          UPLOAD_PATTERN="${UPLOAD_PATTERN:${#SEPARATOR}}"
+          UPLOAD_PATTERN="$(printf "%s\n" "${UPLOAD_PATTERN_ARRAY[@]}")"
           {
             echo 'UPLOAD_PATTERN<<EOF'
             echo "${UPLOAD_PATTERN}"
