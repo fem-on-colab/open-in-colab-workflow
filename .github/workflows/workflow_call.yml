@@ -49,7 +49,7 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-    container: femoncolab/base_images:latest
+    container: ghcr.io/fem-on-colab/base:latest
     steps:
       - name: Mark workspace as safe
         run: |
