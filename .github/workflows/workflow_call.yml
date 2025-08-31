@@ -114,11 +114,16 @@ jobs:
         if: inputs.notebook_preparation != ''
         run: |
           ${{ inputs.notebook_preparation }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         shell: bash
       - name: Run extra files preparation
         if: inputs.extra_files_preparation != ''
         run: |
           ${{ inputs.extra_files_preparation }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
       - name: Add installation cells
         run: |
           python3 -m open_in_cloud_workflow.add_installation_cells "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "colab" '${{ inputs.fem_on_colab_packages }}' '${{ inputs.pip_packages }}'

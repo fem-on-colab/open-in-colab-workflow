@@ -69,7 +69,20 @@ jobs:
         run: |
           python3 -m coverage report --fail-under=100 --show-missing --skip-covered
 
-  test_workflow_artifact:
+  upload_notebooks_as_artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Store notebook files in an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-notebooks
+          path: |
+            **/*.ipynb
+          retention-days: 1
+          if-no-files-found: error
+
+  test_workflow_publish_on_artifact_notebooks_from_git:
     needs: [test_library]
     uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
     with:
@@ -90,10 +103,46 @@ jobs:
         itkwidgets
       test_script: |
         python3 -m pytest --nbval open_in_colab/tests
-      publish_on: artifact@open-in-colab
+      publish_on: artifact@open-in-colab-notebooks-from-git
       publish_if_repository: fem-on-colab/open-in-colab-workflow
 
-  test_workflow_drive:
+  test_workflow_publish_on_artifact_notebooks_from_another_artifact:
+    needs: [test_library, upload_notebooks_as_artifact]
+    uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
+    with:
+      work_directory: open_in_colab
+      notebook_pattern: "**/*.ipynb"
+      extra_files_pattern: "**/*.dat"
+      notebook_preparation: |
+        curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts" \
+          > artifacts.json
+        export ARTIFACT_NAME=all-notebooks
+        ARTIFACT_URL=$(jq -r ".artifacts[] | select(.name==\"$ARTIFACT_NAME\") | .archive_download_url" artifacts.json)
+        if [ -z "$ARTIFACT_URL" ]; then
+          echo "Artifact not found"
+          cat artifacts.json
+          exit 1
+        fi
+        curl -L -s -H "Authorization: token $GITHUB_TOKEN" -o $ARTIFACT_NAME.zip "$ARTIFACT_URL"
+        unzip -oq $ARTIFACT_NAME.zip -d open_in_colab
+        rm -f $ARTIFACT_NAME.zip
+      extra_files_preparation: |
+        rsync -avz --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" tests open_in_colab/
+        mkdir -p open_in_colab/tests/data/extras/
+        echo "This is an extra file" > open_in_colab/tests/data/extras/extra.dat
+      fem_on_colab_packages: |
+        mpi4py
+      pip_packages: |
+        python-dateutil$dateutil
+        kaleido%plotly
+        itkwidgets
+      test_script: |
+        python3 -m pytest --nbval open_in_colab/tests
+      publish_on: artifact@open-in-colab-notebooks-from-another-artifact
+      publish_if_repository: fem-on-colab/open-in-colab-workflow
+
+  test_workflow_publish_on_drive:
     needs: [test_library]
     uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
     with:
@@ -121,7 +170,7 @@ jobs:
       RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
       RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
 
-  test_workflow_github:
+  test_workflow_publish_on_github:
     needs: [test_library]
     uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
     with:
