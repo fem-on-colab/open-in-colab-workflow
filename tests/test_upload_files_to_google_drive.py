@@ -43,11 +43,12 @@ def test_upload_files_to_google_drive_existing(root_directory: str) -> None:
 
 
 @pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")
-def test_upload_files_to_google_drive_new(root_directory: str) -> None:
+def test_upload_files_to_google_drive_new_single_upload(root_directory: str) -> None:
     """Test uploading a new file on Google Drive."""
     original_pattern = os.path.join("tests", "data", "upload_file_to_google_drive", "new_file.txt")
     with tempfile.NamedTemporaryFile(
-            dir=os.path.join(root_directory, os.path.dirname(original_pattern)), suffix=".txt") as tmp:
+        dir=os.path.join(root_directory, os.path.dirname(original_pattern)), suffix=".txt"
+    ) as tmp:
         shutil.copyfile(os.path.join(root_directory, original_pattern), tmp.name)
         pattern = os.path.relpath(tmp.name, root_directory)
         upload_files_to_google_drive(root_directory, pattern, "GitHub/open_in_colab_workflow")
@@ -58,3 +59,38 @@ def test_upload_files_to_google_drive_new(root_directory: str) -> None:
         subprocess.check_call(
             f'rclone -q deletefile drive:{os.path.join("GitHub/open_in_colab_workflow", pattern)}'.split(" "),
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=get_rclone_env())
+
+
+@pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")
+def test_upload_files_to_google_drive_new_double_upload(root_directory: str) -> None:
+    """Test uploading a new file on Google Drive, then replacing it with another."""
+    copy_pattern = os.path.join("tests", "data", "upload_file_to_google_drive", "new_file.txt")
+    upload_pattern = os.path.join(os.path.dirname(copy_pattern), "*.txt")
+    # Do the first upload
+    with tempfile.NamedTemporaryFile(
+        dir=os.path.join(root_directory, os.path.dirname(upload_pattern)), suffix=".txt"
+    ) as tmp1:
+        shutil.copyfile(os.path.join(root_directory, copy_pattern), tmp1.name)
+        pattern1 = os.path.relpath(tmp1.name, root_directory)
+        upload_files_to_google_drive(root_directory, upload_pattern, "GitHub/open_in_colab_workflow")
+        url1 = get_drive_url(pattern1, "GitHub/open_in_colab_workflow")
+        assert url1 is not None
+        assert_files_equal(root_directory, pattern1, url1)
+    # Do the second upload
+    with tempfile.NamedTemporaryFile(
+        dir=os.path.join(root_directory, os.path.dirname(upload_pattern)), suffix=".txt"
+    ) as tmp2:
+        shutil.copyfile(os.path.join(root_directory, copy_pattern), tmp2.name)
+        pattern2 = os.path.relpath(tmp2.name, root_directory)
+        upload_files_to_google_drive(root_directory, upload_pattern, "GitHub/open_in_colab_workflow")
+        url2 = get_drive_url(pattern2, "GitHub/open_in_colab_workflow")
+        assert url2 is not None
+        assert_files_equal(root_directory, pattern2, url2)
+        # The file created in the first upload should have now been removed
+        url1_deleted = get_drive_url(pattern1, "GitHub/open_in_colab_workflow")
+        assert url1_deleted is None
+        # Also delete the file created in the second upload
+        subprocess.check_call(
+            f'rclone -q deletefile drive:{os.path.join("GitHub/open_in_colab_workflow", pattern2)}'.split(" "),
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=get_rclone_env()
+        )

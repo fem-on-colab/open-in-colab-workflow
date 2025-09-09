@@ -14,10 +14,12 @@ from open_in_cloud_workflow.publish_on import publish_on, PublishOnDrive
 
 def upload_files_to_google_drive(work_dir: str, pattern: str, drive_root_directory: str) -> None:
     """Upload all files matching at least one pattern to Google Drive."""
-    for pattern_ in pattern.strip("\n").split("\n"):
-        subprocess.check_call(
-            f"rclone -q copy {work_dir} drive:{drive_root_directory} --include {pattern_}".split(" "),
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=get_rclone_env())
+    subprocess.check_call(
+        (
+            f"rclone -q sync {work_dir} drive:{drive_root_directory} "
+            + " ".join(f"--include {pattern_}" for pattern_ in pattern.strip("\n").split("\n"))
+        ).split(" "),
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=get_rclone_env())
 
 
 if __name__ == "__main__":  # pragma: no cover
