@@ -18,8 +18,7 @@ from open_in_cloud_workflow.upload_files_to_google_drive import upload_files_to_
 
 
 def replace_links_in_markdown(
-    nb_cells: list[nbformat.NotebookNode], nb_dir: str,
-    links_replacement: dict[str, str | None]
+    nb_cells: list[nbformat.NotebookNode], links_replacement: dict[str, str | None]
 ) -> list[nbformat.NotebookNode]:
     """Replace links to local file in markdown with links to the corresponding cloud notebooks."""
     add_quotes_or_parentheses = (
@@ -35,7 +34,7 @@ def replace_links_in_markdown(
                 assert cloud_link is not None
                 for preprocess in add_quotes_or_parentheses:
                     updated_cell.source = updated_cell.source.replace(
-                        preprocess(os.path.relpath(local_link, nb_dir)),  # type: ignore[no-untyped-call]
+                        preprocess(local_link),  # type: ignore[no-untyped-call]
                         preprocess(cloud_link))  # type: ignore[no-untyped-call]
             updated_nb_cells.append(updated_cell)
         else:
@@ -72,7 +71,12 @@ def __main__(  # noqa: N807
     for nb_filename in glob_files(work_dir, nb_pattern):
         with open(nb_filename) as f:
             nb = nbformat.read(f, as_version=4)  # type: ignore[no-untyped-call]
-        nb.cells = replace_links_in_markdown(nb.cells, os.path.dirname(nb_filename), links_replacement)
+        nb_dirname = os.path.dirname(nb_filename)
+        nb_links_replacement = {
+            os.path.relpath(os.path.join(work_dir, key), nb_dirname): value
+            for key, value in links_replacement.items()
+        }
+        nb.cells = replace_links_in_markdown(nb.cells, nb_links_replacement)
         with open(nb_filename, "w") as f:
             nbformat.write(nb, f)  # type: ignore[no-untyped-call]
 
