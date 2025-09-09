@@ -96,6 +96,30 @@ jobs:
           done < .publisher
           rm .publisher
         shell: bash
+      - name: Determine publisher upload pattern
+        run: |
+          if [[ "${{ steps.determine_publisher.outputs.publisher }}" == "artifact" ]]; then
+            UPLOAD_PATTERN_PREFIX="${{ inputs.work_directory }}/"
+          else
+            UPLOAD_PATTERN_PREFIX=""
+          fi
+          UPLOAD_PATTERN_ARRAY=()
+          while read -r PATTERN; do
+            UPLOAD_PATTERN_ARRAY+=("${UPLOAD_PATTERN_PREFIX}${PATTERN}")
+          done <<< "${{ inputs.notebook_pattern }}"
+          if [[ -n "${{ inputs.extra_files_pattern }}" ]]; then
+            while read -r PATTERN; do
+              UPLOAD_PATTERN_ARRAY+=("${UPLOAD_PATTERN_PREFIX}${PATTERN}")
+            done <<< "${{ inputs.extra_files_pattern }}"
+          fi
+          SEPARATOR="\n"
+          UPLOAD_PATTERN="$(printf "%s\n" "${UPLOAD_PATTERN_ARRAY[@]}")"
+          {
+            echo 'UPLOAD_PATTERN<<EOF'
+            echo "${UPLOAD_PATTERN}"
+            echo EOF
+          } >> ${GITHUB_ENV}
+        shell: bash
       - name: Mark work directory as safe
         if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         run: |
@@ -110,6 +134,19 @@ jobs:
           fetch-depth: 0
           path: "${{ inputs.work_directory }}"
           set-safe-directory: false
+      - name: Clean GitHub repository of the publisher
+        if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
+        run: |
+          pushd "${{ inputs.work_directory }}"
+          UPLOAD_PATTERN_AS_ARRAY=($(echo "${{ env.UPLOAD_PATTERN }}" | sed "s/\n/ /g"))
+          for UPLOAD_PATTERN_ENTRY in "${UPLOAD_PATTERN_AS_ARRAY[@]}"; do
+            FILES=$(git ls-files $UPLOAD_PATTERN_ENTRY)
+            if [[ -n "$FILES" ]]; then
+              git rm -f $FILES
+            fi
+          done
+          popd
+        shell: bash
       - name: Run notebook preparation
         if: inputs.notebook_preparation != ''
         run: |
@@ -144,31 +181,6 @@ jobs:
           RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
           RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
           RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
-      - name: Determine publisher upload pattern
-        if: success() || (steps.determine_publisher.outputs.publisher == 'artifact' && (failure() || cancelled()))
-        run: |
-          if [[ "${{ steps.determine_publisher.outputs.publisher }}" == "artifact" ]]; then
-            UPLOAD_PATTERN_PREFIX="${{ inputs.work_directory }}/"
-          else
-            UPLOAD_PATTERN_PREFIX=""
-          fi
-          UPLOAD_PATTERN_ARRAY=()
-          while read -r PATTERN; do
-            UPLOAD_PATTERN_ARRAY+=("${UPLOAD_PATTERN_PREFIX}${PATTERN}")
-          done <<< "${{ inputs.notebook_pattern }}"
-          if [[ -n "${{ inputs.extra_files_pattern }}" ]]; then
-            while read -r PATTERN; do
-              UPLOAD_PATTERN_ARRAY+=("${UPLOAD_PATTERN_PREFIX}${PATTERN}")
-            done <<< "${{ inputs.extra_files_pattern }}"
-          fi
-          SEPARATOR="\n"
-          UPLOAD_PATTERN="$(printf "%s\n" "${UPLOAD_PATTERN_ARRAY[@]}")"
-          {
-            echo 'UPLOAD_PATTERN<<EOF'
-            echo "${UPLOAD_PATTERN}"
-            echo EOF
-          } >> ${GITHUB_ENV}
-        shell: bash
       - name: Upload files to an artifact
         if: steps.determine_publisher.outputs.publisher == 'artifact' && (success() || failure() || cancelled())
         uses: actions/upload-artifact@v4
