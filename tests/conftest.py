@@ -32,7 +32,6 @@ def open_notebook(root_directory: str) -> typing.Callable[[str, str, str | None]
         filename = os.path.join(data_directory, local_directory, filename + ".ipynb")
         with open(filename) as f:
             nb = nbformat.read(f, as_version=4)  # type: ignore[no-untyped-call]
-        nb._filename = filename
         return nb  # type: ignore[no-any-return]
     return _
 
