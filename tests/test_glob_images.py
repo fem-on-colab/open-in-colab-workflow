@@ -17,7 +17,7 @@ def test_glob_images(root_directory: str) -> None:
     black_base64_trail = "DUOgAAAABJRU5ErkJggg=="
     red = os.path.join(nb_directory, "images", "red.jpg")
     red_converted = red.replace(".jpg", ".png")
-    red_base64_trail = ["BJQwAAAABJRU5ErkJggg==", "tgSUMAAAAASUVORK5CYII="]
+    red_base64_trail = ["BJQwAAAABJRU5ErkJggg==", "tgSUMAAAAASUVORK5CYII=", "PodQAAAABJRU5ErkJggg=="]
     blue = os.path.join(nb_directory, "images", "blue.svg")
     blue_converted = blue.replace(".svg", ".png")
     blue_base64_trail = ["Zm1CLDAAAAAElFTkSuQmCC", "bUIsMAAAAASUVORK5CYII="]
