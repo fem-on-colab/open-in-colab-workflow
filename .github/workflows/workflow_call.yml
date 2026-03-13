@@ -68,7 +68,7 @@ jobs:
         id: workflow_call_library_branch
         run: |
           if [[ "${{ github.repository }}" == "fem-on-colab/open-in-colab-workflow" ]]; then
-            BRANCH=${GITHUB_REF##*/}
+            BRANCH=${GITHUB_REF#refs/heads/}
           else
             BRANCH="main"
           fi
