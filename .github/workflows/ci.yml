@@ -84,7 +84,7 @@ jobs:
 
   test_workflow_publish_on_artifact_notebooks_from_git:
     needs: [test_library]
-    uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
+    uses: ./.github/workflows/workflow_call.yml
     with:
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
@@ -109,7 +109,7 @@ jobs:
 
   test_workflow_publish_on_artifact_notebooks_from_another_artifact:
     needs: [test_library, upload_notebooks_as_artifact]
-    uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
+    uses: ./.github/workflows/workflow_call.yml
     with:
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
@@ -146,7 +146,7 @@ jobs:
 
   test_workflow_publish_on_drive:
     needs: [test_library]
-    uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
+    uses: ./.github/workflows/workflow_call.yml
     with:
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
@@ -175,7 +175,7 @@ jobs:
 
   test_workflow_publish_on_github:
     needs: [test_library]
-    uses: fem-on-colab/open-in-colab-workflow/.github/workflows/workflow_call.yml@main
+    uses: ./.github/workflows/workflow_call.yml
     with:
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
