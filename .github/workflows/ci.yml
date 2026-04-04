@@ -20,7 +20,7 @@ jobs:
       - name: Install git
         run: |
           apt update -y -q
-          apt install -y -qq git
+          apt install -y -qq ca-certificates git
       - name: Mark workspace as safe
         run: |
           git config --global --add safe.directory "${GITHUB_WORKSPACE}"
