@@ -24,7 +24,7 @@ jobs:
       - name: Mark workspace as safe
         run: |
           git config --global --add safe.directory "${GITHUB_WORKSPACE}"
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           set-safe-directory: false
       - name: Install non-pip dependencies of the workflow call library
@@ -72,9 +72,9 @@ jobs:
   upload_notebooks_as_artifact:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - name: Store notebook files in an artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7.0.0
         with:
           name: all-notebooks
           path: |
@@ -203,7 +203,7 @@ jobs:
     if: github.repository == 'fem-on-colab/open-in-colab-workflow' && github.ref == 'refs/heads/main' && github.event_name == 'schedule'
     steps:
       - name: Warn if scheduled workflow is about to be disabled
-        uses: fem-on-colab/warn-workflow-about-to-be-disabled-action@main
+        uses: fem-on-colab/warn-workflow-about-to-be-disabled-action@58c6022d9aeb22accfa8df9bf5b58c3d8867208c  # v1.0.0
         with:
           workflow-filename: ci.yml
           days-elapsed: 50
