@@ -14,6 +14,8 @@ import pytest
 
 from open_in_cloud_workflow.publish_on import (
     publish_on, PublishOnArtifact, PublishOnBaseClass, PublishOnDrive, PublishOnGitHub)
+from open_in_cloud_workflow.source_from import (
+    source_from, SourceFromDrive, SourceFromGitHub)
 
 
 @pytest.fixture
@@ -60,3 +62,15 @@ def publisher(request: _pytest.fixtures.SubRequest) -> PublishOnBaseClass:
     if request.param == "publish_on_drive" and "RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ:
         pytest.skip("Missing rclone environment variables")
     return request.getfixturevalue(request.param)  # type: ignore[no-any-return]
+
+
+@pytest.fixture
+def source_from_drive() -> SourceFromDrive:
+    """Return a Google Drive source."""
+    return source_from("drive@GitHub/open_in_colab_workflow")  # type: ignore[return-value]
+
+
+@pytest.fixture
+def source_from_github() -> SourceFromGitHub:
+    """Return a GitHub source."""
+    return source_from("github@fem-on-colab/open-in-colab-workflow@open-in-colab")  # type: ignore[return-value]

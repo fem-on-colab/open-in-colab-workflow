@@ -19,7 +19,7 @@ class PublishOnBaseClass(abc.ABC):
 
     @abc.abstractmethod
     def get_url(self, cloud_provider: str, relative_path: str) -> str | None:  # pragma: no cover
-        """Get the URL used by this publisher and associated to a file at the provied relative path."""
+        """Get the URL used by this publisher and associated to a file at the provided relative path."""
         pass
 
     @abc.abstractmethod
