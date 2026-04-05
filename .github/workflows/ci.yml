@@ -15,25 +15,13 @@ on:
 jobs:
   test_library:
     runs-on: ubuntu-latest
-    container: debian:testing
     steps:
-      - name: Install git
-        run: |
-          apt update -y -q
-          apt install -y -qq ca-certificates git
-      - name: Mark workspace as safe
-        run: |
-          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-        with:
-          set-safe-directory: false
       - name: Install apt dependencies of the workflow call library
         run: |
-          export DEBIAN_FRONTEND="noninteractive"
-          apt install -y -qq imagemagick inkscape python3 wget
+          apt install -y -qq imagemagick inkscape
           wget https://github.com/rclone/rclone/releases/download/v1.73.0/rclone-v1.73.0-linux-amd64.deb -O /tmp/rclone-v1.73.0-linux-amd64.deb
           dpkg -i /tmp/rclone-v1.73.0-linux-amd64.deb
-          rm /usr/lib/python3.*/EXTERNALLY-MANAGED
       - name: Install uv
         uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57  # v8.0.0
       - name: Install the workflow call library
