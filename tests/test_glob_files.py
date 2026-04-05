@@ -24,7 +24,7 @@ def test_glob_files_multiple_patterns(root_directory: str) -> None:
     """Test pattern matching while listing notebooks and text files in a directory."""
     data_directory = os.path.join(root_directory, "tests", "data")
     nb_pattern = os.path.join("replace_images_in_markdown", "*.ipynb")
-    txt_pattern = os.path.join("upload_file_to_google_drive", "*.txt")
+    txt_pattern = os.path.join("upload_files_to_google_drive", "*.txt")
     files = glob_files(data_directory, nb_pattern + "\n" + txt_pattern)
     assert files == {
         os.path.join(data_directory, nb_pattern).replace("*", nb_name) for nb_name in (

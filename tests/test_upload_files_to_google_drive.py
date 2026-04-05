@@ -30,7 +30,7 @@ def assert_files_equal(root_directory: str, pattern: str, url: str) -> None:
 @pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")
 def test_upload_files_to_google_drive_existing(root_directory: str) -> None:
     """Test that updating an existing file on Google Drive preserves its url."""
-    pattern = os.path.join("tests", "data", "upload_file_to_google_drive", "existing_file.txt")
+    pattern = os.path.join("tests", "data", "upload_files_to_google_drive", "existing_file.txt")
     with tempfile.TemporaryDirectory(dir=root_directory) as tmp_root_directory:
         os.makedirs(os.path.dirname(os.path.join(tmp_root_directory, pattern)))
         shutil.copyfile(os.path.join(root_directory, pattern), os.path.join(tmp_root_directory, pattern))
@@ -45,7 +45,7 @@ def test_upload_files_to_google_drive_existing(root_directory: str) -> None:
 @pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")
 def test_upload_files_to_google_drive_new_single_upload(root_directory: str) -> None:
     """Test uploading a new file on Google Drive."""
-    original_pattern = os.path.join("tests", "data", "upload_file_to_google_drive", "new_file.txt")
+    original_pattern = os.path.join("tests", "data", "upload_files_to_google_drive", "new_file.txt")
     with tempfile.NamedTemporaryFile(
         dir=os.path.join(root_directory, os.path.dirname(original_pattern)), suffix=".txt"
     ) as tmp:
@@ -64,7 +64,7 @@ def test_upload_files_to_google_drive_new_single_upload(root_directory: str) -> 
 @pytest.mark.skipif("RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ, reason="Missing rclone environment variables")
 def test_upload_files_to_google_drive_new_double_upload(root_directory: str) -> None:
     """Test uploading a new file on Google Drive, then replacing it with another."""
-    copy_pattern = os.path.join("tests", "data", "upload_file_to_google_drive", "new_file.txt")
+    copy_pattern = os.path.join("tests", "data", "upload_files_to_google_drive", "new_file.txt")
     upload_pattern = os.path.join(os.path.dirname(copy_pattern), "*.txt")
     # Do the first upload
     with tempfile.NamedTemporaryFile(

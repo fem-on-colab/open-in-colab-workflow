@@ -26,10 +26,10 @@ def test_publish_on_drive(publish_on_drive: PublishOnDrive) -> None:
     """Test content of Google Drive publisher."""
     assert publish_on_drive.drive_root_directory == "GitHub/open_in_colab_workflow"
     publish_on_drive.get_url(
-        "colab", os.path.join("tests", "data", "upload_file_to_google_drive", "existing_file.txt")) == (
+        "colab", os.path.join("tests", "data", "upload_files_to_google_drive", "existing_file.txt")) == (
             "https://colab.research.google.com/drive/1MUq5LVW4ScYDE1f1sHRi3XDupYe5jOra")
     publish_on_drive.get_url(
-        "kaggle", os.path.join("tests", "data", "upload_file_to_google_drive", "existing_file.txt")) == (
+        "kaggle", os.path.join("tests", "data", "upload_files_to_google_drive", "existing_file.txt")) == (
             "https://kaggle.com/kernels/welcome?src="
             + "https://drive.google.com/uc?id=13i5VtZV5n3Ipl5AB9b6c1EVVAWfDBaEW")
     assert str(publish_on_drive) == """publisher=drive
