@@ -13,9 +13,17 @@ import nbformat
 import pytest
 
 from open_in_cloud_workflow.publish_on import (
-    publish_on, PublishOnArtifact, PublishOnBaseClass, PublishOnDrive, PublishOnGitHub)
+    publish_on,
+    PublishOnArtifact,
+    PublishOnBaseClass,
+    PublishOnDrive,
+    PublishOnGitHub,
+)
 from open_in_cloud_workflow.source_from import (
-    source_from, SourceFromDrive, SourceFromGitHub)
+    source_from,
+    SourceFromDrive,
+    SourceFromGitHub,
+)
 
 
 @pytest.fixture
@@ -25,52 +33,75 @@ def root_directory() -> str:
 
 
 @pytest.fixture
-def open_notebook(root_directory: str) -> typing.Callable[[str, str, str | None], nbformat.NotebookNode]:
+def open_notebook(
+    root_directory: str,
+) -> typing.Callable[[str, str, str | None], nbformat.NotebookNode]:
     """Return a fixture to open a local notebook."""
-    def _(  local_directory: str, filename: str, data_directory: str | None = None) -> nbformat.NotebookNode:
+
+    def _(
+        local_directory: str, filename: str, data_directory: str | None = None
+    ) -> nbformat.NotebookNode:
         """Open notebook with nbformat."""
         if data_directory is None:
             data_directory = os.path.join(root_directory, "tests", "data")
-        filename = os.path.join(data_directory, local_directory, filename + ".ipynb")
+        filename = os.path.join(
+            data_directory, local_directory, filename + ".ipynb"
+        )
         with open(filename) as f:
-            nb = nbformat.read(f, as_version=4)  # type: ignore[no-untyped-call]
-        return nb  # type: ignore[no-any-return]
+            nb = nbformat.read(f, as_version=4)
+        return nb
+
     return _
 
 
 @pytest.fixture
 def publish_on_artifact() -> PublishOnArtifact:
     """Return an artifact publisher."""
-    return publish_on("artifact@open-in-colab")  # type: ignore[return-value]
+    return typing.cast(PublishOnArtifact, publish_on("artifact@open-in-colab"))
 
 
 @pytest.fixture
 def publish_on_drive() -> PublishOnDrive:
     """Return a Google Drive publisher."""
-    return publish_on("drive@GitHub/open_in_colab_workflow")  # type: ignore[return-value]
+    return typing.cast(
+        PublishOnDrive, publish_on("drive@GitHub/open_in_colab_workflow")
+    )
 
 
 @pytest.fixture
 def publish_on_github() -> PublishOnGitHub:
     """Return a GitHub publisher."""
-    return publish_on("github@fem-on-colab/open-in-colab-workflow@open-in-colab")  # type: ignore[return-value]
+    return typing.cast(
+        PublishOnGitHub,
+        publish_on("github@fem-on-colab/open-in-colab-workflow@open-in-colab"),
+    )
 
 
-@pytest.fixture(params=["publish_on_artifact", "publish_on_drive", "publish_on_github"])
+@pytest.fixture(
+    params=["publish_on_artifact", "publish_on_drive", "publish_on_github"]
+)
 def publisher(request: _pytest.fixtures.SubRequest) -> PublishOnBaseClass:
     """Parameterize over publishers."""
-    if request.param == "publish_on_drive" and "RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ:
+    if (
+        request.param == "publish_on_drive"
+        and "RCLONE_CONFIG_DRIVE_TOKEN" not in os.environ
+    ):
         pytest.skip("Missing rclone environment variables")
-    return request.getfixturevalue(request.param)  # type: ignore[no-any-return]
+    return request.getfixturevalue(request.param)
 
 
 @pytest.fixture
 def source_from_drive() -> SourceFromDrive:
     """Return a Google Drive source."""
-    return source_from("drive@GitHub/open_in_colab_workflow")  # type: ignore[return-value]
+    return typing.cast(
+        SourceFromDrive, source_from("drive@GitHub/open_in_colab_workflow")
+    )
 
 
 @pytest.fixture
 def source_from_github() -> SourceFromGitHub:
     """Return a GitHub source."""
-    return source_from("github@fem-on-colab/open-in-colab-workflow@open-in-colab")  # type: ignore[return-value]
+    return typing.cast(
+        SourceFromGitHub,
+        source_from("github@fem-on-colab/open-in-colab-workflow@open-in-colab"),
+    )

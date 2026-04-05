@@ -3,9 +3,11 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Get the URL that a file will have on Kaggle when hosted on GitHub."""
+"""Build the Kaggle URL for a GitHub-hosted file."""
 
 
-def get_kaggle_github_url(relative_path: str, repository: str, branch: str) -> str:
-    """Get the URL that a file will have on Kaggle when hosted on GitHub."""
+def get_kaggle_github_url(
+    relative_path: str, repository: str, branch: str
+) -> str:
+    """Build the Kaggle URL for a GitHub-hosted file."""
     return f"https://kaggle.com/kernels/welcome?src=https://github.com/{repository}/blob/{branch}/{relative_path}"

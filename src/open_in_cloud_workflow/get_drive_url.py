@@ -13,9 +13,18 @@ from open_in_cloud_workflow.get_rclone_env import get_rclone_env
 
 def get_drive_url(relative_path: str, drive_root_directory: str) -> str | None:
     """Get the URL that a file will have on Google Drive."""
+    drive_path = os.path.join(drive_root_directory, relative_path)
+    command = f"rclone -q link drive:{drive_path}".split(" ")
     try:
-        return subprocess.run(
-            f"rclone -q link drive:{os.path.join(drive_root_directory, relative_path)}".split(" "),
-            capture_output=True, check=True, env=get_rclone_env()).stdout.decode("utf-8").strip("\n")
+        return (
+            subprocess.run(
+                command,
+                capture_output=True,
+                check=True,
+                env=get_rclone_env(),
+            )
+            .stdout.decode("utf-8")
+            .strip("\n")
+        )
     except subprocess.CalledProcessError:
         return None

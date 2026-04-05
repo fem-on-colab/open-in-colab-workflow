@@ -6,5 +6,7 @@
 *.py[cod]
 .coverage
 .pytest_cache
+.rclone.conf
+.venv
 build
 dist

@@ -14,7 +14,7 @@ class SourceFromBaseClass(abc.ABC):
 
     @abc.abstractmethod
     def __str__(self) -> str:  # pragma: no cover
-        """Print private attributes as attribute_name=attribute_value, one attribute per line."""
+        """Print private attributes, one `name=value` pair per line."""
         pass
 
 
@@ -22,10 +22,11 @@ class SourceFromDrive(SourceFromBaseClass):
     """Store Google Drive source and its root directory."""
 
     def __init__(self, drive_root_directory: str) -> None:
+        """Initialize the Google Drive source with its root directory."""
         self.drive_root_directory = drive_root_directory
 
     def __str__(self) -> str:
-        """Print private attributes as attribute_name=attribute_value, one attribute per line."""
+        """Print private attributes, one `name=value` pair per line."""
         return f"""source=drive
 drive_root_directory={self.drive_root_directory}"""
 
@@ -34,18 +35,19 @@ class SourceFromGitHub(SourceFromBaseClass):
     """Store GitHub repository source and its branch."""
 
     def __init__(self, repository: str, branch: str) -> None:
+        """Initialize the GitHub source with repository and branch."""
         self.repository = repository
         self.branch = branch
 
     def __str__(self) -> str:
-        """Print private attributes as attribute_name=attribute_value, one attribute per line."""
+        """Print private attributes, one `name=value` pair per line."""
         return f"""source=github
 repository={self.repository}
 branch={self.branch}"""
 
 
 def source_from(source_from_str: str) -> SourceFromBaseClass:
-    """Transform a string containing the source options to its corresponding class."""
+    """Parse source options and return the corresponding class."""
     if source_from_str.startswith("drive"):
         source, drive_root_directory = source_from_str.split("@")
         assert source == "drive"

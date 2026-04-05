@@ -27,47 +27,31 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           set-safe-directory: false
-      - name: Install non-pip dependencies of the workflow call library
+      - name: Install apt dependencies of the workflow call library
         run: |
           export DEBIAN_FRONTEND="noninteractive"
-          apt install -y -qq imagemagick inkscape python3-pip wget
+          apt install -y -qq imagemagick inkscape python3 wget
           wget https://github.com/rclone/rclone/releases/download/v1.73.0/rclone-v1.73.0-linux-amd64.deb -O /tmp/rclone-v1.73.0-linux-amd64.deb
           dpkg -i /tmp/rclone-v1.73.0-linux-amd64.deb
           rm /usr/lib/python3.*/EXTERNALLY-MANAGED
+      - name: Install uv
+        uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57  # v8.0.0
       - name: Install the workflow call library
         run: |
-          python3 -m pip install .[docs,lint,tests]
-      - name: Clean build files
+          uv sync --frozen
+      - name: Run prek
         run: |
-          git clean -xdf
-      - name: Run ruff
-        run: |
-          python3 -m ruff check .
-          python3 -m nbqa ruff .
-      - name: Run isort
-        run: |
-          python3 -m isort --check --diff .
-          python3 -m nbqa isort --check --diff .
-      - name: Run mypy
-        run: |
-          python3 -m mypy .
-          python3 -m nbqa mypy .
-      - name: Run yamllint
-        run: |
-          python3 -m yamllint -d "{extends: default, rules: {document-start: {present: false}, line-length: disable, truthy: {check-keys: false}}}" .
-      - name: Run documentation generation
-        run: |
-          cd docs && python3 -m sphinx -W -b html . build/html
+          uv run prek --all-files --show-diff-on-failure
       - name: Run tests
         run: |
-          python3 -m coverage run --source=open_in_cloud_workflow -m pytest tests
+          uv run coverage run --source=open_in_cloud_workflow -m pytest tests
         env:
           RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
           RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
           RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
       - name: Check test coverage
         run: |
-          python3 -m coverage report --fail-under=100 --show-missing --skip-covered
+          uv run coverage report --fail-under=100 --show-missing --skip-covered
 
   upload_notebooks_as_artifact:
     runs-on: ubuntu-latest

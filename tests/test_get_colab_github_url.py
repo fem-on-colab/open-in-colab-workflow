@@ -10,5 +10,10 @@ from open_in_cloud_workflow.get_colab_github_url import get_colab_github_url
 
 def test_get_colab_github_url() -> None:
     """Test Google Colab URL for a file on a public GitHub repository."""
-    url = get_colab_github_url("mock/test.ipynb", "fem-on-colab/fem-on-colab", "main")
-    assert url == "https://colab.research.google.com/github/fem-on-colab/fem-on-colab/blob/main/mock/test.ipynb"
+    url = get_colab_github_url(
+        "mock/test.ipynb", "fem-on-colab/fem-on-colab", "main"
+    )
+    assert (
+        url
+        == "https://colab.research.google.com/github/fem-on-colab/fem-on-colab/blob/main/mock/test.ipynb"
+    )

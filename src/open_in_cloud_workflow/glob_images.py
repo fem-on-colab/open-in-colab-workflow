@@ -3,7 +3,7 @@
 # This file is part of FEM on Colab-related actions.
 #
 # SPDX-License-Identifier: MIT
-"""Look for images in the work directory, and compute their base64 representation."""
+"""Find images in the work directory and convert them to base64."""
 
 import base64
 import os
@@ -13,30 +13,44 @@ from open_in_cloud_workflow.glob_files import glob_files
 
 
 def glob_images(work_dir: str) -> dict[str, str]:
-    """Look for images in the work directory, and compute their base64 representation."""
+    """Find images in the work directory and convert them to base64."""
     images_as_base64 = dict()
     image_convert: list[str]
-    for (image_ext, image_convert) in (
+    for image_ext, image_convert in (
         ("png", []),
         ("jpg", ["convert {image_file} {image_file_png}"]),
-        ("svg",
-         ["inkscape -e {image_file_png} {image_file}", "inkscape --export-filename={image_file_png} {image_file}"])
+        (
+            "svg",
+            [
+                "inkscape -e {image_file_png} {image_file}",
+                "inkscape --export-filename={image_file_png} {image_file}",
+            ],
+        ),
     ):
-        for image_file in glob_files(work_dir, os.path.join("**", f"*.{image_ext}")):
+        for image_file in glob_files(
+            work_dir, os.path.join("**", f"*.{image_ext}")
+        ):
             image_prefix, _ = os.path.splitext(image_file)
             image_file_png = image_prefix + ".png"
             if not os.path.isfile(image_file_png):
                 for image_convert_ in image_convert:
                     try:
                         subprocess.check_call(
-                            image_convert_.format(image_file=image_file, image_file_png=image_file_png).split(" "),
-                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                            image_convert_.format(
+                                image_file=image_file,
+                                image_file_png=image_file_png,
+                            ).split(" "),
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL,
+                        )
                     except subprocess.CalledProcessError:  # pragma: no cover
                         pass
                     else:
                         break
                 else:  # pragma: no cover
-                    raise RuntimeError(f"Image conversion failed for {image_file}")
+                    raise RuntimeError(
+                        f"Image conversion failed for {image_file}"
+                    )
             assert image_file not in images_as_base64
             images_as_base64[image_file] = _to_base64(image_file_png)
     return images_as_base64

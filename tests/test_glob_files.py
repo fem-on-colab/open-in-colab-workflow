@@ -16,20 +16,33 @@ def test_glob_files_single_pattern(root_directory: str) -> None:
     nb_pattern = os.path.join("replace_images_in_markdown", "*.ipynb")
     files = glob_files(data_directory, nb_pattern)
     assert files == {
-        os.path.join(data_directory, nb_pattern).replace("*", nb_name) for nb_name in (
-            "html_and_markdown_images", "html_image", "image_and_code", "markdown_image")}
+        os.path.join(data_directory, nb_pattern).replace("*", nb_name)
+        for nb_name in (
+            "html_and_markdown_images",
+            "html_image",
+            "image_and_code",
+            "markdown_image",
+        )
+    }
 
 
 def test_glob_files_multiple_patterns(root_directory: str) -> None:
-    """Test pattern matching while listing notebooks and text files in a directory."""
+    """Test listing notebooks and text files from multiple patterns."""
     data_directory = os.path.join(root_directory, "tests", "data")
     nb_pattern = os.path.join("replace_images_in_markdown", "*.ipynb")
     txt_pattern = os.path.join("upload_files_to_google_drive", "*.txt")
     files = glob_files(data_directory, nb_pattern + "\n" + txt_pattern)
     assert files == {
-        os.path.join(data_directory, nb_pattern).replace("*", nb_name) for nb_name in (
-            "html_and_markdown_images", "html_image", "image_and_code", "markdown_image")
-    }.union({
-        os.path.join(data_directory, txt_pattern).replace("*", txt_name) for txt_name in (
-            "existing_file", "new_file")
-    })
+        os.path.join(data_directory, nb_pattern).replace("*", nb_name)
+        for nb_name in (
+            "html_and_markdown_images",
+            "html_image",
+            "image_and_code",
+            "markdown_image",
+        )
+    }.union(
+        {
+            os.path.join(data_directory, txt_pattern).replace("*", txt_name)
+            for txt_name in ("existing_file", "new_file")
+        }
+    )
