@@ -12,6 +12,7 @@ import pytest
 from open_in_cloud_workflow.publish_on import (
     PublishOnArtifact,
     PublishOnDrive,
+    PublishOnEmpty,
     PublishOnGitHub,
 )
 
@@ -59,6 +60,13 @@ def test_publish_on_drive(publish_on_drive: PublishOnDrive) -> None:
         == """publisher=drive
 drive_root_directory=GitHub/open_in_colab_workflow"""
     )
+
+
+def test_publish_on_empty(publish_on_empty: PublishOnEmpty) -> None:
+    """Test content of empty publisher."""
+    with pytest.raises(RuntimeError):
+        publish_on_empty.get_url("colab", "relative_path")
+    assert str(publish_on_empty) == "publisher=empty"
 
 
 def test_publish_on_github(publish_on_github: PublishOnGitHub) -> None:

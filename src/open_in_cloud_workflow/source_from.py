@@ -48,6 +48,8 @@ branch={self.branch}"""
 
 def source_from(source_from_str: str) -> SourceFromBaseClass:
     """Parse source options and return the corresponding class."""
+    if len(source_from_str) == 0:  # pragma: no cover
+        source_from_str = "github@@"
     if source_from_str.startswith("drive"):
         source, drive_root_directory = source_from_str.split("@")
         assert source == "drive"
@@ -61,9 +63,6 @@ def source_from(source_from_str: str) -> SourceFromBaseClass:
 
 
 if __name__ == "__main__":  # pragma: no cover
-    assert len(sys.argv) in (1, 2)
-    if len(sys.argv) == 1:
-        source = source_from("github@caller-repository@caller-branch")
-    elif len(sys.argv) == 2:
-        source = source_from(sys.argv[1])
+    assert len(sys.argv) == 2
+    source = source_from(sys.argv[1])
     print(source)

@@ -12,6 +12,7 @@ from open_in_cloud_workflow.publish_on import (
     PublishOnArtifact,
     PublishOnBaseClass,
     PublishOnDrive,
+    PublishOnEmpty,
     PublishOnGitHub,
 )
 
@@ -23,7 +24,7 @@ def glob_links(
     publish_on: PublishOnBaseClass,
 ) -> dict[str, str | None]:
     """Get links for notebooks matching a pattern in the work directory."""
-    if isinstance(publish_on, PublishOnArtifact):
+    if isinstance(publish_on, (PublishOnArtifact, PublishOnEmpty)):
         # No link replacement is necessary
         return {}
     elif isinstance(publish_on, PublishOnDrive | PublishOnGitHub):

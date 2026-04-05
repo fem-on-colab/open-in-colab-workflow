@@ -17,6 +17,7 @@ from open_in_cloud_workflow.publish_on import (
     PublishOnArtifact,
     PublishOnBaseClass,
     PublishOnDrive,
+    PublishOnEmpty,
     PublishOnGitHub,
 )
 from open_in_cloud_workflow.source_from import (
@@ -66,6 +67,12 @@ def publish_on_drive() -> PublishOnDrive:
     return typing.cast(
         PublishOnDrive, publish_on("drive@GitHub/open_in_colab_workflow")
     )
+
+
+@pytest.fixture
+def publish_on_empty() -> PublishOnEmpty:
+    """Return an empty publisher."""
+    return typing.cast(PublishOnEmpty, publish_on(""))
 
 
 @pytest.fixture

@@ -58,13 +58,14 @@ jobs:
     needs: [test_library]
     uses: ./.github/workflows/workflow_call.yml
     with:
+      source_directory: source
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
       extra_files_pattern: "**/*.dat"
       notebook_preparation: |
-        rsync -avz --include "*/" --include="*.ipynb" --exclude="*" tests open_in_colab/
+        rsync -avz --include "*/" --include="*.ipynb" --exclude="*" source/tests open_in_colab/
       extra_files_preparation: |
-        rsync -avz --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" tests open_in_colab/
+        rsync -avz --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" source/tests open_in_colab/
         mkdir -p open_in_colab/tests/data/extras/
         echo "This is an extra file" > open_in_colab/tests/data/extras/extra.dat
         date > open_in_colab/tests/data/extras/$(tr -dc "a-zA-Z0-9" </dev/urandom | head -c 10).dat
@@ -83,6 +84,7 @@ jobs:
     needs: [test_library, upload_notebooks_as_artifact]
     uses: ./.github/workflows/workflow_call.yml
     with:
+      source_directory: source
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
       extra_files_pattern: "**/*.dat"
@@ -101,7 +103,7 @@ jobs:
         unzip -oq $ARTIFACT_NAME.zip -d open_in_colab
         rm -f $ARTIFACT_NAME.zip
       extra_files_preparation: |
-        rsync -avz --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" tests open_in_colab/
+        rsync -avz --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" source/tests open_in_colab/
         mkdir -p open_in_colab/tests/data/extras/
         echo "This is an extra file" > open_in_colab/tests/data/extras/extra.dat
         date > open_in_colab/tests/data/extras/$(tr -dc "a-zA-Z0-9" </dev/urandom | head -c 10).dat
@@ -120,13 +122,14 @@ jobs:
     needs: [test_library]
     uses: ./.github/workflows/workflow_call.yml
     with:
+      source_directory: source
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
       extra_files_pattern: "**/*.dat"
       notebook_preparation: |
-        rsync -avz --include "*/" --include="*.ipynb" --exclude="*" tests open_in_colab/
+        rsync -avz --include "*/" --include="*.ipynb" --exclude="*" source/tests open_in_colab/
       extra_files_preparation: |
-        rsync -avz --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" tests open_in_colab/
+        rsync -avz --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" source/tests open_in_colab/
         mkdir -p open_in_colab/tests/data/extras/
         echo "This is an extra file" > open_in_colab/tests/data/extras/extra.dat
         date > open_in_colab/tests/data/extras/$(tr -dc "a-zA-Z0-9" </dev/urandom | head -c 10).dat
@@ -145,17 +148,35 @@ jobs:
       RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
       RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
 
+  test_workflow_source_from_drive:
+    needs: [test_workflow_publish_on_drive]
+    uses: ./.github/workflows/workflow_call.yml
+    with:
+      source_directory: source
+      source_from: drive@GitHub/open_in_colab_workflow
+      work_directory: open_in_colab
+      notebook_pattern: "**/*.ipynb"
+      notebook_preparation: |
+        rsync -avz --include "*/" --include="*.ipynb" --exclude="*" source/tests open_in_colab/
+      test_script: |
+        python3 -m pytest --nbval open_in_colab/tests
+    secrets:
+      RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
+      RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
+      RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
+
   test_workflow_publish_on_github:
     needs: [test_library]
     uses: ./.github/workflows/workflow_call.yml
     with:
+      source_directory: source
       work_directory: open_in_colab
       notebook_pattern: "**/*.ipynb"
       extra_files_pattern: "**/*.dat"
       notebook_preparation: |
-        rsync -avz --delete --include "*/" --include="*.ipynb" --exclude="*" tests open_in_colab/
+        rsync -avz --delete --include "*/" --include="*.ipynb" --exclude="*" source/tests open_in_colab/
       extra_files_preparation: |
-        rsync -avz --delete --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" tests open_in_colab/
+        rsync -avz --delete --include "*/" --include="*.png" --include="*.jpg" --include="*.svg" --exclude="*" source/tests open_in_colab/
         mkdir -p open_in_colab/tests/data/extras/
         echo "This is an extra file" > open_in_colab/tests/data/extras/extra.dat
         date > open_in_colab/tests/data/extras/$(tr -dc "a-zA-Z0-9" </dev/urandom | head -c 10).dat
@@ -169,6 +190,19 @@ jobs:
         python3 -m pytest --nbval open_in_colab/tests
       publish_on: github@fem-on-colab/open-in-colab-workflow@open-in-colab
       publish_if_repository: fem-on-colab/open-in-colab-workflow
+
+  test_workflow_source_from_github:
+    needs: [test_workflow_publish_on_github]
+    uses: ./.github/workflows/workflow_call.yml
+    with:
+      source_directory: source
+      source_from: github@fem-on-colab/open-in-colab-workflow@open-in-colab
+      work_directory: open_in_colab
+      notebook_pattern: "**/*.ipynb"
+      notebook_preparation: |
+        rsync -avz --delete --include "*/" --include="*.ipynb" --exclude="*" source/tests open_in_colab/
+      test_script: |
+        python3 -m pytest --nbval open_in_colab/tests
 
   warn:
     runs-on: ubuntu-latest

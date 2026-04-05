@@ -3,6 +3,9 @@ name: Open notebooks in Colab
 on:
   workflow_call:
     inputs:
+      source_directory:
+        description: "Source directory with the files to be processed"
+        type: string
       work_directory:
         description: "Work directory with a copy of the files to be processed"
         type: string
@@ -27,6 +30,9 @@ on:
       pip_packages:
         description: "List of pip-installable packages that need an installation cell"
         type: string
+      source_from:
+        description: "How to get the source files"
+        type: string
       publish_on:
         description: "How to publish the processed notebooks"
         type: string
@@ -38,25 +44,19 @@ on:
         type: string
     secrets:
       RCLONE_CONFIG_DRIVE_CLIENT_ID:
-        description: "Client ID for the Google Acccount. Only used when publish_on is drive"
+        description: "Client ID for the Google Acccount. Only used when source_from and/or publish_on are drive"
       RCLONE_CONFIG_DRIVE_CLIENT_SECRET:
-        description: "Secret for the Google Acccount. Only used when publish_on is drive"
+        description: "Secret for the Google Acccount. Only used when source_from and/or publish_on are drive"
       RCLONE_CONFIG_DRIVE_TOKEN:
-        description: "Token for the Google Acccount. Only used when publish_on is drive"
+        description: "Token for the Google Acccount. Only used when source_from and/or publish_on are drive"
       REPO_ACCESS_TOKEN:
-        description: "Token that enables writing to the destination repository. Only used when publish_on is github"
+        description: "Token that enables reading from the source repository and/or writing to the destination repository. Only used when source_from and/or publish_on are github"
 
 jobs:
   run:
     runs-on: ubuntu-latest
     container: ghcr.io/fem-on-colab/base:latest
     steps:
-      - name: Mark workspace as safe
-        run: |
-          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-        with:
-          set-safe-directory: false
       - name: Fetch updated package list
         run: apt update -y -q
       - name: Install apt dependencies of the workflow call library
@@ -90,6 +90,45 @@ jobs:
           popd
           rm -rf _workflow_call_library
         shell: bash
+      - name: Determine source settings
+        id: determine_source
+        run: |
+          uv run python -m open_in_cloud_workflow.source_from "${{ inputs.source_from }}" > .source
+          while read -r VARIABLE_VALUE; do
+            VARIABLE_VALUE_ARRAY=(${VARIABLE_VALUE//=/ })
+            echo "${VARIABLE_VALUE_ARRAY[0]}=${VARIABLE_VALUE_ARRAY[1]}" >> ${GITHUB_OUTPUT}
+          done < .source
+          rm .source
+        shell: bash
+      - name: Validate source directory
+        run: |
+          case "${{ inputs.source_directory }}" in
+            ""|"."|"./" )
+              echo "Invalid source_directory"
+              exit 1
+              ;;
+          esac
+      - name: Mark source directory as safe
+        if: steps.determine_source.outputs.source == 'github'
+        run: |
+          git config --global --add safe.directory "${{ inputs.source_directory }}"
+      - name: Clone GitHub repository of the source in the source directory
+        if: steps.determine_source.outputs.source == 'github'
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          repository: "${{ steps.determine_source.outputs.repository }}"
+          token: "${{ secrets.REPO_ACCESS_TOKEN || github.token }}"
+          ref: "${{ steps.determine_source.outputs.branch }}"
+          path: "${{ inputs.source_directory }}"
+          set-safe-directory: false
+      - name: Download files from Google Drive in the source directory
+        if: steps.determine_source.outputs.source == 'drive'
+        run: |
+          uv run python -m open_in_cloud_workflow.download_files_from_google_drive "${{ inputs.source_directory }}" "${{ inputs.notebook_pattern }}" "${{ inputs.source_from }}"
+        env:
+          RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
+          RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
+          RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
       - name: Determine publisher settings
         id: determine_publisher
         run: |
@@ -124,11 +163,19 @@ jobs:
             echo EOF
           } >> ${GITHUB_ENV}
         shell: bash
+      - name: Validate work directory
+        run: |
+          case "${{ inputs.work_directory }}" in
+            ""|"."|"./" )
+              echo "Invalid work_directory"
+              exit 1
+              ;;
+          esac
       - name: Mark work directory as safe
         if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         run: |
           git config --global --add safe.directory "${{ inputs.work_directory }}"
-      - name: Clone GitHub repository of the publisher
+      - name: Clone GitHub repository of the publisher in the work directory
         if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
@@ -138,7 +185,7 @@ jobs:
           fetch-depth: 0
           path: "${{ inputs.work_directory }}"
           set-safe-directory: false
-      - name: Clean GitHub repository of the publisher
+      - name: Clean GitHub repository of the publisher in the work directory
         if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         run: |
           pushd "${{ inputs.work_directory }}"
@@ -175,7 +222,7 @@ jobs:
           export LD_LIBRARY_PATH=""
           ${{ inputs.test_script }}
         shell: bash
-      - name: Replace images in markdown
+      - name: Replace images in markdown in the work directory
         run: |
           uv run python -m open_in_cloud_workflow.replace_images_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}"
       - name: Replace links in markdown
@@ -185,13 +232,13 @@ jobs:
           RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
           RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
           RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
-      - name: Upload files to an artifact
+      - name: Upload files in the work directory to an artifact
         if: steps.determine_publisher.outputs.publisher == 'artifact' && (success() || failure() || cancelled())
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7.0.0
         with:
           name: ${{ steps.determine_publisher.outputs.name }}
           path: ${{ env.UPLOAD_PATTERN }}
-      - name: Upload files to Google Drive
+      - name: Upload files in the work directory to Google Drive
         if: steps.determine_publisher.outputs.publisher == 'drive' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         run: |
           uv run python -m open_in_cloud_workflow.upload_files_to_google_drive "${{ inputs.work_directory }}" "${{ env.UPLOAD_PATTERN }}" "${{ inputs.publish_on }}"
@@ -199,10 +246,12 @@ jobs:
           RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
           RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
           RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
-      - name: Upload files to GitHub repository
+      - name: Upload files in the work directory to GitHub repository
         if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         run: |
+          pushd "${{ inputs.source_directory }}"
           SHA_SHORT=$(git rev-parse --short HEAD)
+          popd
           pushd "${{ inputs.work_directory }}"
           UPLOAD_PATTERN_AS_ARRAY=($(echo "${{ env.UPLOAD_PATTERN }}" | sed "s/\n/ /g"))
           for UPLOAD_PATTERN_ENTRY in "${UPLOAD_PATTERN_AS_ARRAY[@]}"; do

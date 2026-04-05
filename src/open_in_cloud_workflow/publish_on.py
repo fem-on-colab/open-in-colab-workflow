@@ -74,6 +74,25 @@ class PublishOnDrive(PublishOnBaseClass):
 drive_root_directory={self.drive_root_directory}"""
 
 
+class PublishOnEmpty(PublishOnBaseClass):
+    """Store empty publisher."""
+
+    def __init__(self) -> None:
+        """Initialize the empty publisher."""
+        pass
+
+    def get_url(self, cloud_provider: str, relative_path: str) -> str:
+        """Throw an error."""
+        raise RuntimeError(
+            "This method should never be called: empty publisher never "
+            "publishes anything and thus does not need URLs"
+        )
+
+    def __str__(self) -> str:
+        """Print private attributes, one `name=value` pair per line."""
+        return "publisher=empty"
+
+
 class PublishOnGitHub(PublishOnBaseClass):
     """Store GitHub repository publisher and its branch."""
 
@@ -105,7 +124,9 @@ branch={self.branch}"""
 
 def publish_on(publish_on_str: str) -> PublishOnBaseClass:
     """Parse publishing options and return the corresponding class."""
-    if publish_on_str.startswith("artifact"):
+    if len(publish_on_str) == 0:
+        return PublishOnEmpty()
+    elif publish_on_str.startswith("artifact"):
         publisher, name = publish_on_str.split("@")
         assert publisher == "artifact"
         return PublishOnArtifact(name)
