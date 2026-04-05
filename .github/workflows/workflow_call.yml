@@ -85,14 +85,15 @@ jobs:
       - name: Install the workflow call library
         run: |
           pushd _workflow_call_library
-          uv sync --no-dev --locked
+          uv sync --no-dev --locked --no-editable
+          mv .venv ..
           popd
           rm -rf _workflow_call_library
         shell: bash
       - name: Determine publisher settings
         id: determine_publisher
         run: |
-          uv python -m open_in_cloud_workflow.publish_on "${{ inputs.publish_on }}" > .publisher
+          uv run python -m open_in_cloud_workflow.publish_on "${{ inputs.publish_on }}" > .publisher
           while read -r VARIABLE_VALUE; do
             VARIABLE_VALUE_ARRAY=(${VARIABLE_VALUE//=/ })
             echo "${VARIABLE_VALUE_ARRAY[0]}=${VARIABLE_VALUE_ARRAY[1]}" >> ${GITHUB_OUTPUT}
@@ -166,7 +167,7 @@ jobs:
         shell: bash
       - name: Add installation cells
         run: |
-          uv python -m open_in_cloud_workflow.add_installation_cells "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "colab" '${{ inputs.fem_on_colab_packages }}' '${{ inputs.pip_packages }}'
+          uv run python -m open_in_cloud_workflow.add_installation_cells "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "colab" '${{ inputs.fem_on_colab_packages }}' '${{ inputs.pip_packages }}'
       - name: Test notebooks in the work directory
         if: inputs.test_script != ''
         run: |
@@ -176,10 +177,10 @@ jobs:
         shell: bash
       - name: Replace images in markdown
         run: |
-          uv python -m open_in_cloud_workflow.replace_images_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}"
+          uv run python -m open_in_cloud_workflow.replace_images_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}"
       - name: Replace links in markdown
         run: |
-          uv python -m open_in_cloud_workflow.replace_links_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "colab" "${{ inputs.publish_on }}"
+          uv run python -m open_in_cloud_workflow.replace_links_in_markdown "${PWD}/${{ inputs.work_directory }}" "${{ inputs.notebook_pattern }}" "colab" "${{ inputs.publish_on }}"
         env:
           RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
           RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
@@ -193,7 +194,7 @@ jobs:
       - name: Upload files to Google Drive
         if: steps.determine_publisher.outputs.publisher == 'drive' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
         run: |
-          uv python -m open_in_cloud_workflow.upload_files_to_google_drive "${{ inputs.work_directory }}" "${{ env.UPLOAD_PATTERN }}" "${{ inputs.publish_on }}"
+          uv run python -m open_in_cloud_workflow.upload_files_to_google_drive "${{ inputs.work_directory }}" "${{ env.UPLOAD_PATTERN }}" "${{ inputs.publish_on }}"
         env:
           RCLONE_CONFIG_DRIVE_CLIENT_ID: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_ID }}"
           RCLONE_CONFIG_DRIVE_CLIENT_SECRET: "${{ secrets.RCLONE_CONFIG_DRIVE_CLIENT_SECRET }}"
