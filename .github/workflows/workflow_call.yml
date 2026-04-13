@@ -234,7 +234,7 @@ jobs:
           RCLONE_CONFIG_DRIVE_TOKEN: "${{ secrets.RCLONE_CONFIG_DRIVE_TOKEN }}"
       - name: Upload files in the work directory to an artifact
         if: steps.determine_publisher.outputs.publisher == 'artifact' && (success() || failure() || cancelled())
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: ${{ steps.determine_publisher.outputs.name }}
           path: ${{ env.UPLOAD_PATTERN }}
