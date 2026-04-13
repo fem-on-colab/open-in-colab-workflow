@@ -37,7 +37,7 @@ funding = "https://github.com/sponsors/francesco-ballarin"
 
 [dependency-groups]
 dev = [
-    "coverage[toml]>=7.4.3",
+    "coverage[toml]>=7.13.5",
     "nbval>=0.10.0",
     "prek>=0.2.24",
     "pytest>=7.4.3",
