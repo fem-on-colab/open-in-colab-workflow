@@ -77,7 +77,7 @@ jobs:
           echo "branch=${BRANCH}" >> ${GITHUB_OUTPUT}
         shell: bash
       - name: Clone workflow call library
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           repository: fem-on-colab/open-in-colab-workflow.git
           ref: ${{ steps.workflow_call_library_branch.outputs.branch }}
@@ -114,7 +114,7 @@ jobs:
           git config --global --add safe.directory "${{ inputs.source_directory }}"
       - name: Clone GitHub repository of the source in the source directory
         if: steps.determine_source.outputs.source == 'github'
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           repository: "${{ steps.determine_source.outputs.repository }}"
           token: "${{ secrets.REPO_ACCESS_TOKEN || github.token }}"
@@ -177,7 +177,7 @@ jobs:
           git config --global --add safe.directory "${{ inputs.work_directory }}"
       - name: Clone GitHub repository of the publisher in the work directory
         if: steps.determine_publisher.outputs.publisher == 'github' && (github.repository == inputs.publish_if_repository || inputs.publish_if_repository == '') && (endsWith(github.ref, inputs.publish_if_branch) || inputs.publish_if_branch == '')
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           repository: "${{ steps.determine_publisher.outputs.repository }}"
           token: "${{ secrets.REPO_ACCESS_TOKEN || github.token }}"
