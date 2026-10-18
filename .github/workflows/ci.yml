@@ -190,6 +190,8 @@ jobs:
         python3 -m pytest --nbval open_in_colab/tests
       publish_on: github@fem-on-colab/open-in-colab-workflow@open-in-colab
       publish_if_repository: fem-on-colab/open-in-colab-workflow
+    secrets:
+      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
 
   test_workflow_source_from_github:
     needs: [test_workflow_publish_on_github]
