@@ -87,11 +87,18 @@ def test_upload_files_to_google_drive_new_single_upload(
             "rclone -q deletefile "
             f"drive:{os.path.join('GitHub/open_in_colab_workflow', pattern)}"
         )
-        subprocess.check_call(
+        result = subprocess.run(
             delete_command.split(" "),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             env=get_rclone_env(),
+            check=False,
+        )
+        # status code 4 from rcode means File not found. This may happen
+        # when the testsuite is run at the same time by the push and
+        # the pull_request events on GitHub actions.
+        assert result.returncode in (0, 4), (
+            f"Return code is {result.returncode}"
         )
 
 
@@ -141,9 +148,16 @@ def test_upload_files_to_google_drive_new_double_upload(
             "rclone -q deletefile "
             f"drive:{os.path.join('GitHub/open_in_colab_workflow', pattern2)}"
         )
-        subprocess.check_call(
+        result = subprocess.run(
             delete_command.split(" "),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             env=get_rclone_env(),
+            check=False,
+        )
+        # status code 4 from rcode means File not found. This may happen
+        # when the testsuite is run at the same time by the push and
+        # the pull_request events on GitHub actions.
+        assert result.returncode in (0, 4), (
+            f"Return code is {result.returncode}"
         )
