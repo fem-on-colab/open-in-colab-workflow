@@ -12,6 +12,11 @@ on:
     - cron: "0 0 * * THU"
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: false
+  queue: max
+
 jobs:
   test_library:
     runs-on: ubuntu-latest
