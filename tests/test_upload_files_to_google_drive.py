@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: MIT
 """Tests for the open_in_cloud_workflow.upload_files_to_google_drive package."""
 
-import datetime
+import datetime as dt
 import os
 import shutil
 import subprocess
@@ -45,7 +45,7 @@ def test_upload_files_to_google_drive_existing(root_directory: str) -> None:
             os.path.join(tmp_root_directory, pattern),
         )
         with open(os.path.join(tmp_root_directory, pattern), "a") as f:
-            f.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            f.write(dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         upload_files_to_google_drive(
             tmp_root_directory, pattern, "GitHub/open_in_colab_workflow"
         )
