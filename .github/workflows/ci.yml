@@ -28,7 +28,7 @@ jobs:
           wget https://github.com/rclone/rclone/releases/download/v1.73.3/rclone-v1.73.3-linux-amd64.deb -O /tmp/rclone-v1.73.3-linux-amd64.deb
           sudo dpkg -i /tmp/rclone-v1.73.3-linux-amd64.deb
       - name: Install uv
-        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
       - name: Install the workflow call library
         run: |
           uv sync --frozen
